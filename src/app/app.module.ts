@@ -7,9 +7,11 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ButtonModule } from 'primeng/button';
-import {InputTextModule} from 'primeng/inputtext';
+import {InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
-import {PasswordModule} from 'primeng/password';
+import { PasswordModule } from 'primeng/password';
+import { AuthInterceptor } from './services/http/interceptors/auth.interceptor';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,11 +25,13 @@ import {PasswordModule} from 'primeng/password';
     InputTextModule,
     MenubarModule,
     ReactiveFormsModule,
-    PasswordModule
+    PasswordModule,
+    HttpClientModule
   ],
   providers: [
     provideClientHydration(),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

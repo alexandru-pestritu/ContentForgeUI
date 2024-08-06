@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
+import { AuthService } from './services/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +11,18 @@ import { MenuItem } from 'primeng/api';
 export class AppComponent implements OnInit {
   title = 'ContentForgeUI';
   items: MenuItem[] | undefined;
+  isLoggedIn = false;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private authService : AuthService
+  ) { }
 
   ngOnInit() {
+    this.authService.isLoggedIn().subscribe(loggedIn => {
+        this.isLoggedIn = loggedIn;
+      });
+
     this.items = [
         {
             label: 'Dashboard',
@@ -76,6 +85,13 @@ export class AppComponent implements OnInit {
                     ]
                 }
             ]
+        },
+        {
+            label: 'Logout',
+            icon: 'pi pi-fw pi-power-off',
+            command: () => {
+                this.authService.logout();
+            }
         }
     ];
 }

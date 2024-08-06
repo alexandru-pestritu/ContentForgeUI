@@ -1,4 +1,4 @@
-<p-menubar [model]="items">
+<p-menubar *ngIf="isLoggedIn" [model]="items">
     <ng-template pTemplate="item" let-item let-root="root">
         <a pRipple class="flex align-items-center p-menuitem-link" [routerLink]="item.route">
             <span [class]="item.icon"></span>

@@ -1,1 +1,18 @@
-<router-outlet />
+<p-menubar [model]="items">
+    <ng-template pTemplate="item" let-item let-root="root">
+        <a pRipple class="flex align-items-center p-menuitem-link" [routerLink]="item.route">
+            <span [class]="item.icon"></span>
+            <span class="ml-2">{{ item.label }}</span>
+            <span *ngIf="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
+            <i *ngIf="item.items" [ngClass]="['pi', root ? 'pi-angle-down ml-2' : 'pi-angle-right ml-auto']"></i>
+        </a>
+    </ng-template>
+    <ng-template pTemplate="start">
+      <a class="bg-blue-600 text-white py-3 px-5 mr-2 rounded-md font-medium">ContentForge</a>
+    </ng-template>
+    <ng-template pTemplate="end">   
+    </ng-template>
+</p-menubar>
+
+<router-outlet></router-outlet>
+

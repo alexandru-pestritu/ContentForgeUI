@@ -37,50 +37,17 @@ export class AppComponent implements OnInit {
             {
               label: 'Stores',
               icon: 'pi pi-fw pi-shop',
-              items: [
-                {
-                  label: 'Add Store',
-                  icon: 'pi pi-fw pi-plus',
-                  routerLink: '/stores/add'
-                },
-                {
-                  label: 'Manage Stores',
-                  icon: 'pi pi-fw pi-pencil',
-                  routerLink: '/stores'
-                }
-              ]
+              routerLink: '/stores'
             },
             {
               label: 'Products',
               icon: 'pi pi-fw pi-shopping-cart',
-              items: [
-                {
-                  label: 'Add Product',
-                  icon: 'pi pi-fw pi-plus',
-                  routerLink: '/products/add'
-                },
-                {
-                  label: 'Manage Products',
-                  icon: 'pi pi-fw pi-pencil',
-                  routerLink: '/products'
-                }
-              ]
+              routerLink: '/products'
             },
             {
               label: 'Articles',
               icon: 'pi pi-fw pi-align-left',
-              items: [
-                {
-                  label: 'Add Article',
-                  icon: 'pi pi-fw pi-plus',
-                  routerLink: '/articles/add'
-                },
-                {
-                  label: 'Manage Articles',
-                  icon: 'pi pi-fw pi-pencil',
-                  routerLink: '/articles'
-                }
-              ]
+              routerLink: '/articles'
             }
           ]
         },

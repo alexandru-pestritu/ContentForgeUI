@@ -15,11 +15,14 @@ import { AuthInterceptor } from './services/http/interceptors/auth.interceptor';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {AvatarModule} from 'primeng/avatar';
 import {ImageModule} from 'primeng/image';
+import {TableModule} from 'primeng/table';
+import { StoresComponent } from './components/stores/stores.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    StoresComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,8 @@ import {ImageModule} from 'primeng/image';
     HttpClientModule,
     MenuModule,
     AvatarModule,
-    ImageModule
+    ImageModule,
+    TableModule
   ],
   providers: [
     provideClientHydration(),

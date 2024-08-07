@@ -1,0 +1,27 @@
+<div class="min-h-screen flex items-start justify-center bg-gray-100">
+    <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
+<h1 class="text-3xl font-bold mb-6">Stores</h1>
+<p-table [value]="stores" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Base URL</th>
+        <th>WP Upload</th>
+        <th>Favicon</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-store>
+      <tr>
+        <td>{{ store.id }}</td>
+        <td>{{ store.name }}</td>
+        <td>{{ store.base_url }}</td>
+        <td> {{ store.favicon_image_id ? 'Image ID: ' + store.favicon_image_id : 'Not uploaded' }}</td>
+        <td>
+          <img *ngIf="store.favicon_url" [src]="store.favicon_url" alt="Favicon" width="25" height="25">
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+</div>

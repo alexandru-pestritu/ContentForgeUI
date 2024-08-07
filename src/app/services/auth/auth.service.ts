@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError, timer } from 'rxjs';
 import { HttpService } from '../http/http.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { Router } from '@angular/router';
@@ -18,6 +18,7 @@ export class AuthService {
     private localStorageService: LocalStorageService
   ) {
     this.isLoggedInSubject = new BehaviorSubject<boolean>(this.hasValidToken());
+    this.setupTokenRefresh();
   }
 
   login(username: string, password: string): Observable<void> {
@@ -50,7 +51,9 @@ export class AuthService {
       this.logout();
       return throwError('No refresh token available');
     }
-    return this.httpService.post<any>('token/refresh', { refresh_token: refreshToken }).pipe(
+    const url = `token/refresh?refresh_token=${refreshToken}`;
+
+    return this.httpService.post<any>(url, {}).pipe(
       tap(response => {
         this.localStorageService.setItem('access_token', response.access_token);
         this.localStorageService.setItem('refresh_token', response.refresh_token);
@@ -63,7 +66,7 @@ export class AuthService {
         return throwError(error);
       })
     );
-  }
+}
 
   getAccessToken(): string | null {
     return this.localStorageService.getItem('access_token');
@@ -84,6 +87,26 @@ export class AuthService {
       return exp > Date.now() / 1000;
     } catch (e) {
       return false;
+    }
+  }
+
+  private setupTokenRefresh(): void {
+    const token = this.getAccessToken();
+    if (token) {
+      const { exp } = jwtDecode<{ exp: number }>(token);
+      const expiresInMs = (exp * 1000) - Date.now();
+      const refreshTime = expiresInMs - (1 * 60 * 1000);
+
+      if (refreshTime > 0) {
+        timer(refreshTime).pipe(
+          switchMap(() => this.refreshTokenRequest())
+        ).subscribe({
+          next: () => this.setupTokenRefresh(), 
+          error: () => this.logout()
+        });
+      } else {
+        this.logout(); 
+      }
     }
   }
 

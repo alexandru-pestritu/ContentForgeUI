@@ -10,7 +10,7 @@ import { StoreUpdateDTO } from '../../models/store/store-update-dto';
 })
 export class StoreService {
 
-  private endpoint = 'stores'; 
+  private endpoint = 'stores/'; 
 
   constructor(private httpService: HttpService) {}
 

@@ -1,18 +1,18 @@
 <p-menubar *ngIf="isLoggedIn" [model]="items">
-    <ng-template pTemplate="item" let-item let-root="root">
-        <a pRipple class="flex align-items-center p-menuitem-link" [routerLink]="item.route">
-            <span [class]="item.icon"></span>
-            <span class="ml-2">{{ item.label }}</span>
-            <span *ngIf="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
-            <i *ngIf="item.items" [ngClass]="['pi', root ? 'pi-angle-down ml-2' : 'pi-angle-right ml-auto']"></i>
-        </a>
-    </ng-template>
     <ng-template pTemplate="start">
-      <a class="bg-blue-600 text-white py-3 px-5 mr-2 rounded-md font-medium">ContentForge</a>
+        <p-image src="../assets/logo.png" height="55" class="mr-3 ml-1"></p-image>
     </ng-template>
-    <ng-template pTemplate="end">   
+    <ng-template pTemplate="end">
+        <div class="flex items-center">
+            <p-menu #userMenu [popup]="true" [model]="userItems" class="border-0"></p-menu>
+            <p-avatar 
+                icon="pi pi-user" 
+                styleClass="mr-2" 
+                [style]="{ 'background-color': '#dee9fc', color: '#1a2551', cursor: 'pointer'}" 
+                size="large" 
+                (click)="userMenu.toggle($event)"/>
+        </div>
     </ng-template>
 </p-menubar>
 
 <router-outlet></router-outlet>
-

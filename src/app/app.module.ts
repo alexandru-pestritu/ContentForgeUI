@@ -9,9 +9,12 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ButtonModule } from 'primeng/button';
 import {InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
+import { Menu, MenuModule } from 'primeng/menu';
 import { PasswordModule } from 'primeng/password';
 import { AuthInterceptor } from './services/http/interceptors/auth.interceptor';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {AvatarModule} from 'primeng/avatar';
+import {ImageModule} from 'primeng/image';
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +29,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
     MenubarModule,
     ReactiveFormsModule,
     PasswordModule,
-    HttpClientModule
+    HttpClientModule,
+    MenuModule,
+    AvatarModule,
+    ImageModule
   ],
   providers: [
     provideClientHydration(),

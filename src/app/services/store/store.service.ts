@@ -14,8 +14,8 @@ export class StoreService {
 
   constructor(private httpService: HttpService) {}
 
-  getStores(): Observable<Store[]> {
-    return this.httpService.get<Store[]>(this.endpoint);
+  getStores(skip: number = 0, limit: number = 10): Observable<{ stores: Store[], total_records: number }> {
+    return this.httpService.get<{ stores: Store[], total_records: number }>(`${this.endpoint}?skip=${skip}&limit=${limit}`);
   }
 
   getStoreById(id: number): Observable<Store> {

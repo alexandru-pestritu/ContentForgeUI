@@ -19,18 +19,20 @@ export class StoreService {
   }
 
   getStoreById(id: number): Observable<Store> {
-    return this.httpService.get<Store>(`${this.endpoint}/${id}`);
+    return this.httpService.get<Store>(`${this.endpoint}${id}`);
   }
 
-  createStore(store: StoreCreateDTO): Observable<Store> {
-    return this.httpService.post<Store>(this.endpoint, store);
+  createStore(store: StoreCreateDTO, uploadToWordPress: boolean): Observable<Store> {
+    const url = `${this.endpoint}?upload_to_wordpress=${uploadToWordPress}`;
+    return this.httpService.post<Store>(url, store);
   }
 
-  updateStore(id: number, store: StoreUpdateDTO): Observable<Store> {
-    return this.httpService.put<Store>(`${this.endpoint}/${id}`, store);
+  updateStore(id: number, store: StoreUpdateDTO, uploadToWordPress: boolean): Observable<Store> {
+    const url = `${this.endpoint}${id}?upload_to_wordpress=${uploadToWordPress}`;
+    return this.httpService.put<Store>(url, store);
   }
 
   deleteStore(id: number): Observable<Store> {
-    return this.httpService.delete<Store>(`${this.endpoint}/${id}`);
+    return this.httpService.delete<Store>(`${this.endpoint}${id}`);
   }
 }

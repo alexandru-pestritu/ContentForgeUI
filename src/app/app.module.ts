@@ -19,6 +19,13 @@ import {TableModule} from 'primeng/table';
 import { StoresComponent } from './components/stores/stores.component';
 import { MessageService } from 'primeng/api';
 import {ToastModule} from 'primeng/toast';
+import {ToolbarModule} from 'primeng/toolbar';
+import {DialogModule} from 'primeng/dialog';
+import { FormsModule } from '@angular/forms';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { CommonModule } from '@angular/common'
+import {CheckboxModule} from 'primeng/checkbox';
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,13 +46,20 @@ import {ToastModule} from 'primeng/toast';
     AvatarModule,
     ImageModule,
     TableModule,
-    ToastModule
+    ToastModule,
+    ToolbarModule,
+    DialogModule,
+    FormsModule,
+    ConfirmDialogModule,
+    CommonModule,
+    CheckboxModule
   ],
   providers: [
     provideClientHydration(),
     provideAnimationsAsync(),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   bootstrap: [AppComponent]
 })

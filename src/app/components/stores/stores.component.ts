@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { StoreService } from '../../services/store/store.service';
 import { Store } from '../../models/store/store';
 import { NotificationService } from '../../services/notification/notification.service';
-import { LazyLoadEvent } from 'primeng/api';
-import { TableLazyLoadEvent } from 'primeng/table';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { Table, TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-stores',
@@ -12,16 +12,23 @@ import { TableLazyLoadEvent } from 'primeng/table';
 })
 export class StoresComponent implements OnInit {
 
+  @ViewChild('dt') dt: Table | undefined;
+
   stores: Store[] = [];
   totalRecords: number = 0;
   rows: number = 10; 
+  storeDialog: boolean = false;
+  store: Store = {} as Store;
+  selectedStores: Store[] = [];
+  submitted: boolean = false;
+  uploadToWordPress: boolean = false;
 
   constructor(
     private storeService: StoreService,
-    private notificationService: NotificationService) {}
+    private notificationService: NotificationService,
+    private confirmationService: ConfirmationService,) {}
 
   ngOnInit(): void {
-    //this.loadStores(0, this.rows);
   }
 
   loadStores(skip: number, limit: number): void {
@@ -43,4 +50,102 @@ export class StoresComponent implements OnInit {
     this.loadStores(skip, limit); 
   }
 
+  openNewStore() {
+    this.store = {} as Store;
+    this.uploadToWordPress = false;
+    this.submitted = false;
+    this.storeDialog = true;
+  }
+
+  hideDialog() {
+    this.storeDialog = false;
+    this.submitted = false;
+  }
+
+  saveStore() {
+    this.submitted = true;
+
+    if (this.store.name && this.store.base_url) {
+      if (this.store.id) {
+        this.storeService.updateStore(this.store.id, this.store, this.uploadToWordPress).subscribe({
+          next: () => {
+            this.notificationService.showSuccess('Success', 'Store updated successfully.');
+            this.loadStores(0, this.rows); 
+          },
+          error: () => {
+            this.notificationService.showError('Error', 'Failed to update store.');
+          }
+        });
+      } else {
+        this.storeService.createStore(this.store, this.uploadToWordPress).subscribe({
+          next: () => {
+            this.notificationService.showSuccess('Success', 'Store created successfully.');
+            this.loadStores(0, this.rows); 
+          },
+          error: () => {
+            this.notificationService.showError('Error', 'Failed to create store.');
+          }
+        });
+      }
+      this.storeDialog = false;
+      this.store = {} as Store;
+    }
+  }
+
+  editStore(store: Store) {
+    this.store = { ...store };
+    this.uploadToWordPress = false; 
+    this.storeDialog = true;
+  }
+
+  deleteStore(store: Store): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete ${store.name}?`,
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.storeService.deleteStore(store.id).subscribe({
+          next: () => {
+            this.stores = this.stores.filter(s => s.id !== store.id);
+            this.notificationService.showSuccess('Success', `Store ${store.name} deleted successfully.`);
+          },
+          error: (err) => {
+            console.error('Error deleting store', err);
+            this.notificationService.showError('Error', `Failed to delete store ${store.name}.`);
+          }
+        });
+      }
+    });
+  }
+
+  deleteSelectedStores(): void {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete the selected stores?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const selectedIds = this.selectedStores.map(store => store.id);
+        selectedIds.forEach(id => {
+          this.storeService.deleteStore(id).subscribe({
+            next: () => {
+              this.stores = this.stores.filter(s => s.id !== id);
+            },
+            error: (err) => {
+              console.error('Error deleting store', err);
+              this.notificationService.showError('Error', 'Failed to delete some stores.');
+            }
+          });
+        });
+        this.notificationService.showSuccess('Success', 'Selected stores deleted successfully.');
+        this.selectedStores = []; 
+      }
+    });
+  }
+
+  onGlobalFilter(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (this.dt) {
+      this.dt.filterGlobal(target.value, 'contains');
+    }
+  }
 }

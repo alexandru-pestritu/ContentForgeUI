@@ -17,6 +17,8 @@ import {AvatarModule} from 'primeng/avatar';
 import {ImageModule} from 'primeng/image';
 import {TableModule} from 'primeng/table';
 import { StoresComponent } from './components/stores/stores.component';
+import { MessageService } from 'primeng/api';
+import {ToastModule} from 'primeng/toast';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,12 +38,14 @@ import { StoresComponent } from './components/stores/stores.component';
     MenuModule,
     AvatarModule,
     ImageModule,
-    TableModule
+    TableModule,
+    ToastModule
   ],
   providers: [
     provideClientHydration(),
     provideAnimationsAsync(),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

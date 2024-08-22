@@ -14,8 +14,15 @@ export class ProductService {
 
   constructor(private httpService: HttpService) {}
 
-  getProducts(skip: number = 0, limit: number = 10): Observable<{ products: Product[], total_records: number }> {
-    return this.httpService.get<{ products: Product[], total_records: number }>(`${this.endpoint}?skip=${skip}&limit=${limit}`);
+  getProducts(skip: number = 0, limit: number = 10, sortField?: string, sortOrder?: number, filter?: string): Observable<{ products: Product[], total_records: number }> {
+    let queryParams = `?skip=${skip}&limit=${limit}`;
+    if (sortField) {
+      queryParams += `&sort_field=${sortField}&sort_order=${sortOrder}`;
+    }
+    if (filter) {
+      queryParams += `&filter=${filter}`;
+    }
+    return this.httpService.get<{ products: Product[], total_records: number }>(`${this.endpoint}${queryParams}`);
   }
 
   getProductById(id: number): Observable<Product> {

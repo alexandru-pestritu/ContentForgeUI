@@ -17,41 +17,41 @@
                   (onClick)="deleteSelectedStores()" 
                   [disabled]="!selectedStores || !selectedStores.length" />
           </ng-template>
-                  <ng-template pTemplate="right">
-                    <span class="p-input-icon-left">
-                      <i class="pi pi-search"></i>
-                      <input 
-                        pInputText 
-                        type="text" 
-                        (input)="onGlobalFilter($event)" 
-                        placeholder="Search..." />
-                  </span>
-                  </ng-template>
+          <ng-template pTemplate="right">
+              <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input 
+                      pInputText 
+                      type="text" 
+                      (input)="onGlobalFilter($event)" 
+                      placeholder="Search..." />
+              </span>
+          </ng-template>
       </p-toolbar>
 
       <p-table 
-      #dt
-      [value]="stores" 
-      [paginator]="true" 
-      [rows]="rows" 
-      [rowsPerPageOptions]="[10, 25, 50]"
-      [totalRecords]="totalRecords" 
-      [lazy]="true" 
-      (onLazyLoad)="loadStoresLazy($event)"
-      [(selection)]="selectedStores"
-      dataKey="id"
-      [tableStyle]="{ 'min-width': '75rem' }"
-      [rowHover]="true">
+          #dt
+          [value]="stores" 
+          [paginator]="true" 
+          [rows]="rows" 
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [totalRecords]="totalRecords"
+          [lazy]="true"
+          (onLazyLoad)="loadStoresLazy($event)"
+          [(selection)]="selectedStores"
+          dataKey="id"
+          [tableStyle]="{ 'min-width': '75rem' }"
+          [rowHover]="true">
 
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 3rem;">
                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Base URL</th>
-              <th>WP Upload</th>
+              <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+              <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="base_url">Base URL <p-sortIcon field="base_url"></p-sortIcon></th>
+              <th pSortableColumn="favicon_image_id">WP Upload <p-sortIcon field="favicon_image_id"></p-sortIcon></th>
               <th>Favicon</th>
               <th>Actions</th>
             </tr>

@@ -2,13 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { StoreService } from '../../services/store/store.service';
 import { Store } from '../../models/store/store';
 import { NotificationService } from '../../services/notification/notification.service';
-import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-stores',
   templateUrl: './stores.component.html',
-  styleUrl: './stores.component.scss'
+  styleUrls: ['./stores.component.scss']
 })
 export class StoresComponent implements OnInit {
 
@@ -26,13 +26,14 @@ export class StoresComponent implements OnInit {
   constructor(
     private storeService: StoreService,
     private notificationService: NotificationService,
-    private confirmationService: ConfirmationService,) {}
+    private confirmationService: ConfirmationService
+  ) {}
 
   ngOnInit(): void {
   }
 
-  loadStores(skip: number, limit: number): void {
-    this.storeService.getStores(skip, limit).subscribe({
+  loadStores(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
+    this.storeService.getStores(skip, limit, sortField, sortOrder, filter).subscribe({
       next: (data) => {
         this.stores = data.stores;
         this.totalRecords = data.total_records;
@@ -46,8 +47,13 @@ export class StoresComponent implements OnInit {
 
   loadStoresLazy(event: TableLazyLoadEvent): void {
     const skip = event.first || 0;
-    const limit = event.rows !== null && event.rows !== undefined ? event.rows : this.rows; 
-    this.loadStores(skip, limit); 
+    const limit = event.rows !== null && event.rows !== undefined ? event.rows : this.rows;
+    
+    const sortField = Array.isArray(event.sortField) ? event.sortField[0] : event.sortField || undefined;
+    const sortOrder = event.sortOrder || undefined;
+    const globalFilter = Array.isArray(event.globalFilter) ? event.globalFilter[0] : event.globalFilter || undefined;
+
+    this.loadStores(skip, limit, sortField, sortOrder, globalFilter);
   }
 
   openNewStore() {
@@ -70,7 +76,7 @@ export class StoresComponent implements OnInit {
         this.storeService.updateStore(this.store.id, this.store, this.uploadToWordPress).subscribe({
           next: () => {
             this.notificationService.showSuccess('Success', 'Store updated successfully.');
-            this.loadStores(0, this.rows); 
+            this.loadStores(0, this.rows);
           },
           error: () => {
             this.notificationService.showError('Error', 'Failed to update store.');
@@ -80,7 +86,7 @@ export class StoresComponent implements OnInit {
         this.storeService.createStore(this.store, this.uploadToWordPress).subscribe({
           next: () => {
             this.notificationService.showSuccess('Success', 'Store created successfully.');
-            this.loadStores(0, this.rows); 
+            this.loadStores(0, this.rows);
           },
           error: () => {
             this.notificationService.showError('Error', 'Failed to create store.');
@@ -94,7 +100,7 @@ export class StoresComponent implements OnInit {
 
   editStore(store: Store) {
     this.store = { ...store };
-    this.uploadToWordPress = false; 
+    this.uploadToWordPress = false;
     this.storeDialog = true;
   }
 

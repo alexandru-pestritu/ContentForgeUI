@@ -26,12 +26,14 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { CommonModule } from '@angular/common'
 import {CheckboxModule} from 'primeng/checkbox';
+import { ProductsComponent } from './components/products/products.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    StoresComponent
+    StoresComponent,
+    ProductsComponent
   ],
   imports: [
     BrowserModule,

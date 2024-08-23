@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { AuthService } from './services/auth/auth.service';
 
 @Component({
@@ -16,7 +16,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService : AuthService
+    private authService : AuthService,
+    private confirmationService: ConfirmationService
   ) { }
 
   ngOnInit() {
@@ -100,9 +101,20 @@ export class AppComponent implements OnInit {
           label: 'Logout',
           icon: 'pi pi-fw pi-power-off',
           command: () => {
-            this.authService.logout();
+            this.logout();
           }
         }
       ];
+    }
+
+    logout(){
+      this.confirmationService.confirm({
+        message: 'Are you sure you want to logout?',
+        header: 'Confirm',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.authService.logout();
+        }
+      });
     }
 }

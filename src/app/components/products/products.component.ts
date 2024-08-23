@@ -29,6 +29,8 @@ export class ProductsComponent implements OnInit {
   newSpecificationKey: string = '';
   newSpecificationValue: string = '';
 
+  loading: boolean = false;
+
   constructor(
     private productService: ProductService,
     private notificationService: NotificationService,
@@ -82,34 +84,40 @@ export class ProductsComponent implements OnInit {
   saveProduct() {
     this.submitted = true;
     if (this.isValidProduct(this.product)) {
-      this.productService.createProduct(this.product, this.uploadToWordPress).subscribe({
-        next: () => {
-          this.notificationService.showSuccess('Success', 'Product created successfully.');
-          this.loadProducts(0, this.rows);
-        },
-        error: (err) => {
-          console.error('Error creating product', err);
-          this.notificationService.showError('Error', 'Failed to create product.');
-        }
-      });
-      this.addDialog = false;
+        this.loading = true; 
+        this.productService.createProduct(this.product, this.uploadToWordPress).subscribe({
+            next: () => {
+                this.notificationService.showSuccess('Success', 'Product created successfully.');
+                this.loadProducts(0, this.rows);
+                this.loading = false; 
+                this.addDialog = false; 
+            },
+            error: (err) => {
+                console.error('Error creating product', err);
+                this.notificationService.showError('Error', 'Failed to create product.');
+                this.loading = false; 
+            }
+        });
     }
-  }
+}
 
   updateProduct() {
     this.submitted = true;
     if (this.isValidProduct(this.product)) {
-      this.productService.updateProduct(this.product.id, this.product, this.uploadToWordPress).subscribe({
-        next: () => {
-          this.notificationService.showSuccess('Success', 'Product updated successfully.');
-          this.loadProducts(0, this.rows);
-        },
-        error: (err) => {
-          console.error('Error updating product', err);
-          this.notificationService.showError('Error', 'Failed to update product.');
-        }
-      });
-      this.editDialog = false;
+        this.loading = true; 
+        this.productService.updateProduct(this.product.id, this.product, this.uploadToWordPress).subscribe({
+            next: () => {
+                this.notificationService.showSuccess('Success', 'Product updated successfully.');
+                this.loadProducts(0, this.rows);
+                this.loading = false; 
+                this.editDialog = false; 
+            },
+            error: (err) => {
+                console.error('Error updating product', err);
+                this.notificationService.showError('Error', 'Failed to update product.');
+                this.loading = false; 
+            }
+        });
     }
   }
 

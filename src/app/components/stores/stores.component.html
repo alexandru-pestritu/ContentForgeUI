@@ -92,60 +92,71 @@
       <p-confirmDialog></p-confirmDialog>
 
       <p-dialog 
-          [(visible)]="storeDialog" 
-          [style]="{ width: '450px' }" 
-          header="Store Details" 
-          [modal]="true" 
-          styleClass="p-fluid">
-          <ng-template pTemplate="content">
-              <div class="field">
-                  <label for="name">Name</label>
-                  <input 
-                      type="text" 
-                      pInputText 
-                      id="name" 
-                      [(ngModel)]="store.name" 
-                      class="mt-2"
-                      required 
-                      autofocus />
-                  <small class="p-error pt-2" *ngIf="submitted && !store.name">
-                      Name is required.
-                  </small>
-              </div>
-              <div class="field mt-4">
-                  <label for="base_url">Base URL</label>
-                  <input 
-                      type="text"   
-                      pInputText 
-                      id="base_url" 
-                      [(ngModel)]="store.base_url" 
-                      class="mt-2"
-                      required />
-                  <small class="p-error pt-2" *ngIf="submitted && !store.base_url">
-                      Base URL is required.
-                  </small>
-              </div>
-              <div class="field-checkbox mt-4">
-                <p-checkbox 
-                    [(ngModel)]="uploadToWordPress" 
-                    binary="true" 
-                    inputId="upload_to_wordpress"></p-checkbox>
-                <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
-            </div>
-          </ng-template>
+    [(visible)]="storeDialog" 
+    [style]="{ width: '450px' }" 
+    header="Store Details" 
+    [modal]="true" 
+    styleClass="p-fluid">
 
-          <ng-template pTemplate="footer">
-              <p-button 
-                  label="Cancel" 
-                  icon="pi pi-times" 
-                  [text]="true" 
-                  (onClick)="hideDialog()" />
-              <p-button
-                  label="Save" 
-                  icon="pi pi-check" 
-                  [text]="true" 
-                  (onClick)="saveStore()" />
-          </ng-template>
-      </p-dialog>
+    <ng-template pTemplate="content">
+        <div class="dialog-loading-overlay" *ngIf="loading">
+            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+        </div>
+
+        <div [class.dialog-loading-blur]="loading">
+            <div class="field">
+                <label for="name">Name</label>
+                <input 
+                    type="text" 
+                    pInputText 
+                    id="name" 
+                    [(ngModel)]="store.name" 
+                    class="mt-2"
+                    required 
+                    autofocus />
+                <small class="p-error pt-2" *ngIf="submitted && !store.name">
+                    Name is required.
+                </small>
+            </div>
+            <div class="field mt-4">
+                <label for="base_url">Base URL</label>
+                <input 
+                    type="text"   
+                    pInputText 
+                    id="base_url" 
+                    [(ngModel)]="store.base_url" 
+                    class="mt-2"
+                    required />
+                <small class="p-error pt-2" *ngIf="submitted && !store.base_url">
+                    Base URL is required.
+                </small>
+            </div>
+            <div class="field-checkbox mt-4">
+              <p-checkbox 
+                  [(ngModel)]="uploadToWordPress" 
+                  binary="true" 
+                  inputId="upload_to_wordpress"></p-checkbox>
+              <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
+          </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Cancel" 
+            icon="pi pi-times" 
+            [text]="true" 
+            (onClick)="hideDialog()" 
+            [disabled]="loading"
+        />
+        <p-button
+            label="Save" 
+            icon="pi pi-check" 
+            [text]="true" 
+            (onClick)="saveStore()" 
+            [disabled]="loading"
+        />
+    </ng-template>
+</p-dialog>
   </div>
 </div>

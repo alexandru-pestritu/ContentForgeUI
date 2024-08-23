@@ -22,6 +22,7 @@ export class StoresComponent implements OnInit {
   selectedStores: Store[] = [];
   submitted: boolean = false;
   uploadToWordPress: boolean = false;
+  loading: boolean = false;
 
   constructor(
     private storeService: StoreService,
@@ -70,16 +71,21 @@ export class StoresComponent implements OnInit {
 
   saveStore() {
     this.submitted = true;
-
+    
     if (this.store.name && this.store.base_url) {
+      this.loading = true; 
+      this.submitted = false;
       if (this.store.id) {
         this.storeService.updateStore(this.store.id, this.store, this.uploadToWordPress).subscribe({
           next: () => {
             this.notificationService.showSuccess('Success', 'Store updated successfully.');
             this.loadStores(0, this.rows);
+            this.loading = false; 
+            this.storeDialog = false;
           },
           error: () => {
             this.notificationService.showError('Error', 'Failed to update store.');
+            this.loading = false; 
           }
         });
       } else {
@@ -87,13 +93,15 @@ export class StoresComponent implements OnInit {
           next: () => {
             this.notificationService.showSuccess('Success', 'Store created successfully.');
             this.loadStores(0, this.rows);
+            this.loading = false; 
+            this.storeDialog = false;
           },
           error: () => {
             this.notificationService.showError('Error', 'Failed to create store.');
+            this.loading = false; 
           }
         });
       }
-      this.storeDialog = false;
       this.store = {} as Store;
     }
   }

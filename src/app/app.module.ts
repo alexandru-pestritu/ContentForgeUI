@@ -32,6 +32,7 @@ import { CommonModule } from '@angular/common'
 import {CheckboxModule} from 'primeng/checkbox';
 import { ProductsComponent } from './components/products/products.component';
 import { RatingModule } from 'primeng/rating';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,7 +65,8 @@ import { RatingModule } from 'primeng/rating';
     InputNumberModule,
     ChipsModule,
     InputSwitchModule,
-    RatingModule
+    RatingModule,
+    ProgressSpinnerModule
   ],
   providers: [
     provideClientHydration(),

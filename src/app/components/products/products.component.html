@@ -109,6 +109,12 @@
     styleClass="p-fluid">
     
     <ng-template pTemplate="content">
+        <div *ngIf="loading" class="dialog-loading-overlay">
+            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+        </div>
+
+        <div [ngClass]="{'dialog-loading-blur': loading}">
+        
         <div class="field">
             <label for="name">Name</label>
             <input 
@@ -185,7 +191,7 @@
                 inputId="upload_to_wordpress"></p-checkbox>
             <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
         </div>
-        
+    </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
@@ -194,12 +200,14 @@
             icon="pi pi-times" 
             [text]="true" 
             (onClick)="hideDialog()" 
+            [disabled]="loading"
         />
         <p-button
             label="Save" 
             icon="pi pi-check" 
             [text]="true" 
             (onClick)="saveProduct()" 
+            [disabled]="loading"
         />
     </ng-template>
 </p-dialog>
@@ -213,6 +221,11 @@
     styleClass="p-fluid">
 
     <ng-template pTemplate="content">
+        <div *ngIf="loading" class="dialog-loading-overlay">
+            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+        </div>
+
+        <div [ngClass]="{'dialog-loading-blur': loading}">
         <div class="p-grid p-dir-col">
             <div class="p-col-12">
                 <h3><i class="pi pi-user mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>User-Added Data</h3>
@@ -425,6 +438,7 @@
                 </div>
             </div>
         </div>
+        </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
@@ -433,12 +447,14 @@
             icon="pi pi-times" 
             [text]="true" 
             (onClick)="hideDialog()" 
+            [disabled]="loading"
         />
         <p-button
             label="Save" 
             icon="pi pi-check" 
             [text]="true" 
             (onClick)="updateProduct()" 
+            [disabled]="loading"
         />
     </ng-template>
 </p-dialog>

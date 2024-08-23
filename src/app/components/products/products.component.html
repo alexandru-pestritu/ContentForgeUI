@@ -1,1 +1,567 @@
-<p>products works!</p>
+<div class="min-h-screen flex items-start justify-center bg-gray-100">
+    <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
+      <h1 class="text-3xl font-bold mb-6">Products</h1>
+  
+      <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+          <p-button
+            severity="success" 
+            label="New Product" 
+            icon="pi pi-plus" 
+            class="mr-2" 
+            (onClick)="openNewProduct()" 
+          />
+          <p-button
+            severity="danger" 
+            label="Delete" 
+            icon="pi pi-trash" 
+            (onClick)="deleteSelectedProducts()" 
+            [disabled]="!selectedProducts || !selectedProducts.length" 
+          />
+        </ng-template>
+        <ng-template pTemplate="right">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input 
+              pInputText 
+              type="text" 
+              (input)="onGlobalFilter($event)" 
+              placeholder="Search..." 
+            />
+          </span>
+        </ng-template>
+      </p-toolbar>
+  
+      <p-table 
+        #dt
+        [value]="products" 
+        [paginator]="true" 
+        [rows]="rows" 
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="loadProductsLazy($event)"
+        [(selection)]="selectedProducts"
+        dataKey="id"
+        [tableStyle]="{ 'min-width': '75rem' }"
+        [rowHover]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem;">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="in_stock">In Stock <p-sortIcon field="in_stock"></p-sortIcon></th>
+            <th pSortableColumn="seo_keyword">SEO Keyword <p-sortIcon field="seo_keyword"></p-sortIcon></th>
+            <th pSortableColumn="rating">Rating <p-sortIcon field="rating"></p-sortIcon></th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+  
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="product"></p-tableCheckbox>
+            </td>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.in_stock ? 'Yes' : 'No' }}</td>
+            <td>{{ product.seo_keyword }}</td>
+            <td>{{ product.rating }}</td>
+            <td>
+              <p-button 
+                icon="pi pi-info-circle" 
+                class="mr-2" 
+                label="Details"
+                [rounded]="true" 
+                [outlined]="true" 
+                severity="info" 
+                (onClick)="viewProduct(product)" 
+              ></p-button>
+              <p-button 
+                icon="pi pi-pencil" 
+                class="mr-2" 
+                [rounded]="true" 
+                [outlined]="true" 
+                severity="success" 
+                (onClick)="editProduct(product)"
+              ></p-button>
+              <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                [rounded]="true" 
+                [outlined]="true" 
+                (onClick)="deleteProduct(product)" />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+  
+      <p-confirmDialog></p-confirmDialog>
+  
+      <p-dialog 
+    [(visible)]="addDialog" 
+    [style]="{ width: '600px' }" 
+    header="Add Product" 
+    [modal]="true" 
+    styleClass="p-fluid">
+    
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="name">Name</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="name" 
+                [(ngModel)]="product.name" 
+                class="mt-2"
+                required 
+                autofocus 
+            />
+            <small class="p-error pt-2" *ngIf="submitted && !product.name">
+                Name is required.
+            </small>
+        </div>
+
+        <div class="field mt-4">
+            <label for="store_ids">Store IDs</label>
+            <p-chips 
+                [(ngModel)]="product.store_ids" 
+                id="store_ids" 
+                class="mt-2"
+                [max]="10"
+                [allowDuplicate]="false"
+                required
+            ></p-chips>
+            <small class="p-error pt-2" *ngIf="submitted && (!product.store_ids || !product.store_ids.length)">
+                At least one Store ID is required.
+            </small>
+        </div>
+
+        <div class="field mt-4">
+            <label for="affiliate_urls">Affiliate URLs</label>
+            <p-chips 
+                [(ngModel)]="product.affiliate_urls" 
+                id="affiliate_urls" 
+                class="mt-2"
+                [allowDuplicate]="false"
+                required
+            ></p-chips>
+            <small class="p-error pt-2" *ngIf="submitted && (!product.affiliate_urls || !product.affiliate_urls.length)">
+                At least one Affiliate URL is required.
+            </small>
+        </div>
+
+        <div class="field mt-4">
+            <label for="seo_keyword">SEO Keyword</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="seo_keyword" 
+                [(ngModel)]="product.seo_keyword" 
+                class="mt-2"
+            />
+        </div>
+
+        <div class="field mt-4">
+            <label for="rating">Rating</label>
+            <p-inputNumber 
+                [(ngModel)]="product.rating" 
+                id="rating" 
+                class="mt-2"
+                mode="decimal"
+                [min]="0"
+                [max]="5"
+                [step]="0.1"
+            ></p-inputNumber>
+        </div>
+        
+        <div class="field-checkbox mt-4">
+            <p-checkbox 
+                [(ngModel)]="uploadToWordPress" 
+                binary="true" 
+                inputId="upload_to_wordpress"></p-checkbox>
+            <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
+        </div>
+        
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Cancel" 
+            icon="pi pi-times" 
+            [text]="true" 
+            (onClick)="hideDialog()" 
+        />
+        <p-button
+            label="Save" 
+            icon="pi pi-check" 
+            [text]="true" 
+            (onClick)="saveProduct()" 
+        />
+    </ng-template>
+</p-dialog>
+
+  
+<p-dialog 
+    [(visible)]="editDialog" 
+    [style]="{ width: '70vw' }" 
+    header="Edit Product" 
+    [modal]="true" 
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <div class="p-grid p-dir-col">
+            <div class="p-col-12">
+                <h3><i class="pi pi-user mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>User-Added Data</h3>
+                <div class="p-grid p-align-start p-justify-between">
+                    <div class="p-col-4">
+                        <label for="name">Name</label>
+                        <input 
+                            type="text" 
+                            pInputText 
+                            id="name" 
+                            [(ngModel)]="product.name" 
+                            class="mt-2"
+                            required 
+                            autofocus 
+                        />
+                        <small class="p-error pt-2" *ngIf="submitted && !product.name">
+                            Name is required.
+                        </small>
+                    </div>
+                    <div class="p-col-4 mt-4">
+                        <label for="store_ids">Store IDs</label>
+                        <p-chips 
+                            [(ngModel)]="product.store_ids" 
+                            id="store_ids" 
+                            styleClass="mt-2"
+                            [max]="10"
+                            [allowDuplicate]="false"
+                            required
+                        ></p-chips>
+                        <small class="p-error pt-2" *ngIf="submitted && (!product.store_ids || !product.store_ids.length)">
+                            At least one Store ID is required.
+                        </small>
+                    </div>
+                    <div class="p-col-4 mt-4">
+                        <label for="affiliate_urls">Affiliate URLs</label>
+                        <p-chips 
+                            [(ngModel)]="product.affiliate_urls" 
+                            id="affiliate_urls" 
+                            styleClass="mt-2"
+                            [allowDuplicate]="false"
+                            required
+                        ></p-chips>
+                        <small class="p-error pt-2" *ngIf="submitted && (!product.affiliate_urls || !product.affiliate_urls.length)">
+                            At least one Affiliate URL is required.
+                        </small>
+                    </div>
+                    <div class="p-col-4 mt-4">
+                        <label for="seo_keyword">SEO Keyword</label>
+                        <input 
+                            type="text" 
+                            pInputText 
+                            id="seo_keyword" 
+                            [(ngModel)]="product.seo_keyword" 
+                            class="mt-2"
+                        />
+                    </div>
+                    <div class="p-col-4 mt-4">
+                        <label for="rating">Rating</label>
+                        <p-inputNumber 
+                            [(ngModel)]="product.rating" 
+                            id="rating" 
+                            class="mt-2"
+                            mode="decimal"
+                            [min]="0"
+                            [max]="5"
+                            [step]="0.1"
+                        ></p-inputNumber>
+                    </div>
+                    <div class="field-checkbox mt-4">
+                        <p-checkbox 
+                            [(ngModel)]="uploadToWordPress" 
+                            binary="true" 
+                            inputId="upload_to_wordpress"></p-checkbox>
+                        <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-col-12 mt-12">
+                <h3><i class="pi pi-clone mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Scraped Data</h3>
+                <div class="p-grid p-align-start p-justify-between">
+                    <div class="p-col-6">
+                        <label for="full_name">Full Name</label>
+                        <input 
+                            type="text" 
+                            pInputText 
+                            id="full_name" 
+                            [(ngModel)]="product.full_name" 
+                            class="mt-2"
+                        />
+                    </div>
+                    <div class="p-col-12 mt-4">
+                        <label for="description">Description</label>
+                        <textarea 
+                            pInputTextarea 
+                            id="description" 
+                            [(ngModel)]="product.description" 
+                            rows="4" 
+                            cols="30" 
+                            class="mt-2"
+                        ></textarea>
+                    </div>
+                    <div class="p-col-12 mt-4">
+                        <label for="specifications">Specifications</label>
+                        <div class="flex flex-row mt-2">
+                            <div class="p-col-5 mr-2">
+                                <input 
+                                    type="text" 
+                                    pInputText 
+                                    [(ngModel)]="newSpecificationKey" 
+                                    placeholder="Key"
+                                />
+                            </div>
+                            <div class="p-col-5 mr-2">
+                                <input 
+                                    type="text" 
+                                    pInputText 
+                                    [(ngModel)]="newSpecificationValue" 
+                                    placeholder="Value"
+                                />
+                            </div>
+                            <div class="p-col-2">
+                                <p-button 
+                                    icon="pi pi-plus" 
+                                    (onClick)="addSpecification()"
+                                    [disabled]="!newSpecificationKey || !newSpecificationValue"
+                                    label="Add"
+                                ></p-button>
+                            </div>
+                        </div>
+                        <div *ngIf="product.specifications && objectKeys(product.specifications).length">
+                            <ul>
+                                <li *ngFor="let key of objectKeys(product.specifications)">
+                                    <div class="flex flex-row items-center h-8">
+                                        <strong class="pr-1.5">{{ key }}: </strong> {{ product.specifications[key] }}
+                                        <p-button 
+                                            icon="pi pi-times" 
+                                            class="ml-2" 
+                                            styleClass="h-1 w-5"
+                                            [outlined]="true" 
+                                            severity="danger"
+                                            (onClick)="removeSpecification(key)"
+                                        ></p-button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="p-col-12 mt-4">
+                        <label for="image_urls">Image URLs</label>
+                        <p-chips 
+                            [(ngModel)]="product.image_urls" 
+                            id="image_urls" 
+                            styleClass="mt-2"
+                            [allowDuplicate]="false"
+                        ></p-chips>
+                    </div>
+                    <div class="p-col-12 mt-4">
+                        <label for="image_ids">Image IDs</label>
+                        <p-chips 
+                            [(ngModel)]="product.image_ids" 
+                            id="image_ids" 
+                            styleClass="mt-2"
+                            [allowDuplicate]="false"
+                        ></p-chips>
+                    </div>
+                    <div class="p-col-6 mt-4">
+                        <p-checkbox 
+                        [(ngModel)]="product.in_stock" 
+                        binary="true" 
+                        inputId="in_stock"
+                        ></p-checkbox>
+                        <label for="in_stock" class="ml-2">In Stock</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-col-12 mt-12">
+                <h3><i class="pi pi-microchip-ai mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>AI-Generated Data</h3>
+                <div class="p-grid p-align-start p-justify-between">
+                    <div class="p-col-12">
+                        <label for="review">Review</label>
+                        <textarea 
+                            pInputTextarea 
+                            id="review" 
+                            [(ngModel)]="product.review" 
+                            rows="4" 
+                            cols="30" 
+                            class="mt-2"
+                        ></textarea>
+                    </div>
+                    <div class="p-col-12 mt-4">
+                        <label for="pros">Pros</label>
+                        <p-chips 
+                            [(ngModel)]="product.pros" 
+                            id="pros" 
+                            styleClass="mt-2"
+                            [allowDuplicate]="false"
+                        ></p-chips>
+                    </div>
+                    <div class="p-col-12 mt-4">
+                        <label for="cons">Cons</label>
+                        <p-chips 
+                            [(ngModel)]="product.cons" 
+                            id="cons" 
+                            styleClass="mt-2"
+                            [allowDuplicate]="false"
+                        ></p-chips>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Cancel" 
+            icon="pi pi-times" 
+            [text]="true" 
+            (onClick)="hideDialog()" 
+        />
+        <p-button
+            label="Save" 
+            icon="pi pi-check" 
+            [text]="true" 
+            (onClick)="updateProduct()" 
+        />
+    </ng-template>
+</p-dialog>
+
+
+
+
+<p-dialog 
+    [(visible)]="viewDialog" 
+    [style]="{ width: '70vw' }" 
+    header="Product Details" 
+    [modal]="true" 
+    styleClass="p-fluid"
+    [closable]="true"
+    [dismissableMask]="true">
+
+    <ng-template pTemplate="content">
+        <div class="p-grid p-dir-col">
+            <!-- User-Added Information Section -->
+            <div class="p-col-12">
+                <h3>User-Added Information</h3>
+                <div class="p-grid p-align-start p-justify-between">
+                    <div class="p-col-4">
+                        <strong>ID:</strong>
+                        <p>{{ selectedProduct.id }}</p>
+                    </div>
+                    <div class="p-col-4">
+                        <strong>Name:</strong>
+                        <p>{{ selectedProduct.name }}</p>
+                    </div>
+                    <div class="p-col-4">
+                        <strong>SEO Keyword:</strong>
+                        <p>{{ selectedProduct.seo_keyword }}</p>
+                    </div>
+                    <div class="p-col-4">
+                        <strong>Rating:</strong>
+                        <p>{{ selectedProduct.rating }}</p>
+                    </div>
+                    <div class="p-col-4">
+                        <strong>Store IDs:</strong>
+                        <p>{{ selectedProduct.store_ids.join(', ') }}</p>
+                    </div>
+                    <div class="p-col-12">
+                        <strong><i class="pi pi-link"></i> Affiliate URLs:</strong>
+                        <ul>
+                            <li *ngFor="let url of selectedProduct.affiliate_urls">
+                                <i class="pi pi-external-link"></i> <a [href]="url" target="_blank">{{ url }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scraped Information Section -->
+            <div class="p-col-12">
+                <h3>Scraped Information</h3>
+                <div class="p-grid p-align-start p-justify-between">
+                    <div class="p-col-6">
+                        <strong>Full Name:</strong>
+                        <p>{{ selectedProduct.full_name }}</p>
+                    </div>
+                    <div class="p-col-6">
+                        <strong>In Stock:</strong>
+                        <p>{{ selectedProduct.in_stock ? 'Yes' : 'No' }}</p>
+                    </div>
+                    <div class="p-col-12">
+                        <strong>Description:</strong>
+                        <p>{{ selectedProduct.description }}</p>
+                    </div>
+                    <div class="p-col-12">
+                        <strong>Specifications:</strong>
+                        <ul>
+                            <li *ngFor="let spec of selectedProduct.specifications | keyvalue">
+                                {{ spec.key }}: {{ spec.value }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-col-12">
+                        <strong><i class="pi pi-image"></i> Image URLs:</strong>
+                        <ul>
+                            <li *ngFor="let imageUrl of selectedProduct.image_urls">
+                                <i class="pi pi-external-link"></i> <a [href]="imageUrl" target="_blank">{{ imageUrl }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-col-12">
+                        <strong>Image IDs:</strong>
+                        <p>{{ selectedProduct.image_ids && selectedProduct.image_ids.length > 0 ? selectedProduct.image_ids.join(', ') : 'Not uploaded yet' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI-Generated Information Section -->
+            <div class="p-col-12">
+                <h3>AI-Generated Information</h3>
+                <div class="p-grid p-align-start p-justify-between">
+                    <div class="p-col-12">
+                        <strong>Review:</strong>
+                        <p>{{ selectedProduct.review || 'Not generated yet.' }}</p>
+                    </div>
+                    <div class="p-col-12">
+                        <strong><i class="pi pi-thumbs-up"></i> Pros:</strong>
+                        <ul>
+                            <li *ngFor="let pro of selectedProduct.pros">
+                                <i class="pi pi-check"></i> {{ pro }}
+                            </li>
+                        </ul>
+                        <p *ngIf="!selectedProduct.pros || selectedProduct.pros.length === 0">Not generated yet.</p>
+                    </div>
+                    <div class="p-col-12">
+                        <strong><i class="pi pi-thumbs-down"></i> Cons:</strong>
+                        <ul>
+                            <li *ngFor="let con of selectedProduct.cons">
+                                <i class="pi pi-times"></i> {{ con }}
+                            </li>
+                        </ul>
+                        <p *ngIf="!selectedProduct.cons || selectedProduct.cons.length === 0">Not generated yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
+    </div>
+  </div>
+  

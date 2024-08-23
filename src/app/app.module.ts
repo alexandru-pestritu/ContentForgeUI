@@ -8,6 +8,10 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ButtonModule } from 'primeng/button';
 import {InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ChipsModule } from 'primeng/chips';
+import {InputSwitchModule} from 'primeng/inputswitch';
 import { MenubarModule } from 'primeng/menubar';
 import { Menu, MenuModule } from 'primeng/menu';
 import { PasswordModule } from 'primeng/password';
@@ -27,6 +31,7 @@ import { ConfirmationService } from 'primeng/api';
 import { CommonModule } from '@angular/common'
 import {CheckboxModule} from 'primeng/checkbox';
 import { ProductsComponent } from './components/products/products.component';
+import { RatingModule } from 'primeng/rating';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,7 +59,12 @@ import { ProductsComponent } from './components/products/products.component';
     FormsModule,
     ConfirmDialogModule,
     CommonModule,
-    CheckboxModule
+    CheckboxModule,
+    InputTextareaModule,
+    InputNumberModule,
+    ChipsModule,
+    InputSwitchModule,
+    RatingModule
   ],
   providers: [
     provideClientHydration(),

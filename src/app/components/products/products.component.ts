@@ -161,6 +161,7 @@ export class ProductsComponent implements OnInit {
     this.viewDialog = false;
     this.addDialog = false;
     this.editDialog = false;
+    this.loadProducts(0, this.rows);
   }
 
   onGlobalFilter(event: Event) {

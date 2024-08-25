@@ -67,9 +67,10 @@
             </td>
             <td>{{ product.id }}</td>
             <td>{{ product.name }}</td>
-            <td>{{ product.in_stock ? 'Yes' : 'No' }}</td>
+            <td><p-tag *ngIf="product.in_stock" severity="success" value="In Stock"/>
+                <p-tag *ngIf="!product.in_stock" severity="danger" value="Out of Stock"/></td>
             <td>{{ product.seo_keyword }}</td>
-            <td>{{ product.rating }}</td>
+            <td>{{ product.rating }}<i class="pi pi-star-fill pl-1.5 text-yellow-500"></i></td>
             <td>
               <p-button 
                 icon="pi pi-info-circle" 
@@ -459,12 +460,9 @@
     </ng-template>
 </p-dialog>
 
-
-
-
 <p-dialog 
     [(visible)]="viewDialog" 
-    [style]="{ width: '70vw' }" 
+    [style]="{ width: '71vw' }" 
     header="Product Details" 
     [modal]="true" 
     styleClass="p-fluid"
@@ -473,106 +471,179 @@
 
     <ng-template pTemplate="content">
         <div class="p-grid p-dir-col">
-            <!-- User-Added Information Section -->
             <div class="p-col-12">
-                <h3>User-Added Information</h3>
+                <h3><i class="pi pi-user mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>User-Added Data</h3>
                 <div class="p-grid p-align-start p-justify-between">
-                    <div class="p-col-4">
-                        <strong>ID:</strong>
-                        <p>{{ selectedProduct.id }}</p>
+                    <table class="table-auto w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="px-4 py-2 border text-left rounded-tl-md rounded-bl-md">ID</th>
+                                <th class="px-4 py-2 border text-left">Name</th>
+                                <th class="px-4 py-2 border text-left">SEO Keyword</th>
+                                <th class="px-4 py-2 border text-left">Rating</th>
+                                <th class="px-4 py-2 border text-left rounded-tr-md rounded-br-md">Store IDs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-2 border text-left">{{ selectedProduct.id }}</td>
+                                <td class="px-4 py-2 border text-left">{{ selectedProduct.name }}</td>
+                                <td class="px-4 py-2 border text-left">{{ selectedProduct.seo_keyword }}</td>
+                                <td class="px-4 py-2 border text-left">{{ selectedProduct.rating }}<i class="pi pi-star-fill pl-1.5 text-yellow-500"></i></td>
+                                <td class="px-4 py-2 border text-left">{{ selectedProduct.store_ids.join(', ') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="p-col-12 mt-8">
+                        <table class="table-fixed w-full mt-2">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="px-4 py-2 text-left w-full rounded-md">Affiliate URLs</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let url of selectedProduct.affiliate_urls">
+                                    <td class="border px-4 py-2 break-words">
+                                        <i class="pi pi-link pr-2 text-blue-500"></i> <a class="text-gray-600" [href]="url" target="_blank">{{ url }}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="p-col-4">
-                        <strong>Name:</strong>
-                        <p>{{ selectedProduct.name }}</p>
-                    </div>
-                    <div class="p-col-4">
-                        <strong>SEO Keyword:</strong>
-                        <p>{{ selectedProduct.seo_keyword }}</p>
-                    </div>
-                    <div class="p-col-4">
-                        <strong>Rating:</strong>
-                        <p>{{ selectedProduct.rating }}</p>
-                    </div>
-                    <div class="p-col-4">
-                        <strong>Store IDs:</strong>
-                        <p>{{ selectedProduct.store_ids.join(', ') }}</p>
-                    </div>
+                </div>
+            </div>            
+            <div class="p-col-12 mt-12">
+                <h3><i class="pi pi-clone mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Scraped Data</h3>
+                <div class="p-grid p-align-start p-justify-between">
                     <div class="p-col-12">
-                        <strong><i class="pi pi-link"></i> Affiliate URLs:</strong>
-                        <ul>
-                            <li *ngFor="let url of selectedProduct.affiliate_urls">
-                                <i class="pi pi-external-link"></i> <a [href]="url" target="_blank">{{ url }}</a>
-                            </li>
-                        </ul>
+                        <table class="table-auto w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="px-4 py-2 border text-left rounded-tl-md rounded-bl-md">Full Name</th>
+                                    <th class="px-4 py-2 border text-left">In Stock</th>
+                                    <th class="px-4 py-2 border text-left rounded-tr-md rounded-br-md">Image IDs</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 border text-left">{{ selectedProduct.full_name }}</td>
+                                    <td class="px-4 py-2 border text-left">{{ selectedProduct.in_stock ? 'Yes' : 'No' }}</td>
+                                    <td class="px-4 py-2 border text-left">{{ selectedProduct.image_ids && selectedProduct.image_ids.length > 0 ? selectedProduct.image_ids.join(', ') : 'Not uploaded yet' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-col-12 mt-8">
+                        <table class="table-fixed w-full mt-2">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="px-4 py-2 text-left w-full rounded-md">Image URLs</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let imageUrl of selectedProduct.image_urls">
+                                    <td class="border px-4 py-2 break-words text-left">
+                                        <i class="pi pi-image pr-2 text-blue-500"></i><a class="text-gray-600" [href]="imageUrl" target="_blank">{{ imageUrl }}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-col-12 mt-8">
+                        <table class="table-fixed w-full mt-2">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="px-4 py-2 text-left w-full rounded-md">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border px-4 py-2 break-words text-left">
+                                    <p>{{ selectedProduct.description || 'Not scraped yet.' }}</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-col-12 mt-4">
+                        <table class="table-fixed w-full mt-2">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="px-4 py-2 text-left w-full rounded-md">Specifications</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border px-4 py-2 break-words text-left">
+                                        <ul class="list-none pl-0">
+                                            <li *ngFor="let spec of selectedProduct.specifications | keyvalue">
+                                                <i class="pi pi-angle-right pr-2"></i>{{ spec.key }}: {{ spec.value }}
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Scraped Information Section -->
-            <div class="p-col-12">
-                <h3>Scraped Information</h3>
-                <div class="p-grid p-align-start p-justify-between">
-                    <div class="p-col-6">
-                        <strong>Full Name:</strong>
-                        <p>{{ selectedProduct.full_name }}</p>
-                    </div>
-                    <div class="p-col-6">
-                        <strong>In Stock:</strong>
-                        <p>{{ selectedProduct.in_stock ? 'Yes' : 'No' }}</p>
-                    </div>
-                    <div class="p-col-12">
-                        <strong>Description:</strong>
-                        <p>{{ selectedProduct.description }}</p>
-                    </div>
-                    <div class="p-col-12">
-                        <strong>Specifications:</strong>
-                        <ul>
-                            <li *ngFor="let spec of selectedProduct.specifications | keyvalue">
-                                {{ spec.key }}: {{ spec.value }}
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="p-col-12">
-                        <strong><i class="pi pi-image"></i> Image URLs:</strong>
-                        <ul>
-                            <li *ngFor="let imageUrl of selectedProduct.image_urls">
-                                <i class="pi pi-external-link"></i> <a [href]="imageUrl" target="_blank">{{ imageUrl }}</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="p-col-12">
-                        <strong>Image IDs:</strong>
-                        <p>{{ selectedProduct.image_ids && selectedProduct.image_ids.length > 0 ? selectedProduct.image_ids.join(', ') : 'Not uploaded yet' }}</p>
-                    </div>
+            <div class="p-col-12 mt-12">
+                <h3><i class="pi pi-microchip-ai mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>AI-Generated Data</h3>
+                <div class="p-col-12 mt-4">
+                    <table class="table-fixed w-full mt-2">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="px-4 py-2 text-left w-full rounded-md">Review</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border px-4 py-2 break-words text-left">
+                                    <p>{{ selectedProduct.review || 'Not generated yet.' }}</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <!-- AI-Generated Information Section -->
-            <div class="p-col-12">
-                <h3>AI-Generated Information</h3>
-                <div class="p-grid p-align-start p-justify-between">
-                    <div class="p-col-12">
-                        <strong>Review:</strong>
-                        <p>{{ selectedProduct.review || 'Not generated yet.' }}</p>
-                    </div>
-                    <div class="p-col-12">
-                        <strong><i class="pi pi-thumbs-up"></i> Pros:</strong>
-                        <ul>
-                            <li *ngFor="let pro of selectedProduct.pros">
-                                <i class="pi pi-check"></i> {{ pro }}
-                            </li>
-                        </ul>
-                        <p *ngIf="!selectedProduct.pros || selectedProduct.pros.length === 0">Not generated yet.</p>
-                    </div>
-                    <div class="p-col-12">
-                        <strong><i class="pi pi-thumbs-down"></i> Cons:</strong>
-                        <ul>
-                            <li *ngFor="let con of selectedProduct.cons">
-                                <i class="pi pi-times"></i> {{ con }}
-                            </li>
-                        </ul>
-                        <p *ngIf="!selectedProduct.cons || selectedProduct.cons.length === 0">Not generated yet.</p>
-                    </div>
+                <div class="p-col-12 mt-4">
+                    <table class="table-fixed w-full mt-2">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="px-4 py-2 text-left w-full rounded-tl-md rounded-bl-md">Pros</th>
+                                <th class="px-4 py-2 text-left w-full rounded-tr-md rounded-br-md">Cons</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="px-4 py-2 border text-left align-top">
+                                    <ul class="list-none pl-0">
+                                        <li *ngFor="let pro of selectedProduct.pros" class="flex items-center space-x-2 mt-2">
+                                            <span class="flex justify-center items-center w-5 h-5 rounded-full bg-green-500 text-white">
+                                                <i class="pi pi-check text-sm"></i>
+                                            </span>
+                                            <span>{{ pro }}</span>
+                                        </li>
+                                    </ul>
+                                    <p *ngIf="!selectedProduct.pros || selectedProduct.pros.length === 0">Not generated yet.</p>
+                                </td>
+                                <td class="px-4 py-2 border text-left align-top">
+                                    <ul class="list-none pl-0">
+                                        <li *ngFor="let con of selectedProduct.cons" class="flex items-center space-x-2 mt-2">
+                                            <span class="flex justify-center items-center w-5 h-5 rounded-full bg-red-500 text-white">
+                                                <i class="pi pi-times text-sm"></i>
+                                            </span>
+                                            <span>{{ con }}</span>
+                                        </li>
+                                    </ul>
+                                    <p *ngIf="!selectedProduct.cons || selectedProduct.cons.length === 0">Not generated yet.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

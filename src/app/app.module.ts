@@ -33,6 +33,9 @@ import {CheckboxModule} from 'primeng/checkbox';
 import { ProductsComponent } from './components/products/products.component';
 import { RatingModule } from 'primeng/rating';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TabViewModule } from 'primeng/tabview';
+import { GalleriaModule } from 'primeng/galleria';
+import { TagModule } from 'primeng/tag';
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,7 +69,10 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     ChipsModule,
     InputSwitchModule,
     RatingModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    TabViewModule,
+    GalleriaModule,
+    TagModule
   ],
   providers: [
     provideClientHydration(),

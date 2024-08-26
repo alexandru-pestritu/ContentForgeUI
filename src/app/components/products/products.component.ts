@@ -4,6 +4,8 @@ import { Product } from '../../models/product/product';
 import { NotificationService } from '../../services/notification/notification.service';
 import { ConfirmationService } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
+import { StoreService } from '../../services/store/store.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-products',
@@ -31,8 +33,12 @@ export class ProductsComponent implements OnInit {
 
   loading: boolean = false;
 
+  stores: any[] = [];
+  selectedStores: any[] = [];
+
   constructor(
     private productService: ProductService,
+    private storeService: StoreService,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService
   ) {}
@@ -67,24 +73,66 @@ export class ProductsComponent implements OnInit {
     this.addDialog = true;
     this.submitted = false;
     this.uploadToWordPress = false;
+    this.selectedStores = [];
   }
 
   editProduct(product: Product) {
     this.product = { ...product };
     this.editDialog = true;
     this.submitted = false;
-    this.uploadToWordPress = false; 
-  }
+    this.uploadToWordPress = false;
+    this.selectedStores = [];
+
+    if (product.store_ids && product.store_ids.length > 0) {
+        const storeObservables = product.store_ids.map(storeId => this.storeService.getStoreById(storeId));
+        
+        forkJoin(storeObservables).subscribe({
+            next: (stores) => {
+                this.selectedStores = stores.map(store => ({
+                    id: store.id,
+                    name: store.name,
+                    displayName: `ID: ${store.id}, ${store.name}`
+                }));
+            },
+            error: (err) => {
+                console.error('Error fetching store details', err);
+                this.notificationService.showError('Error', 'Failed to load store details.');
+            }
+        });
+    }
+  } 
 
   viewProduct(product: Product) {
     this.selectedProduct = { ...product };
     this.viewDialog = true;
-  }
+
+    this.selectedStores = [];
+
+    if (product.store_ids && product.store_ids.length > 0) {
+        product.store_ids.forEach((storeId) => {
+            this.storeService.getStoreById(storeId).subscribe({
+                next: (store) => {
+                    this.selectedStores.push({
+                        id: store.id,
+                        name: store.name,
+                        displayName: `ID: ${store.id}, ${store.name}`
+                    });
+                },
+                error: (err) => {
+                    console.error(`Error fetching details for store ID ${storeId}`, err);
+                    this.notificationService.showError('Error', `Failed to load store details for ID ${storeId}.`);
+                }
+            });
+        });
+    }
+}
+
 
   saveProduct() {
     this.submitted = true;
     if (this.isValidProduct(this.product)) {
         this.loading = true; 
+        this.product.store_ids = this.selectedStores.map(store => store.id);
         this.productService.createProduct(this.product, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Product created successfully.');
@@ -105,6 +153,7 @@ export class ProductsComponent implements OnInit {
     this.submitted = true;
     if (this.isValidProduct(this.product)) {
         this.loading = true; 
+        this.product.store_ids = this.selectedStores.map(store => store.id);
         this.productService.updateProduct(this.product.id, this.product, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Product updated successfully.');
@@ -181,7 +230,7 @@ export class ProductsComponent implements OnInit {
 
   private isValidProduct(product: Product): boolean {
     return !!product.name && 
-           product.store_ids.length > 0 && 
+           this.selectedStores.length > 0 && 
            product.affiliate_urls.length > 0 && 
            !!product.rating;
   }
@@ -204,4 +253,22 @@ export class ProductsComponent implements OnInit {
   }
 
   objectKeys = Object.keys;
+
+  searchStores(event: any) {
+    const query = event.query;
+    this.storeService.getStores(0, 10, undefined, undefined, query).subscribe({
+      next: (data) => {
+        this.stores = data.stores.map(store => ({
+          id: store.id,
+          name: store.name,
+          displayName: `ID: ${store.id}, ${store.name}`
+        }));
+      },
+      error: (err) => {
+        console.error('Error fetching stores', err);
+        this.notificationService.showError('Error', 'Failed to fetch stores.');
+      }
+    });
+  }
 }
+

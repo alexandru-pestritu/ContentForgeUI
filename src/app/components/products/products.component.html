@@ -134,25 +134,29 @@
 
         <div class="field mt-4">
             <label for="store_ids">Store IDs</label>
-            <p-chips 
-                [(ngModel)]="product.store_ids" 
-                id="store_ids" 
-                class="mt-2"
-                [max]="10"
-                [allowDuplicate]="false"
-                required
-            ></p-chips>
-            <small class="p-error pt-2" *ngIf="submitted && (!product.store_ids || !product.store_ids.length)">
-                At least one Store ID is required.
+            <p-autoComplete 
+            [(ngModel)]="selectedStores" 
+            [suggestions]="stores" 
+            (completeMethod)="searchStores($event)" 
+            field="displayName" 
+            [multiple]="true"
+            [forceSelection]="true"
+            id="store_ids" 
+            styleClass="mt-2"
+            required
+            ></p-autoComplete>
+
+            <small class="p-error pt-2" *ngIf="submitted && selectedStores.length === 0">
+              At least one Store ID is required.
             </small>
-        </div>
+          </div>
 
         <div class="field mt-4">
             <label for="affiliate_urls">Affiliate URLs</label>
             <p-chips 
                 [(ngModel)]="product.affiliate_urls" 
                 id="affiliate_urls" 
-                class="mt-2"
+                styleClass="mt-2"
                 [allowDuplicate]="false"
                 required
             ></p-chips>
@@ -246,20 +250,23 @@
                             Name is required.
                         </small>
                     </div>
-                    <div class="p-col-4 mt-4">
+                    <div class="field mt-4">
                         <label for="store_ids">Store IDs</label>
-                        <p-chips 
-                            [(ngModel)]="product.store_ids" 
-                            id="store_ids" 
-                            styleClass="mt-2"
-                            [max]="10"
-                            [allowDuplicate]="false"
-                            required
-                        ></p-chips>
-                        <small class="p-error pt-2" *ngIf="submitted && (!product.store_ids || !product.store_ids.length)">
-                            At least one Store ID is required.
+                        <p-autoComplete 
+                          [(ngModel)]="selectedStores" 
+                          [suggestions]="stores" 
+                          (completeMethod)="searchStores($event)" 
+                          field="displayName" 
+                          [multiple]="true"
+                          [forceSelection]="true"
+                          id="store_ids" 
+                          styleClass="mt-2"
+                          required
+                        ></p-autoComplete>
+                        <small class="p-error pt-2" *ngIf="submitted && selectedStores.length === 0">
+                          At least one Store ID is required.
                         </small>
-                    </div>
+                      </div>
                     <div class="p-col-4 mt-4">
                         <label for="affiliate_urls">Affiliate URLs</label>
                         <p-chips 
@@ -490,7 +497,13 @@
                                 <td class="px-4 py-2 border text-left">{{ selectedProduct.name }}</td>
                                 <td class="px-4 py-2 border text-left">{{ selectedProduct.seo_keyword }}</td>
                                 <td class="px-4 py-2 border text-left">{{ selectedProduct.rating }}<i class="pi pi-star-fill pl-1.5 text-yellow-500"></i></td>
-                                <td class="px-4 py-2 border text-left">{{ selectedProduct.store_ids.join(', ') }}</td>
+                                <td class="px-4 py-2 border text-left">
+                                    <ul class="list-none pl-0">
+                                        <li *ngFor="let store of selectedStores">
+                                            {{ store.displayName }}
+                                        </li>
+                                    </ul>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

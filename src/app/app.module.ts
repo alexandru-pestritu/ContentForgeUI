@@ -36,6 +36,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TabViewModule } from 'primeng/tabview';
 import { GalleriaModule } from 'primeng/galleria';
 import { TagModule } from 'primeng/tag';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 @NgModule({
   declarations: [
     AppComponent,
@@ -72,7 +73,8 @@ import { TagModule } from 'primeng/tag';
     ProgressSpinnerModule,
     TabViewModule,
     GalleriaModule,
-    TagModule
+    TagModule,
+    AutoCompleteModule
   ],
   providers: [
     provideClientHydration(),

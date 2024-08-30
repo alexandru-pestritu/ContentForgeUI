@@ -1,0 +1,318 @@
+<div class="min-h-screen flex items-start justify-center bg-gray-100">
+    <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
+        <h1 class="text-3xl font-bold mb-6">Articles</h1>
+
+        <p-toolbar styleClass="mb-4 gap-2">
+            <ng-template pTemplate="left">
+                <p-button
+                    severity="success" 
+                    label="New Article" 
+                    icon="pi pi-plus" 
+                    class="mr-2" 
+                    (onClick)="openNewArticle()" 
+                />
+                <p-button
+                    severity="danger" 
+                    label="Delete" 
+                    icon="pi pi-trash" 
+                    (onClick)="deleteSelectedArticles()" 
+                    [disabled]="!selectedArticles || !selectedArticles.length" 
+                />
+            </ng-template>
+            <ng-template pTemplate="right">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input 
+                        pInputText 
+                        type="text" 
+                        (input)="onGlobalFilter($event)" 
+                        placeholder="Search..." 
+                    />
+                </span>
+            </ng-template>
+        </p-toolbar>
+
+        <p-table 
+            #dt
+            [value]="articles" 
+            [paginator]="true" 
+            [rows]="rows" 
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [totalRecords]="totalRecords"
+            [lazy]="true"
+            (onLazyLoad)="loadArticlesLazy($event)"
+            [(selection)]="selectedArticles"
+            dataKey="id"
+            [tableStyle]="{ 'min-width': '75rem' }"
+            [rowHover]="true"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem;">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+                    <th pSortableColumn="title">Title <p-sortIcon field="title"></p-sortIcon></th>
+                    <th pSortableColumn="slug">Slug <p-sortIcon field="slug"></p-sortIcon></th>
+                    <th pSortableColumn="wp_id">WP ID <p-sortIcon field="wp_id"></p-sortIcon></th>
+                    <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                    <th>Actions</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-article>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="article"></p-tableCheckbox>
+                    </td>
+                    <td>{{ article.id }}</td>
+                    <td>{{ article.title }}</td>
+                    <td>{{ article.slug }}</td>
+                    <td>{{ article.wp_id || 'Not added yet.'}}</td>
+                    <td><p-tag *ngIf="article.status=='draft'" severity="warning" value="Draft"/>
+                        <p-tag *ngIf="article.status=='publish'" severity="success" value="Publish"/></td>
+                    <td>
+                        <p-button 
+                            icon="pi pi-info-circle" 
+                            class="mr-2" 
+                            label="Details"
+                            [rounded]="true" 
+                            [outlined]="true" 
+                            severity="info" 
+                            (onClick)="viewArticle(article)" 
+                        ></p-button>
+                        <p-button 
+                            icon="pi pi-pencil" 
+                            class="mr-2" 
+                            [rounded]="true" 
+                            [outlined]="true" 
+                            severity="success" 
+                            (onClick)="editArticle(article)"
+                        ></p-button>
+                        <p-button 
+                            icon="pi pi-trash" 
+                            severity="danger" 
+                            [rounded]="true" 
+                            [outlined]="true" 
+                            (onClick)="deleteArticle(article)" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <p-confirmDialog></p-confirmDialog>
+
+        <p-dialog 
+    [(visible)]="viewDialog" 
+    [style]="{ width: '75vw' }" 
+    header="Article Details" 
+    [modal]="true" 
+    styleClass="p-fluid"
+    [closable]="true"
+    [dismissableMask]="true">
+
+    <ng-template pTemplate="content">
+        <div class="p-grid p-dir-col">
+            <div class="p-col-12">
+                <h3><i class="pi pi-info-circle mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>General Information</h3>
+                <table class="table-auto w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border text-left rounded-tl-md rounded-bl-md">ID</th>
+                            <th class="px-4 py-2 border text-left">Title</th>
+                            <th class="px-4 py-2 border text-left">Slug</th>
+                            <th class="px-4 py-2 border text-left">WP ID</th>
+                            <th class="px-4 py-2 border text-left rounded-tr-md rounded-br-md">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.id }}</td>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.title }}</td>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.slug }}</td>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.wp_id || 'Not added yet.'}}</td>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.status }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-auto w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border text-left rounded-tl-md rounded-bl-md">Author</th>
+                            <th class="px-4 py-2 border text-left rounded-tr-md rounded-br-md">Categories</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.author_id }}</td>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.categories_id_list && selectedArticle.categories_id_list.length > 0 ? selectedArticle.categories_id_list.join(', ') : 'Not provided' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-auto w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border text-left rounded-md">Products</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.products_id_list && selectedArticle.products_id_list.length > 0 ? selectedArticle.products_id_list.join(', ') : 'Not provided' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-col-12 mt-12">
+                <h3><i class="pi pi-chart-line mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>SEO and Meta Information</h3>
+                <table class="table-fixed w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left w-full rounded-md">Meta Title</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 break-words">{{ selectedArticle.meta_title || 'Not provided' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-fixed w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left w-full rounded-md">Meta Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 break-words">{{ selectedArticle.meta_description || 'Not provided' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-fixed w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left w-full rounded-md">SEO Keywords</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 break-words">
+                                <ul class="list-none pl-0">
+                                    <li *ngFor="let keyword of selectedArticle.seo_keywords">
+                                        {{ keyword }}
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+           <div class="p-col-12 mt-8">
+                <h3><i class="pi pi-image mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Images</h3>
+                <table class="table-auto w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border text-left rounded-tl-md rounded-bl-md w-90">Main Image</th>
+                            <th class="px-4 py-2 border text-left w-10">WP ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-4 py-2 border text-left"><a [href]="selectedArticle.main_image_url" target="_blank">{{ selectedArticle.main_image_url || 'Not provided' }}</a></td>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.main_image_wp_id || 'Not uploaded yet.' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-auto w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border text-left rounded-tl-md rounded-bl-md w-90">Buyers Guide Image</th>
+                            <th class="px-4 py-2 border text-left w-10">WP ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-4 py-2 border text-left"><a [href]="selectedArticle.buyers_guide_image_url" target="_blank">{{ selectedArticle.buyers_guide_image_url || 'Not provided' }}</a></td>
+                            <td class="px-4 py-2 border text-left">{{ selectedArticle.buyers_guide_image_wp_id || 'Not uploaded yet.' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-col-12 mt-8">
+                <h3><i class="pi pi-book mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Content</h3>
+                <table class="table-fixed w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left w-full rounded-md">Introduction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 break-words">
+                                <p>{{ selectedArticle.introduction || 'Not generated yet.' }}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-fixed w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left w-full rounded-md">Buyers Guide</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 break-words">
+                                <p>{{ selectedArticle.buyers_guide || 'Not generated yet.' }}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table-fixed w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left w-full rounded-md">FAQs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 break-words">
+                                <ul class="list-none pl-0">
+                                    <li *ngIf="!selectedArticle.faqs || selectedArticle.faqs.length === 0 || (selectedArticle.faqs.length === 1 && !selectedArticle.faqs[0].title && !selectedArticle.faqs[0].description)">
+                                        Not generated yet.
+                                    </li>
+                                    <ng-container *ngFor="let faq of selectedArticle.faqs">
+                                        <li *ngIf="faq.title && faq.description">
+                                          <strong>{{ faq.title }}</strong>: {{ faq.description }}
+                                        </li>
+                                      </ng-container>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <table class="table-fixed w-full border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left w-full rounded-md">Conclusion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 break-words">
+                                <p>{{ selectedArticle.conclusion || 'Not generated yet.' }}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </ng-template>
+</p-dialog>
+    </div>
+</div>

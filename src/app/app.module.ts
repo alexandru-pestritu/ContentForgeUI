@@ -37,13 +37,15 @@ import { TabViewModule } from 'primeng/tabview';
 import { GalleriaModule } from 'primeng/galleria';
 import { TagModule } from 'primeng/tag';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { ArticlesComponent } from './components/articles/articles.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
     StoresComponent,
-    ProductsComponent
+    ProductsComponent,
+    ArticlesComponent
   ],
   imports: [
     BrowserModule,

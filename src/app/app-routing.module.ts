@@ -6,12 +6,14 @@ import { AuthGuard } from './services/guards/auth-guard';
 import { LoginGuard } from './services/guards/login-guard';
 import { StoresComponent } from './components/stores/stores.component';
 import { ProductsComponent } from './components/products/products.component';
+import { ArticlesComponent } from './components/articles/articles.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'stores', component: StoresComponent, canActivate: [AuthGuard] },
   { path:'products', component: ProductsComponent, canActivate: [AuthGuard]},
+  { path: 'articles', component: ArticlesComponent, canActivate: [AuthGuard]},
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: '/dashboard' }
 ];

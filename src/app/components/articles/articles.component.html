@@ -103,6 +103,178 @@
         <p-confirmDialog></p-confirmDialog>
 
         <p-dialog 
+        [(visible)]="addDialog" 
+        [style]="{ width: '600px' }" 
+        header="Add Article" 
+        [modal]="true" 
+        styleClass="p-fluid">
+        
+        <ng-template pTemplate="content">
+            <div *ngIf="loading" class="dialog-loading-overlay">
+                <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+            </div>
+    
+            <div [ngClass]="{'dialog-loading-blur': loading}">
+            
+            <div class="field">
+                <label for="title">Title</label>
+                <input 
+                    type="text" 
+                    pInputText 
+                    id="title" 
+                    [(ngModel)]="article.title" 
+                    class="mt-2"
+                    required 
+                    autofocus 
+                />
+                <small class="p-error pt-2" *ngIf="submitted && !article.title">
+                    Title is required.
+                </small>
+            </div>
+    
+            <div class="field mt-4">
+                <label for="slug">Slug</label>
+                <input 
+                    type="text" 
+                    pInputText 
+                    id="slug" 
+                    [(ngModel)]="article.slug" 
+                    class="mt-2"
+                    required
+                />
+                <small class="p-error pt-2" *ngIf="submitted && !article.slug">
+                    Slug is required.
+                </small>
+            </div>
+    
+            <div class="field mt-4">
+                <label for="categories_id_list">Categories ID List</label>
+                <p-chips 
+                    [(ngModel)]="article.categories_id_list" 
+                    id="categories_id_list" 
+                    styleClass="mt-2"
+                    [allowDuplicate]="false"
+                ></p-chips>
+            </div>
+    
+            <div class="field mt-4">
+                <label for="author_id">Author ID</label>
+                <input 
+                    type="number" 
+                    pInputText 
+                    id="author_id" 
+                    [(ngModel)]="article.author_id" 
+                    class="mt-2"
+                />
+            </div>
+    
+            <div class="field mt-4">
+                <label for="status">Status</label>
+                <p-dropdown 
+                    [options]="statusOptions" 
+                    [(ngModel)]="article.status" 
+                    id="status" 
+                    placeholder="Select a Status"
+                    styleClass="mt-2"
+                ></p-dropdown>
+            </div>
+    
+            <div class="field mt-4">
+                <label for="seo_keywords">SEO Keywords</label>
+                <p-chips 
+                    [(ngModel)]="article.seo_keywords" 
+                    id="seo_keywords" 
+                    styleClass="mt-2"
+                    [allowDuplicate]="false"
+                ></p-chips>
+            </div>
+    
+            <div class="field mt-4">
+                <label for="meta_title">Meta Title</label>
+                <input 
+                    type="text" 
+                    pInputText 
+                    id="meta_title" 
+                    [(ngModel)]="article.meta_title" 
+                    class="mt-2"
+                />
+            </div>
+    
+            <div class="field mt-4">
+                <label for="meta_description">Meta Description</label>
+                <textarea 
+                    pInputTextarea 
+                    id="meta_description" 
+                    [(ngModel)]="article.meta_description" 
+                    rows="4" 
+                    cols="30" 
+                    class="mt-2"
+                ></textarea>
+            </div>
+    
+
+            <div class="field mt-4">
+                <label for="main_image_url">Main Image URL</label>
+                <input 
+                    type="text" 
+                    pInputText 
+                    id="main_image_url" 
+                    [(ngModel)]="article.main_image_url" 
+                    class="mt-2"
+                />
+            </div>
+    
+            <div class="field mt-4">
+                <label for="buyers_guide_image_url">Buyer's Guide Image URL</label>
+                <input 
+                    type="text" 
+                    pInputText 
+                    id="buyers_guide_image_url" 
+                    [(ngModel)]="article.buyers_guide_image_url" 
+                    class="mt-2"
+                />
+            </div>
+    
+            <div class="field mt-4">
+                <label for="products_id_list">Products ID List</label>
+                <p-chips 
+                    [(ngModel)]="article.products_id_list" 
+                    id="products_id_list" 
+                    styleClass="mt-2"
+                    [allowDuplicate]="false"
+                ></p-chips>
+            </div>
+
+            <div class="field-checkbox mt-4">
+                <p-checkbox 
+                    [(ngModel)]="uploadToWordPress" 
+                    binary="true" 
+                    inputId="upload_to_wordpress"></p-checkbox>
+                <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
+            </div>
+        </div>
+        </ng-template>
+    
+        <ng-template pTemplate="footer">
+            <p-button 
+                label="Cancel" 
+                icon="pi pi-times" 
+                [text]="true" 
+                (onClick)="hideDialog()" 
+                [disabled]="loading"
+            />
+            <p-button
+                label="Save" 
+                icon="pi pi-check" 
+                [text]="true" 
+                (onClick)="saveArticle()" 
+                [disabled]="loading"
+            />
+        </ng-template>
+    </p-dialog>
+    
+
+        <p-dialog 
     [(visible)]="viewDialog" 
     [style]="{ width: '75vw' }" 
     header="Article Details" 

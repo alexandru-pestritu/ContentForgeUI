@@ -38,6 +38,7 @@ import { GalleriaModule } from 'primeng/galleria';
 import { TagModule } from 'primeng/tag';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ArticlesComponent } from './components/articles/articles.component';
+import {DropdownModule} from 'primeng/dropdown'
 @NgModule({
   declarations: [
     AppComponent,
@@ -76,7 +77,8 @@ import { ArticlesComponent } from './components/articles/articles.component';
     TabViewModule,
     GalleriaModule,
     TagModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    DropdownModule
   ],
   providers: [
     provideClientHydration(),

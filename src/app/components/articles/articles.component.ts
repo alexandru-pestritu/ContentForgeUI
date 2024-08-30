@@ -30,6 +30,11 @@ export class ArticlesComponent implements OnInit {
 
   loading: boolean = false;
 
+  statusOptions = [
+    { label: 'Draft', value: 'draft' },
+    { label: 'Publish', value: 'publish' }
+  ];
+
   constructor(
     private articleService: ArticleService,
     private notificationService: NotificationService,

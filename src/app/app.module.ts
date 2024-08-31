@@ -38,7 +38,8 @@ import { GalleriaModule } from 'primeng/galleria';
 import { TagModule } from 'primeng/tag';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ArticlesComponent } from './components/articles/articles.component';
-import {DropdownModule} from 'primeng/dropdown'
+import { DropdownModule } from 'primeng/dropdown'
+import { MultiSelectModule } from 'primeng/multiselect';
 @NgModule({
   declarations: [
     AppComponent,
@@ -78,7 +79,8 @@ import {DropdownModule} from 'primeng/dropdown'
     GalleriaModule,
     TagModule,
     AutoCompleteModule,
-    DropdownModule
+    DropdownModule,
+    MultiSelectModule
   ],
   providers: [
     provideClientHydration(),

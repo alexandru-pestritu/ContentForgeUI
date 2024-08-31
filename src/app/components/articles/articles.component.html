@@ -46,19 +46,19 @@
             [tableStyle]="{ 'min-width': '75rem' }"
             [rowHover]="true"
         >
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 3rem;">
-                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                    </th>
-                    <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
-                    <th pSortableColumn="title">Title <p-sortIcon field="title"></p-sortIcon></th>
-                    <th pSortableColumn="slug">Slug <p-sortIcon field="slug"></p-sortIcon></th>
-                    <th pSortableColumn="wp_id">WP ID <p-sortIcon field="wp_id"></p-sortIcon></th>
-                    <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-                    <th>Actions</th>
-                </tr>
-            </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="w-12">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="id" class="w-16">ID <p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="title" class="w-1/4">Title <p-sortIcon field="title"></p-sortIcon></th>
+                <th pSortableColumn="slug" class="w-1/4">Slug <p-sortIcon field="slug"></p-sortIcon></th>
+                <th pSortableColumn="wp_id" class="w-20">WP ID <p-sortIcon field="wp_id"></p-sortIcon></th>
+                <th pSortableColumn="status" class="w-24">Status <p-sortIcon field="status"></p-sortIcon></th>
+                <th class="w-32">Actions</th>
+            </tr>
+        </ng-template>
 
             <ng-template pTemplate="body" let-article>
                 <tr>
@@ -66,12 +66,12 @@
                         <p-tableCheckbox [value]="article"></p-tableCheckbox>
                     </td>
                     <td>{{ article.id }}</td>
-                    <td>{{ article.title }}</td>
+                    <td class="whitespace-normal break-words">{{ article.title }}</td>
                     <td>{{ article.slug }}</td>
                     <td>{{ article.wp_id || 'Not added yet.'}}</td>
                     <td><p-tag *ngIf="article.status=='draft'" severity="warning" value="Draft"/>
                         <p-tag *ngIf="article.status=='publish'" severity="success" value="Publish"/></td>
-                    <td>
+                    <td class="whitespace-nowrap">
                         <p-button 
                             icon="pi pi-info-circle" 
                             class="mr-2" 
@@ -103,178 +103,490 @@
         <p-confirmDialog></p-confirmDialog>
 
         <p-dialog 
-        [(visible)]="addDialog" 
-        [style]="{ width: '600px' }" 
-        header="Add Article" 
-        [modal]="true" 
-        styleClass="p-fluid">
-        
-        <ng-template pTemplate="content">
-            <div *ngIf="loading" class="dialog-loading-overlay">
-                <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
-            </div>
+    [(visible)]="addDialog" 
+    [style]="{ width: '70vw' }" 
+    header="Add Article" 
+    [modal]="true" 
+    styleClass="p-fluid">
     
-            <div [ngClass]="{'dialog-loading-blur': loading}">
-            
-            <div class="field">
-                <label for="title">Title</label>
-                <input 
-                    type="text" 
-                    pInputText 
-                    id="title" 
-                    [(ngModel)]="article.title" 
-                    class="mt-2"
-                    required 
-                    autofocus 
-                />
-                <small class="p-error pt-2" *ngIf="submitted && !article.title">
-                    Title is required.
-                </small>
-            </div>
-    
-            <div class="field mt-4">
-                <label for="slug">Slug</label>
-                <input 
-                    type="text" 
-                    pInputText 
-                    id="slug" 
-                    [(ngModel)]="article.slug" 
-                    class="mt-2"
-                    required
-                />
-                <small class="p-error pt-2" *ngIf="submitted && !article.slug">
-                    Slug is required.
-                </small>
-            </div>
-    
-            <div class="field mt-4">
-                <label for="categories_id_list">Categories ID List</label>
-                <p-chips 
-                    [(ngModel)]="article.categories_id_list" 
-                    id="categories_id_list" 
-                    styleClass="mt-2"
-                    [allowDuplicate]="false"
-                ></p-chips>
-            </div>
-    
-            <div class="field mt-4">
-                <label for="author_id">Author ID</label>
-                <input 
-                    type="number" 
-                    pInputText 
-                    id="author_id" 
-                    [(ngModel)]="article.author_id" 
-                    class="mt-2"
-                />
-            </div>
-    
-            <div class="field mt-4">
-                <label for="status">Status</label>
-                <p-dropdown 
-                    [options]="statusOptions" 
-                    [(ngModel)]="article.status" 
-                    id="status" 
-                    placeholder="Select a Status"
-                    styleClass="mt-2"
-                ></p-dropdown>
-            </div>
-    
-            <div class="field mt-4">
-                <label for="seo_keywords">SEO Keywords</label>
-                <p-chips 
-                    [(ngModel)]="article.seo_keywords" 
-                    id="seo_keywords" 
-                    styleClass="mt-2"
-                    [allowDuplicate]="false"
-                ></p-chips>
-            </div>
-    
-            <div class="field mt-4">
-                <label for="meta_title">Meta Title</label>
-                <input 
-                    type="text" 
-                    pInputText 
-                    id="meta_title" 
-                    [(ngModel)]="article.meta_title" 
-                    class="mt-2"
-                />
-            </div>
-    
-            <div class="field mt-4">
-                <label for="meta_description">Meta Description</label>
-                <textarea 
-                    pInputTextarea 
-                    id="meta_description" 
-                    [(ngModel)]="article.meta_description" 
-                    rows="4" 
-                    cols="30" 
-                    class="mt-2"
-                ></textarea>
-            </div>
-    
+    <ng-template pTemplate="content">
+        <div *ngIf="loading" class="dialog-loading-overlay">
+            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+        </div>
 
-            <div class="field mt-4">
-                <label for="main_image_url">Main Image URL</label>
-                <input 
-                    type="text" 
-                    pInputText 
-                    id="main_image_url" 
-                    [(ngModel)]="article.main_image_url" 
-                    class="mt-2"
-                />
-            </div>
-    
-            <div class="field mt-4">
-                <label for="buyers_guide_image_url">Buyer's Guide Image URL</label>
-                <input 
-                    type="text" 
-                    pInputText 
-                    id="buyers_guide_image_url" 
-                    [(ngModel)]="article.buyers_guide_image_url" 
-                    class="mt-2"
-                />
-            </div>
-    
-            <div class="field mt-4">
-                <label for="products_id_list">Products ID List</label>
-                <p-chips 
-                    [(ngModel)]="article.products_id_list" 
-                    id="products_id_list" 
-                    styleClass="mt-2"
-                    [allowDuplicate]="false"
-                ></p-chips>
-            </div>
+        <div [ngClass]="{'dialog-loading-blur': loading}">
+            <div class="p-grid p-dir-col">
+                
+                <div class="p-col-12">
+                    <h3><i class="pi pi-info-circle mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>General Information</h3>
+                    <div class="p-grid p-align-start p-justify-between">
+                        <div class="p-col-6">
+                            <label for="title">Title</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="title" 
+                                [(ngModel)]="article.title" 
+                                class="mt-2"
+                                required 
+                                autofocus 
+                            />
+                            <small class="p-error pt-2" *ngIf="submitted && !article.title">
+                                Title is required.
+                            </small>
+                        </div>
 
-            <div class="field-checkbox mt-4">
-                <p-checkbox 
-                    [(ngModel)]="uploadToWordPress" 
-                    binary="true" 
-                    inputId="upload_to_wordpress"></p-checkbox>
-                <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
+                        <div class="p-col-6 mt-4">
+                            <label for="slug">Slug</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="slug" 
+                                [(ngModel)]="article.slug" 
+                                class="mt-2"
+                                required
+                            />
+                            <small class="p-error pt-2" *ngIf="submitted && !article.slug">
+                                Slug is required.
+                            </small>
+                        </div>
+
+                        <div class="p-col-6 mt-4">
+                            <label for="categories_id_list">Categories ID List</label>
+                            <p-chips 
+                                [(ngModel)]="article.categories_id_list" 
+                                id="categories_id_list" 
+                                styleClass="mt-2"
+                                [allowDuplicate]="false"
+                            ></p-chips>
+                        </div>
+
+                        <div class="p-col-6 mt-4">
+                            <label for="author_id">Author ID</label>
+                            <input 
+                                type="number" 
+                                pInputText 
+                                id="author_id" 
+                                [(ngModel)]="article.author_id" 
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div class="p-col-6 mt-4">
+                            <label for="status">Status</label>
+                            <p-dropdown 
+                                [options]="statusOptions" 
+                                [(ngModel)]="article.status" 
+                                id="status" 
+                                placeholder="Select a Status"
+                                styleClass="mt-2"
+                            ></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-col-12 mt-12">
+                    <h3><i class="pi pi-chart-line mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>SEO and Meta Information</h3>
+                    <div class="p-grid p-align-start p-justify-between">
+                        <div class="p-col-6 mt-4">
+                            <label for="seo_keywords">SEO Keywords</label>
+                            <p-chips 
+                                [(ngModel)]="article.seo_keywords" 
+                                id="seo_keywords" 
+                                styleClass="mt-2"
+                                [allowDuplicate]="false"
+                            ></p-chips>
+                        </div>
+
+                        <div class="p-col-6 mt-4">
+                            <label for="meta_title">Meta Title</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="meta_title" 
+                                [(ngModel)]="article.meta_title" 
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div class="p-col-12 mt-4">
+                            <label for="meta_description">Meta Description</label>
+                            <textarea 
+                                pInputTextarea 
+                                id="meta_description" 
+                                [(ngModel)]="article.meta_description" 
+                                rows="4" 
+                                cols="30" 
+                                class="mt-2"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-col-12 mt-12">
+                    <h3><i class="pi pi-image mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Images</h3>
+                    <div class="p-grid p-align-start p-justify-between">
+                        <div class="p-col-6 mt-4">
+                            <label for="main_image_url">Main Image URL</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="main_image_url" 
+                                [(ngModel)]="article.main_image_url" 
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div class="p-col-6 mt-4">
+                            <label for="buyers_guide_image_url">Buyer's Guide Image URL</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="buyers_guide_image_url" 
+                                [(ngModel)]="article.buyers_guide_image_url" 
+                                class="mt-2"
+                            />
+                        </div>
+                        <div class="p-col-12 mt-4">
+                            <div class="field-checkbox">
+                                <p-checkbox 
+                                    [(ngModel)]="uploadToWordPress" 
+                                    binary="true" 
+                                    inputId="upload_to_wordpress"></p-checkbox>
+                                <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-col-12 mt-12">
+                    <h3><i class="pi pi-box mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Products</h3>
+                    <div class="field mt-4">
+                        <label for="products_id_list">Products</label>
+                        <p-autoComplete 
+                            [(ngModel)]="selectedProducts" 
+                            [suggestions]="products" 
+                            (completeMethod)="searchProducts($event)" 
+                            field="displayName" 
+                            [multiple]="true"
+                            [forceSelection]="true"
+                            id="products_id_list" 
+                            styleClass="mt-2"
+                            required
+                        ></p-autoComplete>
+                        <small class="p-error pt-2" *ngIf="submitted && selectedProducts.length === 0">
+                            At least one Product is required.
+                        </small>
+                    </div>
+                </div>
             </div>
         </div>
-        </ng-template>
-    
-        <ng-template pTemplate="footer">
-            <p-button 
-                label="Cancel" 
-                icon="pi pi-times" 
-                [text]="true" 
-                (onClick)="hideDialog()" 
-                [disabled]="loading"
-            />
-            <p-button
-                label="Save" 
-                icon="pi pi-check" 
-                [text]="true" 
-                (onClick)="saveArticle()" 
-                [disabled]="loading"
-            />
-        </ng-template>
-    </p-dialog>
-    
+    </ng-template>
 
-        <p-dialog 
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Cancel" 
+            icon="pi pi-times" 
+            [text]="true" 
+            (onClick)="hideDialog()" 
+            [disabled]="loading"
+        />
+        <p-button
+            label="Save" 
+            icon="pi pi-check" 
+            [text]="true" 
+            (onClick)="saveArticle()" 
+            [disabled]="loading"
+        />
+    </ng-template>
+</p-dialog>
+
+    
+    <p-dialog 
+    [(visible)]="editDialog" 
+    [style]="{ width: '70vw' }" 
+    header="Edit Article" 
+    [modal]="true" 
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <div *ngIf="loading" class="dialog-loading-overlay">
+            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+        </div>
+
+        <div [ngClass]="{'dialog-loading-blur': loading}">
+            <div class="p-grid p-dir-col">
+
+                <div class="p-col-12">
+                    <h3><i class="pi pi-info-circle mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>General Information</h3>
+                    <div class="p-grid p-align-start p-justify-between">
+                        <div class="p-col-4">
+                            <label for="title">Title</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="title" 
+                                [(ngModel)]="article.title" 
+                                class="mt-2"
+                                required 
+                                autofocus 
+                            />
+                            <small class="p-error pt-2" *ngIf="submitted && !article.title">
+                                Title is required.
+                            </small>
+                        </div>
+                        <div class="p-col-4 mt-4">
+                            <label for="slug">Slug</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="slug" 
+                                [(ngModel)]="article.slug" 
+                                class="mt-2"
+                                required
+                            />
+                            <small class="p-error pt-2" *ngIf="submitted && !article.slug">
+                                Slug is required.
+                            </small>
+                        </div>
+                        <div class="p-col-4 mt-4">
+                            <label for="status">Status</label>
+                            <p-dropdown 
+                                [options]="statusOptions" 
+                                [(ngModel)]="article.status" 
+                                id="status" 
+                                styleClass="mt-2"
+                                required>
+                            </p-dropdown>
+                        </div>
+                        <div class="p-col-4 mt-4">
+                            <label for="author_id">Author ID</label>
+                            <p-inputNumber 
+                                [(ngModel)]="article.author_id" 
+                                id="author_id" 
+                                class="mt-2">
+                            </p-inputNumber>
+                        </div>
+                        <div class="p-col-4 mt-4">
+                            <label for="categories_id_list">Categories ID List</label>
+                            <p-chips 
+                                [(ngModel)]="article.categories_id_list" 
+                                id="categories_id_list" 
+                                styleClass="mt-2"
+                                [allowDuplicate]="false">
+                            </p-chips>
+                        </div>
+                        <div class="field mt-4">
+                            <label for="products_id_list">Products</label>
+                            <p-autoComplete 
+                                [(ngModel)]="selectedProducts" 
+                                [suggestions]="products" 
+                                (completeMethod)="searchProducts($event)" 
+                                field="displayName" 
+                                [multiple]="true"
+                                [forceSelection]="true"
+                                id="products_id_list" 
+                                styleClass="mt-2"
+                                required
+                            ></p-autoComplete>
+                            <small class="p-error pt-2" *ngIf="submitted && selectedProducts.length === 0">
+                                At least one Product is required.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-col-12 mt-12">
+                    <h3><i class="pi pi-chart-line mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>SEO and Meta Information</h3>
+                    <div class="p-grid p-align-start p-justify-between">
+                        <div class="p-col-6">
+                            <label for="meta_title">Meta Title</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="meta_title" 
+                                [(ngModel)]="article.meta_title" 
+                                class="mt-2">
+                        </div>
+                        <div class="p-col-12 mt-4">
+                            <label for="meta_description">Meta Description</label>
+                            <textarea 
+                                pInputTextarea 
+                                id="meta_description" 
+                                [(ngModel)]="article.meta_description" 
+                                rows="3" 
+                                class="mt-2">
+                            </textarea>
+                        </div>
+                        <div class="p-col-12 mt-4">
+                            <label for="seo_keywords">SEO Keywords</label>
+                            <p-chips 
+                                [(ngModel)]="article.seo_keywords" 
+                                id="seo_keywords" 
+                                styleClass="mt-2"
+                                [allowDuplicate]="false">
+                            </p-chips>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-col-12 mt-12">
+                    <h3><i class="pi pi-image mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Images</h3>
+                    <div class="p-grid p-align-start p-justify-between">
+                        <div class="p-col-6">
+                            <label for="main_image_url">Main Image URL</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="main_image_url" 
+                                [(ngModel)]="article.main_image_url" 
+                                class="mt-2">
+                        </div>
+                        <div class="p-col-6 mt-4">
+                            <label for="main_image_wp_id">Main Image WP ID</label>
+                            <p-inputNumber 
+                                [(ngModel)]="article.main_image_wp_id" 
+                                id="main_image_wp_id" 
+                                class="mt-2">
+                            </p-inputNumber>
+                        </div>
+                        <div class="p-col-6 mt-4">
+                            <label for="buyers_guide_image_url">Buyers Guide Image URL</label>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                id="buyers_guide_image_url" 
+                                [(ngModel)]="article.buyers_guide_image_url" 
+                                class="mt-2">
+                        </div>
+                        <div class="p-col-6 mt-4">
+                            <label for="buyers_guide_image_wp_id">Buyers Guide Image WP ID</label>
+                            <p-inputNumber 
+                                [(ngModel)]="article.buyers_guide_image_wp_id" 
+                                id="buyers_guide_image_wp_id" 
+                                class="mt-2">
+                            </p-inputNumber>
+                        </div>
+                        <div class="field-checkbox mt-4">
+                            <p-checkbox 
+                                [(ngModel)]="uploadToWordPress" 
+                                binary="true" 
+                                inputId="upload_to_wordpress"></p-checkbox>
+                            <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-col-12 mt-12">
+                    <h3><i class="pi pi-book mr-1.5" style="color: #3B82F6; font-weight: bold;"></i>Content</h3>
+                    <div class="p-grid p-align-start p-justify-between">
+                        <div class="p-col-12">
+                            <label for="introduction">Introduction</label>
+                            <textarea 
+                                pInputTextarea 
+                                id="introduction" 
+                                [(ngModel)]="article.introduction" 
+                                rows="3" 
+                                class="mt-2">
+                            </textarea>
+                        </div>
+                        <div class="p-col-12 mt-4">
+                            <label for="buyers_guide">Buyers Guide</label>
+                            <textarea 
+                                pInputTextarea 
+                                id="buyers_guide" 
+                                [(ngModel)]="article.buyers_guide" 
+                                rows="3" 
+                                class="mt-2">
+                            </textarea>
+                        </div>
+
+                        <div class="p-col-12 mt-4">
+                            <label for="faqs">FAQs</label>
+                            <div class="flex flex-row mt-2">
+                                <div class="p-col-5 mr-2">
+                                    <input 
+                                        type="text" 
+                                        pInputText 
+                                        [(ngModel)]="newFaqTitle" 
+                                        placeholder="Title"
+                                    />
+                                </div>
+                                <div class="p-col-5 mr-2">
+                                    <input 
+                                        type="text" 
+                                        pInputText 
+                                        [(ngModel)]="newFaqDescription" 
+                                        placeholder="Description"
+                                    />
+                                </div>
+                                <div class="p-col-2">
+                                    <p-button 
+                                        icon="pi pi-plus" 
+                                        (onClick)="addFaq()"
+                                        [disabled]="!newFaqTitle || !newFaqDescription"
+                                        label="Add"
+                                    ></p-button>
+                                </div>
+                            </div>
+                            <div *ngIf="article.faqs && article.faqs.length">
+                                <ul>
+                                    <ng-container *ngFor="let faq of article.faqs">
+                                    <li *ngIf="faq.title && faq.description">
+                                        <div class="flex flex-row items-center h-8">
+                                            <strong class="pr-1.5">{{ faq.title }}: </strong> {{ faq.description }}
+                                            <p-button 
+                                                icon="pi pi-times" 
+                                                class="ml-2" 
+                                                styleClass="h-1 w-5"
+                                                [outlined]="true" 
+                                                severity="danger"
+                                                (onClick)="removeFaq(faq)"
+                                            ></p-button>
+                                        </div>
+                                    </li>
+                                </ng-container>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-col-12 mt-4">
+                            <label for="conclusion">Conclusion</label>
+                            <textarea 
+                                pInputTextarea 
+                                id="conclusion" 
+                                [(ngModel)]="article.conclusion" 
+                                rows="3" 
+                                class="mt-2">
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Cancel" 
+            icon="pi pi-times" 
+            [text]="true" 
+            (onClick)="hideDialog()" 
+            [disabled]="loading"
+        />
+        <p-button
+            label="Save" 
+            icon="pi pi-check" 
+            [text]="true" 
+            (onClick)="updateArticle()" 
+            [disabled]="loading"
+        />
+    </ng-template>
+</p-dialog>
+
+
+    <p-dialog 
     [(visible)]="viewDialog" 
     [style]="{ width: '75vw' }" 
     header="Article Details" 
@@ -329,7 +641,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="px-4 py-2 border text-left">{{ selectedArticle.products_id_list && selectedArticle.products_id_list.length > 0 ? selectedArticle.products_id_list.join(', ') : 'Not provided' }}</td>
+                            <td class="px-4 py-2 border text-left">
+                                <ul class="list-none pl-0">
+                                    <li *ngFor="let product of selectedProducts">
+                                        {{ product.displayName }}
+                                    </li>
+                                </ul>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

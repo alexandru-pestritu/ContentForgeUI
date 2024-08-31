@@ -6,6 +6,9 @@ import { ArticleUpdateDTO } from '../../models/article/article-update-dto';
 import { NotificationService } from '../../services/notification/notification.service';
 import { ConfirmationService } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
+import { ProductService } from '../../services/product/product.service';
+import { Product } from '../../models/product/product';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-articles',
@@ -28,7 +31,12 @@ export class ArticlesComponent implements OnInit {
   submitted: boolean = false;
   uploadToWordPress: boolean = false; 
 
+  newFaqTitle: string = '';
+  newFaqDescription: string = '';
   loading: boolean = false;
+
+  products: any[] = []; 
+  selectedProducts: any[] = [];
 
   statusOptions = [
     { label: 'Draft', value: 'draft' },
@@ -37,6 +45,7 @@ export class ArticlesComponent implements OnInit {
 
   constructor(
     private articleService: ArticleService,
+    private productService: ProductService,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService
   ) {}
@@ -73,6 +82,7 @@ export class ArticlesComponent implements OnInit {
     this.addDialog = true;
     this.submitted = false;
     this.uploadToWordPress = false;
+    this.selectedProducts = [];
   }
 
   editArticle(article: Article) {
@@ -80,17 +90,56 @@ export class ArticlesComponent implements OnInit {
     this.editDialog = true;
     this.submitted = false;
     this.uploadToWordPress = false;
+    this.selectedProducts = [];
+
+    if (article.products_id_list && article.products_id_list.length > 0) {
+      const productObservables = article.products_id_list.map(productId => this.productService.getProductById(productId));
+      
+      forkJoin(productObservables).subscribe({
+          next: (products) => {
+              this.selectedProducts = products.map(product => ({
+                  id: product.id,
+                  name: product.name,
+                  displayName: `ID: ${product.id}, ${product.name} - ${product.seo_keyword!.charAt(0).toUpperCase() + product.seo_keyword!.slice(1)}`
+              }));
+          },
+          error: (err) => {
+              console.error('Error fetching product details', err);
+              this.notificationService.showError('Error', 'Failed to load product details.');
+          }
+      });
+  }
   }
 
   viewArticle(article: Article) {
     this.selectedArticle = { ...article };
     this.viewDialog = true;
+    this.selectedProducts = [];
+
+    if (article.products_id_list && article.products_id_list.length > 0) {
+      article.products_id_list.forEach((productId) => {
+          this.productService.getProductById(productId).subscribe({
+              next: (product) => {
+                  this.selectedProducts.push({
+                      id: product.id,
+                      name: product.name,
+                      displayName: `ID: ${product.id}, ${product.name} - ${product.seo_keyword!.charAt(0).toUpperCase() + product.seo_keyword!.slice(1)}`
+                  });
+              },
+              error: (err) => {
+                  console.error(`Error fetching details for product ID ${productId}`, err);
+                  this.notificationService.showError('Error', `Failed to load product details for ID ${productId}.`);
+              }
+          });
+      });
+  }
   }
 
   saveArticle() {
     this.submitted = true;
     if (this.isValidArticle(this.article)) {
         this.loading = true; 
+        this.article.products_id_list = this.selectedProducts.map(product => product.id);
         this.articleService.createArticle(this.article, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Article created successfully.');
@@ -111,6 +160,7 @@ export class ArticlesComponent implements OnInit {
     this.submitted = true;
     if (this.isValidArticle(this.article)) {
         this.loading = true; 
+        this.article.products_id_list = this.selectedProducts.map(product => product.id);
         this.articleService.updateArticle(this.article.id, this.article, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Article updated successfully.');
@@ -185,7 +235,41 @@ export class ArticlesComponent implements OnInit {
     }
   }
 
+  addFaq() {
+    if (this.newFaqTitle && this.newFaqDescription) {
+      if (!this.article.faqs) {
+        this.article.faqs = [];
+      }
+      this.article.faqs.push({ title: this.newFaqTitle, description: this.newFaqDescription });
+      this.newFaqTitle = '';
+      this.newFaqDescription = '';
+    }
+  }
+
+  removeFaq(faq: { title: string; description: string }) {
+    if (this.article.faqs) {
+      this.article.faqs = this.article.faqs.filter(f => f !== faq);
+    }
+  }
+
+  searchProducts(event: any) {
+    const query = event.query;
+    this.productService.getProducts(0, 10, undefined, undefined, query).subscribe({
+      next: (data) => {
+        this.products = data.products.map(product => ({
+          id: product.id,
+          name: product.name,
+          displayName: `ID: ${product.id}, ${product.name} - ${product.seo_keyword!.charAt(0).toUpperCase() + product.seo_keyword!.slice(1)}`
+        }));
+      },
+      error: (err) => {
+        console.error('Error fetching products', err);
+        this.notificationService.showError('Error', 'Failed to fetch products.');
+      }
+    });
+  }
+
   private isValidArticle(article: ArticleCreateDTO | ArticleUpdateDTO): boolean {
-    return !!article.title && !!article.slug;
+    return !!article.title && !!article.slug && this.selectedProducts.length > 0;
   }
 }

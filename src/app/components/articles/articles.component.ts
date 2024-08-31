@@ -9,6 +9,7 @@ import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { ProductService } from '../../services/product/product.service';
 import { Product } from '../../models/product/product';
 import { forkJoin } from 'rxjs';
+import { WordpressService } from '../../services/wordpress/wordpress.service';
 
 @Component({
   selector: 'app-articles',
@@ -38,6 +39,13 @@ export class ArticlesComponent implements OnInit {
   products: any[] = []; 
   selectedProducts: any[] = [];
 
+  users: any[] = [];
+  categories: any[] = [];
+
+  selectedAuthor: any;
+  selectedCategories: any[] = [];
+
+
   statusOptions = [
     { label: 'Draft', value: 'draft' },
     { label: 'Publish', value: 'publish' }
@@ -46,12 +54,15 @@ export class ArticlesComponent implements OnInit {
   constructor(
     private articleService: ArticleService,
     private productService: ProductService,
+    private wordpressService: WordpressService,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
     this.loadArticles(0, this.rows);
+    this.loadWordPressUsers();
+    this.loadWordPressCategories();
   }
 
   loadArticles(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
@@ -132,7 +143,23 @@ export class ArticlesComponent implements OnInit {
               }
           });
       });
-  }
+    }
+
+    if (article.author_id) {
+        const foundAuthor = this.users.find(user => user.id === article.author_id);
+        if (foundAuthor) {
+            this.selectedAuthor = foundAuthor.displayName;
+        } else {
+            this.selectedAuthor = 'Author not found';
+        }
+    }
+
+    if (article.categories_id_list && article.categories_id_list.length > 0) {
+        this.selectedCategories = article.categories_id_list.map(categoryId => {
+            const foundCategory = this.categories.find(category => category.id === categoryId);
+            return foundCategory ? foundCategory.displayName : 'Category not found';
+        });
+    }
   }
 
   saveArticle() {
@@ -272,4 +299,35 @@ export class ArticlesComponent implements OnInit {
   private isValidArticle(article: ArticleCreateDTO | ArticleUpdateDTO): boolean {
     return !!article.title && !!article.slug && this.selectedProducts.length > 0;
   }
+
+  loadWordPressUsers(): void {
+    this.wordpressService.getUsers().subscribe({
+      next: (data) => {
+        this.users = data.map(user => ({
+          id: user.id,
+          displayName: `ID: ${user.id} - ${user.name}`
+        }));
+      },
+      error: (err) => {
+        console.error('Error fetching users', err);
+        this.notificationService.showError('Error', 'Failed to load WordPress users.');
+      }
+    });
+  }
+  
+  loadWordPressCategories(): void {
+    this.wordpressService.getCategories().subscribe({
+      next: (data) => {
+        this.categories = data.map(category => ({
+          id: category.id,
+          displayName: `ID: ${category.id} - ${category.name}`
+        }));
+      },
+      error: (err) => {
+        console.error('Error fetching categories', err);
+        this.notificationService.showError('Error', 'Failed to load WordPress categories.');
+      }
+    });
+  }
+  
 }

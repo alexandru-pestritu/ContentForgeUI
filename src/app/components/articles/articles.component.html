@@ -152,25 +152,30 @@
                         </div>
 
                         <div class="p-col-6 mt-4">
-                            <label for="categories_id_list">Categories ID List</label>
-                            <p-chips 
-                                [(ngModel)]="article.categories_id_list" 
-                                id="categories_id_list" 
-                                styleClass="mt-2"
-                                [allowDuplicate]="false"
-                            ></p-chips>
-                        </div>
+                            <label for="author_id">Author</label>
+                            <p-dropdown 
+                              [options]="users" 
+                              [(ngModel)]="article.author_id" 
+                              id="author_id" 
+                              placeholder="Select an Author"
+                              styleClass="mt-2"
+                              optionLabel="displayName"
+                              optionValue="id"
+                            ></p-dropdown>
+                          </div>
 
                         <div class="p-col-6 mt-4">
-                            <label for="author_id">Author ID</label>
-                            <input 
-                                type="number" 
-                                pInputText 
-                                id="author_id" 
-                                [(ngModel)]="article.author_id" 
-                                class="mt-2"
-                            />
-                        </div>
+                            <label for="categories_id_list">Categories</label>
+                            <p-multiSelect 
+                              [options]="categories" 
+                              [(ngModel)]="article.categories_id_list" 
+                              id="categories_id_list" 
+                              placeholder="Select Categories"
+                              styleClass="mt-2"
+                              optionLabel="displayName"
+                              optionValue="id"
+                            ></p-multiSelect>
+                          </div>
 
                         <div class="p-col-6 mt-4">
                             <label for="status">Status</label>
@@ -360,22 +365,31 @@
                             </p-dropdown>
                         </div>
                         <div class="p-col-4 mt-4">
-                            <label for="author_id">Author ID</label>
-                            <p-inputNumber 
-                                [(ngModel)]="article.author_id" 
-                                id="author_id" 
-                                class="mt-2">
-                            </p-inputNumber>
-                        </div>
+                            <label for="author_id">Author</label>
+                            <p-dropdown 
+                              [options]="users" 
+                              [(ngModel)]="article.author_id" 
+                              id="author_id" 
+                              placeholder="Select an Author"
+                              styleClass="mt-2"
+                              optionLabel="displayName"
+                              optionValue="id"
+                            ></p-dropdown>
+                          </div>
+                          
                         <div class="p-col-4 mt-4">
-                            <label for="categories_id_list">Categories ID List</label>
-                            <p-chips 
-                                [(ngModel)]="article.categories_id_list" 
-                                id="categories_id_list" 
-                                styleClass="mt-2"
-                                [allowDuplicate]="false">
-                            </p-chips>
-                        </div>
+                            <label for="categories_id_list">Categories</label>
+                            <p-multiSelect 
+                              [options]="categories" 
+                              [(ngModel)]="article.categories_id_list" 
+                              id="categories_id_list" 
+                              placeholder="Select Categories"
+                              styleClass="mt-2"
+                              optionLabel="displayName"
+                              optionValue="id"
+                            ></p-multiSelect>
+                          </div>
+
                         <div class="field mt-4">
                             <label for="products_id_list">Products</label>
                             <p-autoComplete 
@@ -628,11 +642,15 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="px-4 py-2 border text-left">{{ selectedArticle.author_id }}</td>
-                            <td class="px-4 py-2 border text-left">{{ selectedArticle.categories_id_list && selectedArticle.categories_id_list.length > 0 ? selectedArticle.categories_id_list.join(', ') : 'Not provided' }}</td>
+                            <td class="px-4 py-2 border text-left">{{ selectedAuthor || 'Not provided' }}</td>
+                            <td class="px-4 py-2 border text-left">
+                                <ul class="list-none pl-0">
+                                    <li *ngFor="let category of selectedCategories">{{ category }}</li>
+                                </ul>
+                            </td>
                         </tr>
                     </tbody>
-                </table>
+                </table>                
                 <table class="table-auto w-full border-collapse mt-4">
                     <thead>
                         <tr class="bg-gray-200">

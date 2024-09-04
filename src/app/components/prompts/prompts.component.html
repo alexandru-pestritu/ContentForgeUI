@@ -1,0 +1,266 @@
+<div class="min-h-screen flex items-start justify-center bg-gray-100">
+    <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
+      <h1 class="text-3xl font-bold mb-6">AI Prompts</h1>
+  
+      <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+          <p-button severity="success" label="New Prompt" icon="pi pi-plus" class="mr-2" (onClick)="openNewPrompt()" />
+          <p-button severity="danger" label="Delete" icon="pi pi-trash" (onClick)="deleteSelectedPrompts()" [disabled]="!selectedPrompts || !selectedPrompts.length" />
+        </ng-template>
+        <ng-template pTemplate="right">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="onGlobalFilter($event)" placeholder="Search..." />
+          </span>
+        </ng-template>
+      </p-toolbar>
+  
+      <p-table 
+        #dt
+        [value]="prompts" 
+        [paginator]="true" 
+        [rows]="rows" 
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="loadPromptsLazy($event)"
+        [(selection)]="selectedPrompts"
+        dataKey="id"
+        [tableStyle]="{ 'min-width': '50rem'}"
+        [rowHover]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem;" class="border-l border-t rounded-tl-md rounded-bl-md">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="id" class="border-t">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="name" class="border-t">Name <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="type" class="border-t">Type <p-sortIcon field="type"></p-sortIcon></th>
+            <th pSortableColumn="subtype" class="border-t">Subtype <p-sortIcon field="subtype"></p-sortIcon></th>
+            <th class="border-r border-t rounded-tr-md rounded-br-md">Actions</th>
+          </tr>
+        </ng-template>
+  
+        <ng-template pTemplate="body" let-prompt>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="prompt"></p-tableCheckbox>
+            </td>
+            <td>{{ prompt.id }}</td>
+            <td>{{ prompt.name }}</td>
+            <td>
+                <p-tag *ngIf="prompt.type == 'Article'" severity="secondary" icon="pi pi-align-left" value="Article"/>
+                <p-tag *ngIf="prompt.type =='Product'" severity="info" icon="pi pi-shopping-cart" value="Product"/>
+            </td>
+            <td>{{ prompt.subtype }}</td>
+            <td>
+              <p-button icon="pi pi-info-circle" class="mr-2" label="Details" [rounded]="true" [outlined]="true" severity="info" (onClick)="viewPrompt(prompt)"></p-button>
+              <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" severity="success" (onClick)="editPrompt(prompt)"></p-button>
+              <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (onClick)="deletePrompt(prompt)" />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+  
+      <p-confirmDialog></p-confirmDialog>
+  
+      <p-dialog [(visible)]="addDialog" [style]="{ width: '50vw' }" header="Add Prompt" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+          <div *ngIf="loading" class="dialog-loading-overlay">
+            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+          </div>
+      
+          <div [ngClass]="{'dialog-loading-blur': loading}">
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" pInputText id="name" [(ngModel)]="prompt.name" class="mt-2" required autofocus />
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.name">Name is required.</small>
+            </div>
+      
+            <div class="field mt-4">
+              <label for="type">Type</label>
+              <p-dropdown [options]="types" [(ngModel)]="prompt.type" id="type" styleClass="mt-2" 
+                          (onChange)="onTypeChange($event)" placeholder="Select a Type"></p-dropdown>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.type">Type is required.</small>
+            </div>
+      
+            <div class="field mt-4">
+              <label for="subtype">Subtype</label>
+              <p-dropdown [options]="subtypes" [(ngModel)]="prompt.subtype" id="subtype" styleClass="mt-2" placeholder="Select a Subtype"></p-dropdown>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.subtype">Subtype is required.</small>
+            </div>
+      
+            <div class="field mt-4">
+              <label for="text">Text</label>
+              <p-editor #editorAdd [(ngModel)]="prompt.text" [style]="{ height: '200px' }" id="text" styleClass="mt-2">
+                <ng-template pTemplate="header">
+                  <span class="ql-formats">
+                    <button type="button" class="ql-bold" aria-label="Bold"></button>
+                    <button type="button" class="ql-italic" aria-label="Italic"></button>
+                    <button type="button" class="ql-underline" aria-label="Underline"></button>
+                    <button type="button" class="ql-link" aria-label="Insert Link"></button>
+                  </span>
+                  <span class="ql-formats">
+                    <select class="ql-header" aria-label="Select Heading">
+                      <option value="1">H1</option>
+                      <option value="2">H2</option>
+                      <option value="3">H3</option>
+                      <option value="4">H4</option>
+                      <option value="5">H5</option>
+                      <option value="6">H6</option>
+                      <option selected>Normal</option>
+                    </select>
+                  </span>
+                </ng-template>
+              </p-editor>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.text">Text is required.</small>
+            </div>
+          </div>
+      
+          <div class="field mt-4">
+            <label>Placeholders</label>
+            <ng-container *ngIf="placeholders.length > 0; else noPlaceholders">
+            <div class="grid grid-flow-row auto-rows-max grid-cols-4 gap-2 mt-2">
+                <button 
+                  *ngFor="let placeholder of placeholders" 
+                  type="button" 
+                  pButton 
+                  label="{{ placeholder }}" 
+                  (click)="addPlaceholderToEditor(placeholder, 'add')" 
+                  class="p-button-outlined p-1 text-xs"
+                ></button>
+            </div>
+        </ng-container>
+        <ng-template #noPlaceholders>
+            <p class="text-gray-500 text-sm">Please select a type to see available placeholders.</p>
+          </ng-template>
+          </div>
+          
+        </ng-template>
+      
+        <ng-template pTemplate="footer">
+          <p-button label="Cancel" icon="pi pi-times" [text]="true" (onClick)="hideDialog()" [disabled]="loading" />
+          <p-button label="Save" icon="pi pi-check" [text]="true" (onClick)="savePrompt()" [disabled]="loading" />
+        </ng-template>
+      </p-dialog>      
+  
+      <p-dialog [(visible)]="editDialog" [style]="{ width: '50vw' }" header="Edit Prompt" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+          <div *ngIf="loading" class="dialog-loading-overlay">
+            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
+          </div>
+  
+          <div [ngClass]="{'dialog-loading-blur': loading}">
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" pInputText id="name" [(ngModel)]="prompt.name" class="mt-2" required autofocus />
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.name">Name is required.</small>
+            </div>
+  
+            <div class="field mt-4">
+              <label for="type">Type</label>
+              <p-dropdown [options]="types" [(ngModel)]="prompt.type" id="type" styleClass="mt-2" (onChange)="loadSubtypes($event.value)" placeholder="Select a Type"></p-dropdown>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.type">Type is required.</small>
+            </div>
+  
+            <div class="field mt-4">
+              <label for="subtype">Subtype</label>
+              <p-dropdown [options]="subtypes" [(ngModel)]="prompt.subtype" id="subtype" styleClass="mt-2" placeholder="Select a Subtype"></p-dropdown>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.subtype">Subtype is required.</small>
+            </div>
+  
+            <div class="field mt-4">
+              <label for="text">Text</label>
+              <p-editor #editorEdit [(ngModel)]="prompt.text" [style]="{ height: '200px' }" id="text" styleClass="mt-2">
+                <ng-template pTemplate="header">
+                  <span class="ql-formats">
+                    <button type="button" class="ql-bold" aria-label="Bold"></button>
+                    <button type="button" class="ql-italic" aria-label="Italic"></button>
+                    <button type="button" class="ql-underline" aria-label="Underline"></button>
+                    <button type="button" class="ql-link" aria-label="Insert Link"></button>
+                  </span>
+                  <span class="ql-formats">
+                    <select class="ql-header" aria-label="Select Heading">
+                      <option value="1">H1</option>
+                      <option value="2">H2</option>
+                      <option value="3">H3</option>
+                      <option value="4">H4</option>
+                      <option value="5">H5</option>
+                      <option value="6">H6</option>
+                      <option selected>Normal</option>
+                    </select>
+                  </span>
+                </ng-template>
+              </p-editor>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.text">Text is required.</small>
+            </div>
+          </div>
+  
+          <div class="field mt-4">
+            <label>Placeholders</label>
+            <div class="grid grid-flow-row auto-rows-max grid-cols-4 gap-2 mt-2">
+              <button 
+                *ngFor="let placeholder of placeholders" 
+                type="button" 
+                pButton 
+                label="{{ placeholder }}" 
+                (click)="addPlaceholderToEditor(placeholder, 'edit')" 
+                class="p-button-outlined p-1 text-xs"
+              ></button>
+            </div>
+          </div>
+        </ng-template>
+  
+        <ng-template pTemplate="footer">
+          <p-button label="Cancel" icon="pi pi-times" [text]="true" (onClick)="hideDialog()" [disabled]="loading" />
+          <p-button label="Save" icon="pi pi-check" [text]="true" (onClick)="updatePrompt()" [disabled]="loading" />
+        </ng-template>
+      </p-dialog>
+  
+      <p-dialog [(visible)]="viewDialog" [style]="{ width: '60vw' }" header="Prompt Details" [modal]="true" styleClass="p-fluid" [closable]="true" [dismissableMask]="true">
+        <ng-template pTemplate="content">
+          <div class="p-grid">
+            <div class="p-col-12">
+              <table class="table-auto w-full border-collapse">
+                <thead>
+                  <tr class="bg-gray-200">
+                    <th class="px-4 py-2 border text-left rounded-tl-md rounded-bl-md">ID</th>
+                    <th class="px-4 py-2 border text-left">Name</th>
+                    <th class="px-4 py-2 border text-left">Type</th>
+                    <th class="px-4 py-2 border text-left rounded-tr-md rounded-br-md">Subtype</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="px-4 py-2 border text-left">{{ selectedPrompt.id }}</td>
+                    <td class="px-4 py-2 border text-left">{{ selectedPrompt.name }}</td>
+                    <td class="px-4 py-2 border text-left">{{ selectedPrompt.type }}</td>
+                    <td class="px-4 py-2 border text-left">{{ selectedPrompt.subtype }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+      
+            <div class="p-col-12 mt-4">
+              <table class="table-auto w-full border-collapse">
+                <thead>
+                  <tr class="bg-gray-200">
+                    <th class="px-4 py-2 border text-left rounded-md">Text</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="px-4 py-2 border text-left">
+                      <div [innerHTML]="selectedPrompt.text"></div> 
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </ng-template>
+      </p-dialog>
+    </div>
+  </div>
+  

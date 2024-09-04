@@ -57,6 +57,11 @@ export class AppComponent implements OnInit {
           icon: 'pi pi-fw pi-microchip-ai',
           items: [
             {
+              label: 'AI Prompts',
+              icon: 'pi pi-fw pi-comment',
+              routerLink: '/ai/prompts'
+            },
+            {
               label: 'Product Content',
               icon: 'pi pi-fw pi-shopping-cart',
               routerLink: '/ai/product'

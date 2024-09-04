@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from '../http/http.service';
 import { Prompt } from '../../models/prompt/prompt';
 import { Observable } from 'rxjs';
+import { TypesAndSubtypesResponse } from '../../models/prompt/types-and-subtypes-response';
 
 @Injectable({
   providedIn: 'root'
@@ -39,9 +40,10 @@ export class PromptService {
     return this.httpService.delete<Prompt>(`${this.endpoint}${id}`);
   }
 
-  getTypesAndSubtypes(): Observable<{ types: string[], subtypes: { [key: string]: string[] } }> {
-    return this.httpService.get<{ types: string[], subtypes: { [key: string]: string[] } }>(`${this.endpoint}types-subtypes`);
+  getTypesAndSubtypes(): Observable<TypesAndSubtypesResponse> {
+    return this.httpService.get<TypesAndSubtypesResponse>(`${this.endpoint}types-subtypes/`);
   }
+  
 
   getPlaceholdersByType(type: string): Observable<string[]> {
     return this.httpService.get<string[]>(`${this.endpoint}placeholders/${type}`);

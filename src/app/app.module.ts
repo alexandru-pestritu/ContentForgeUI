@@ -41,6 +41,7 @@ import { ArticlesComponent } from './components/articles/articles.component';
 import { DropdownModule } from 'primeng/dropdown'
 import { MultiSelectModule } from 'primeng/multiselect';
 import { EditorModule } from 'primeng/editor';
+import { PromptsComponent } from './components/prompts/prompts.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,7 +49,8 @@ import { EditorModule } from 'primeng/editor';
     DashboardComponent,
     StoresComponent,
     ProductsComponent,
-    ArticlesComponent
+    ArticlesComponent,
+    PromptsComponent
   ],
   imports: [
     BrowserModule,

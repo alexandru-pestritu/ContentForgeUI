@@ -40,6 +40,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ArticlesComponent } from './components/articles/articles.component';
 import { DropdownModule } from 'primeng/dropdown'
 import { MultiSelectModule } from 'primeng/multiselect';
+import { EditorModule } from 'primeng/editor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -80,7 +81,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     TagModule,
     AutoCompleteModule,
     DropdownModule,
-    MultiSelectModule
+    MultiSelectModule,
+    EditorModule
   ],
   providers: [
     provideClientHydration(),

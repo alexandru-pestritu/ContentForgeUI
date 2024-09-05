@@ -48,4 +48,12 @@ export class PromptService {
   getPlaceholdersByType(type: string): Observable<string[]> {
     return this.httpService.get<string[]>(`${this.endpoint}placeholders/${type}`);
   }
+
+  getPromptsByTypeAndOptionalSubtype(type: string, subtype?: string): Observable<Prompt[]> {
+    let url = `${this.endpoint}${type}`;
+    if (subtype) {
+      url += `?subtype=${subtype}`;
+    }
+    return this.httpService.get<Prompt[]>(url);
+  }
 }

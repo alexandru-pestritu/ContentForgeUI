@@ -240,11 +240,12 @@ export class PromptsComponent implements OnInit {
 
     if (quillEditor) {
       const currentText = quillEditor.getText();
-      quillEditor.setText(currentText.trimEnd() + ` ${placeholder}`); 
+      quillEditor.setText(currentText.trimEnd() + ` ${placeholder} `); 
     }
   }
 
   private isValidPrompt(prompt: Prompt): boolean {
-    return !!prompt.name && !!prompt.type && !!prompt.subtype && !!prompt.text;
+    return !!prompt.name && !!prompt.type && !!prompt.subtype && !!prompt.text && 
+    prompt.text.includes("{output}");
   }
 }

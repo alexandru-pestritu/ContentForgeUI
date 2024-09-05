@@ -115,6 +115,9 @@
                 </ng-template>
               </p-editor>
               <small class="p-error pt-2" *ngIf="submitted && !prompt.text">Text is required.</small>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.text.includes('{output}')">
+                The text must contain the placeholder {{ '{' }}output{{ '}' }}.
+            </small>            
             </div>
           </div>
       
@@ -194,6 +197,9 @@
                 </ng-template>
               </p-editor>
               <small class="p-error pt-2" *ngIf="submitted && !prompt.text">Text is required.</small>
+              <small class="p-error pt-2" *ngIf="submitted && !prompt.text.includes('{output}')">
+                The text must contain the placeholder {{ '{' }}output{{ '}' }}.
+            </small>            
             </div>
           </div>
   

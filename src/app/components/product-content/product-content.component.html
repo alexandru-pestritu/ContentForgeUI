@@ -1,154 +1,186 @@
 <div class="min-h-screen flex items-start justify-center bg-gray-100">
-  <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
-    <h1 class="text-3xl font-bold mb-6">Product Content</h1>
-
-    <div class="grid grid-cols-1 gap-4 mb-4">
-      <div class="col-span-1">
-        <label for="product_autocomplete">Search and Select Product</label>
-        <p-autoComplete 
-          [(ngModel)]="selectedProduct" 
-          [suggestions]="products" 
-          (completeMethod)="searchProducts($event)" 
-          field="displayName" 
-          [forceSelection]="true" 
-          [dropdown]="true" 
-          placeholder="Type to search..." 
-          id="product_autocomplete"
-        ></p-autoComplete>
-      </div>
-
-      <div class="col-span-1 flex items-center gap-4">
-        <label>Enable Review Generation</label>
-        <p-inputSwitch [(ngModel)]="reviewEnabled"></p-inputSwitch>
-      </div>
-
-      <div class="col-span-1 flex items-center gap-4">
-        <label>Enable Pros & Cons Generation</label>
-        <p-inputSwitch [(ngModel)]="prosConsEnabled"></p-inputSwitch>
-      </div>
-    </div>
-
-    <div *ngIf="reviewEnabled" class="mb-6">
-      <h2 class="text-2xl font-bold mb-4">Generate Review</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
+      <h1 class="text-3xl font-bold mb-6">Product Content</h1>
+  
+      <div class="grid grid-cols-1 gap-4 w-1/2">
         <div class="col-span-1">
-          <label for="prompt_review">Select Prompt</label>
-          <p-dropdown 
-            [options]="reviewPrompts" 
-            [(ngModel)]="selectedReviewPrompt" 
-            optionLabel="name" 
-            placeholder="Select a Review Prompt" 
-          ></p-dropdown>
+          <label for="product_autocomplete">Search Product</label>
+          <p-autoComplete 
+            [(ngModel)]="selectedProduct" 
+            [suggestions]="products" 
+            (completeMethod)="searchProducts($event)" 
+            field="displayName" 
+            [forceSelection]="true" 
+            [dropdown]="true" 
+            placeholder="Type to search..." 
+            id="product_autocomplete"
+            styleClass="mt-2 w-full"
+          ></p-autoComplete>
         </div>
-
-        <div class="col-span-1">
-          <label for="provider_review">Select Provider</label>
-          <p-dropdown 
-            [options]="providers" 
-            [(ngModel)]="selectedReviewProvider" 
-            placeholder="Select Provider" 
-            (onChange)="onReviewProviderChange($event.value)" 
-          ></p-dropdown>
+  
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <label class="mb-2">Enable Review Generation</label>
+            <p-inputSwitch [(ngModel)]="reviewEnabled" [disabled]="selectedProduct==null"></p-inputSwitch>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-2">Enable Pros & Cons Generation</label>
+            <p-inputSwitch [(ngModel)]="prosConsEnabled" [disabled]="selectedProduct==null"></p-inputSwitch>
+          </div>
         </div>
-
-        <div class="col-span-1">
+      </div>
+  
+      <div *ngIf="reviewEnabled" class="mb-6 mt-12">
+        <p-divider></p-divider>
+        <h2 class="text-2xl font-bold mb-8 mt-8">Generate Review</h2>
+  
+        <div class="grid grid-cols-12 gap-5">
+          <div class="col-span-3 flex flex-col">
+            <label for="prompt_review">Select Prompt</label>
+            <p-dropdown 
+              [options]="reviewPrompts" 
+              [(ngModel)]="selectedReviewPrompt" 
+              optionLabel="name" 
+              placeholder="Select a Review Prompt"
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+        
+          <div class="col-span-3 flex flex-col">
+            <label for="provider_review">Select Provider</label>
+            <p-dropdown 
+              [options]="providers" 
+              [(ngModel)]="selectedReviewProvider" 
+              placeholder="Select Provider" 
+              (onChange)="onReviewProviderChange($event.value)" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+        
+          <div class="col-span-4 flex flex-col">
             <label for="model_review">Select Model</label>
             <p-dropdown 
               [options]="reviewModels" 
               [(ngModel)]="selectedReviewModel" 
               optionLabel="model" 
               placeholder="Select Model" 
+              styleClass="mt-2 w-full"
             ></p-dropdown>
           </div>
-
-        <div class="col-span-1">
-          <p-button 
-            label="Generate Review" 
-            icon="pi pi-sync" 
-            (onClick)="generateReviewContent()" 
-            [disabled]="!selectedProduct || !selectedReviewPrompt || !selectedReviewProvider || !selectedReviewModel" 
-          ></p-button>
+        
+          <div class="col-span-2 flex flex-col justify-end">
+            <small *ngIf="selectedReviewModel" class="text-center">{{ selectedReviewModel.cost }}</small>
+            <p-button 
+              label="Generate Review" 
+              icon="pi pi-sync" 
+              (onClick)="generateReviewContent()" 
+              [disabled]="!selectedProduct || !selectedReviewPrompt || !selectedReviewProvider || !selectedReviewModel || isGeneratingReview"
+              styleClass="w-full mt-1"
+              severity="secondary"
+              [loading]="isGeneratingReview"
+            ></p-button>
+          </div>
         </div>
-
-        <div class="col-span-1">
-          <small>Cost: {{ reviewCost }}</small>
+        <p-editor [(ngModel)]="selectedProduct!.review" [style]="{ height: '200px' }" styleClass="mt-5"></p-editor>
+        <div class="flex flex-row justify-end">
+            <p-button 
+            label="Update Review" 
+            icon="pi pi-save" 
+            (onClick)="updateProduct()" 
+            [disabled]="isUpdatingProduct" 
+            styleClass="mt-4" 
+            severity="primary" 
+            [loading]="isUpdatingProduct">
+          </p-button>
         </div>
       </div>
-
-      <p-editor [(ngModel)]="selectedProduct!.review" [style]="{ height: '200px' }"></p-editor>
-      <p-button label="Update Review" icon="pi pi-save" (onClick)="updateProduct()"></p-button>
-    </div>
-
-    <div *ngIf="prosConsEnabled" class="mb-6">
-      <h2 class="text-2xl font-bold mb-4">Generate Pros & Cons</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div class="col-span-1">
-          <label for="prompt_pros_cons">Select Prompt</label>
-          <p-dropdown 
-            [options]="prosConsPrompts" 
-            [(ngModel)]="selectedProsConsPrompt" 
-            optionLabel="name" 
-            placeholder="Select a Pros & Cons Prompt" 
-          ></p-dropdown>
-        </div>
-
-        <div class="col-span-1">
-          <label for="provider_pros_cons">Select Provider</label>
-          <p-dropdown 
-            [options]="providers" 
-            [(ngModel)]="selectedProsConsProvider" 
-            placeholder="Select Provider" 
-            (onChange)="onProsConsProviderChange($event.value)" 
-          ></p-dropdown>
-        </div>
-
-        <div class="col-span-1">
-            <label for="model_pros_cons">Select Model</label>
+  
+      <div *ngIf="prosConsEnabled" class="mb-6 mt-12">
+        <p-divider></p-divider>
+        <h2 class="text-2xl font-bold mb-8 mt-8">Generate Pros & Cons</h2>
+  
+        <div class="grid grid-cols-12 gap-5">
+          <div class="col-span-3 flex flex-col">
+            <label for="prompt_review">Select Prompt</label>
+            <p-dropdown 
+              [options]="prosConsPrompts" 
+              [(ngModel)]="selectedProsConsPrompt" 
+              optionLabel="name" 
+              placeholder="Select a Review Prompt"
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+        
+          <div class="col-span-3 flex flex-col">
+            <label for="provider_review">Select Provider</label>
+            <p-dropdown 
+              [options]="providers" 
+              [(ngModel)]="selectedProsConsProvider" 
+              placeholder="Select Provider" 
+              (onChange)="onProsConsProviderChange($event.value)" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+        
+          <div class="col-span-3 flex flex-col">
+            <label for="model_review">Select Model</label>
             <p-dropdown 
               [options]="prosConsModels" 
               [(ngModel)]="selectedProsConsModel" 
               optionLabel="model" 
               placeholder="Select Model" 
+              styleClass="mt-2 w-full"
             ></p-dropdown>
           </div>
-
-        <div class="col-span-1">
-          <p-button 
-            label="Generate Pros & Cons" 
-            icon="pi pi-sync" 
-            (onClick)="generateProsConsContent()" 
-            [disabled]="!selectedProduct || !selectedProsConsPrompt || !selectedProsConsProvider || !selectedProsConsModel" 
-          ></p-button>
+        
+          <div class="col-span-3 flex flex-col justify-end">
+            <small *ngIf="selectedProsConsModel" class="text-center">{{ selectedProsConsModel.cost }}</small>
+            <p-button 
+              label="Generate Pros & Cons" 
+              icon="pi pi-sync" 
+              (onClick)="generateProsConsContent()" 
+              [disabled]="!selectedProduct || !selectedProsConsPrompt || !selectedProsConsProvider || !selectedProsConsModel || isGeneratingProsCons"
+              styleClass="w-full mt-1"
+              severity="secondary"
+              [loading]="isGeneratingProsCons"
+            ></p-button>
+          </div>
         </div>
-
-        <div class="col-span-1">
-          <small>Cost: {{ prosConsCost }}</small>
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 mt-8">
+          <div class="col-span-1">
+            <label for="pros">Pros</label>
+            <div *ngFor="let pros of prosList; let i = index; trackBy: trackByIndex" class="mb-2 flex items-center mt-2">
+              <input type="text" [(ngModel)]="prosList[i]" class="w-full p-inputtext mr-2" />
+              <p-button icon="pi pi-times" class="ml-2" (onClick)="removePros(i)" severity="danger"></p-button>
+            </div>
+            <div class="flex justify-start mt-2">
+              <p-button icon="pi pi-plus" (onClick)="addPros()" severity="success"></p-button>
+            </div>
+          </div>
+          
+          <div class="col-span-1">
+            <label for="cons">Cons</label>
+            <div *ngFor="let cons of consList; let i = index; trackBy: trackByIndex" class="mb-2 flex items-center mt-2">
+              <input type="text" [(ngModel)]="consList[i]" class="w-full p-inputtext mr-2" />
+              <p-button icon="pi pi-times" class="ml-2" (onClick)="removeCons(i)" severity="danger"></p-button>
+            </div>
+            <div class="flex justify-start mt-2">
+              <p-button icon="pi pi-plus" (onClick)="addCons()" severity="success"></p-button>
+            </div>
+          </div>
+        </div>          
+        <div class="flex justify-end">
+            <p-button 
+            label="Update Pros & Cons" 
+            icon="pi pi-save" 
+            (onClick)="updateProduct()" 
+            [disabled]="isUpdatingProduct" 
+            severity="primary" 
+            [loading]="isUpdatingProduct">
+          </p-button>
         </div>
       </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div class="col-span-1">
-          <label for="pros">Pros</label>
-          <div *ngFor="let pros of prosList; let i = index" class="mb-2">
-            <input type="text" [(ngModel)]="prosList[i]" class="w-full p-inputtext" />
-            <p-button icon="pi pi-times" class="ml-2" (onClick)="removePros(i)" severity="danger"></p-button>
-          </div>
-          <p-button label="Add Pros" icon="pi pi-plus" (onClick)="addPros()"></p-button>
-        </div>
-
-        <div class="col-span-1">
-          <label for="cons">Cons</label>
-          <div *ngFor="let cons of consList; let i = index" class="mb-2">
-            <input type="text" [(ngModel)]="consList[i]" class="w-full p-inputtext" />
-            <p-button icon="pi pi-times" class="ml-2" (onClick)="removeCons(i)" severity="danger"></p-button>
-          </div>
-          <p-button label="Add Cons" icon="pi pi-plus" (onClick)="addCons()"></p-button>
-        </div>
-      </div>
-
-      <p-button label="Update Pros & Cons" icon="pi pi-save" (onClick)="updateProduct()"></p-button>
     </div>
   </div>
-</div>
+  

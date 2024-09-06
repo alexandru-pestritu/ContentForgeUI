@@ -43,6 +43,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { EditorModule } from 'primeng/editor';
 import { PromptsComponent } from './components/prompts/prompts.component';
 import { ProductContentComponent } from './components/product-content/product-content.component';
+import { DividerModule } from 'primeng/divider';
 @NgModule({
   declarations: [
     AppComponent,
@@ -86,7 +87,8 @@ import { ProductContentComponent } from './components/product-content/product-co
     AutoCompleteModule,
     DropdownModule,
     MultiSelectModule,
-    EditorModule
+    EditorModule,
+    DividerModule
   ],
   providers: [
     provideClientHydration(),

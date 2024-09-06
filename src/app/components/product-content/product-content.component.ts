@@ -12,8 +12,23 @@ import { NotificationService } from '../../services/notification/notification.se
   styleUrls: ['./product-content.component.scss']
 })
 export class ProductContentComponent implements OnInit {
-  products: any[] = [];
-  selectedProduct: Product | null = null;
+  products: Product[] = [];
+  private _selectedProduct: Product | null = null;
+
+  get selectedProduct(): Product | null {
+    return this._selectedProduct;
+  }
+
+  set selectedProduct(product: Product | null) {
+    this._selectedProduct = product;
+    if (product) {
+      this.prosList = product.pros || [];
+      this.consList = product.cons || [];
+    } else {
+      this.prosList = [];
+      this.consList = [];
+    }
+  }
 
   providers: string[] = [];
   models: { provider: string, model: string, cost: string }[] = [];
@@ -38,7 +53,9 @@ export class ProductContentComponent implements OnInit {
   reviewEnabled: boolean = false;
   prosConsEnabled: boolean = false;
 
-  loading: boolean = false;
+  isGeneratingReview: boolean = false; 
+  isGeneratingProsCons: boolean = false;
+  isUpdatingProduct: boolean = false; 
 
   constructor(
     private productService: ProductService,
@@ -52,14 +69,12 @@ export class ProductContentComponent implements OnInit {
     this.loadProvidersAndModels();
   }
 
-  // Căutarea produselor pentru p-autocomplete
   searchProducts(event: any) {
     const query = event.query;
     this.productService.getProducts(0, 10, undefined, undefined, query).subscribe({
       next: (data) => {
         this.products = data.products.map(product => ({
-          id: product.id,
-          name: product.name,
+          ...product,
           displayName: `ID: ${product.id}, ${product.name} - ${product.seo_keyword}`
         }));
       },
@@ -68,8 +83,7 @@ export class ProductContentComponent implements OnInit {
       }
     });
   }
-
-  // Încărcarea tuturor furnizorilor și modelelor o singură dată
+  
   loadProvidersAndModels(): void {
     this.aiService.getProviders('text', 'chat').subscribe({
       next: (data) => {
@@ -89,21 +103,18 @@ export class ProductContentComponent implements OnInit {
     });
   }
 
-  // Când se schimbă furnizorul pentru Review, filtrează modelele
   onReviewProviderChange(provider: string): void {
     this.selectedReviewProvider = provider;
     this.reviewModels = this.models.filter(model => model.provider === provider);
     this.selectedReviewModel = null;
   }
 
-  // Când se schimbă furnizorul pentru Pros & Cons, filtrează modelele
   onProsConsProviderChange(provider: string): void {
     this.selectedProsConsProvider = provider;
     this.prosConsModels = this.models.filter(model => model.provider === provider);
     this.selectedProsConsModel = null;
   }
 
-  // Încărcarea prompturilor pentru review și pros & cons
   loadPrompts(): void {
     this.promptService.getPromptsByTypeAndOptionalSubtype('Product').subscribe({
       next: (prompts) => {
@@ -116,59 +127,65 @@ export class ProductContentComponent implements OnInit {
     });
   }
 
-  // Generare Review
   generateReviewContent(): void {
     if (!this.selectedProduct || !this.selectedReviewPrompt || !this.selectedReviewProvider || !this.selectedReviewModel) return;
 
-    this.loading = true;
-    this.aiService.generateProductText(this.selectedProduct.id, this.selectedReviewPrompt.id!, this.selectedReviewProvider, this.selectedReviewModel.model).subscribe({
+    this.isGeneratingReview = true;
+
+    this.aiService.generateProductText(this.selectedProduct.id, this.selectedReviewPrompt!.id!, this.selectedReviewProvider, this.selectedReviewModel.model).subscribe({
       next: (data) => {
-        this.selectedProduct = data.product;
+        this.selectedProduct = {
+          ...data.product,
+          displayName: `ID: ${data.product.id}, ${data.product.name} - ${data.product.seo_keyword}`
+        };
         this.reviewCost = data.cost;
         this.notificationService.showSuccess('Success', 'Review generated successfully');
-        this.loading = false;
+        this.isGeneratingReview = false;
       },
       error: (err) => {
         this.notificationService.showError('Error', 'Failed to generate review');
-        this.loading = false;
+        this.isGeneratingReview = false;
       }
     });
   }
 
-  // Generare Pros & Cons
   generateProsConsContent(): void {
     if (!this.selectedProduct || !this.selectedProsConsPrompt || !this.selectedProsConsProvider || !this.selectedProsConsModel) return;
 
-    this.loading = true;
-    this.aiService.generateProductText(this.selectedProduct.id, this.selectedProsConsPrompt.id!, this.selectedProsConsProvider, this.selectedProsConsModel.model).subscribe({
+    this.isGeneratingProsCons = true;
+
+    this.aiService.generateProductText(this.selectedProduct.id, this.selectedProsConsPrompt!.id!, this.selectedProsConsProvider, this.selectedProsConsModel.model).subscribe({
       next: (data) => {
-        this.selectedProduct = data.product;
+        this.selectedProduct = {
+          ...data.product,
+          displayName: `ID: ${data.product.id}, ${data.product.name} - ${data.product.seo_keyword}`
+        };
         this.prosConsCost = data.cost;
         this.prosList = this.selectedProduct!.pros || [];
         this.consList = this.selectedProduct!.cons || [];
         this.notificationService.showSuccess('Success', 'Pros & Cons generated successfully');
-        this.loading = false;
+        this.isGeneratingProsCons = false;
       },
       error: (err) => {
         this.notificationService.showError('Error', 'Failed to generate pros & cons');
-        this.loading = false;
+        this.isGeneratingProsCons = false;
       }
     });
   }
 
-  // Actualizare produs
   updateProduct(): void {
     if (!this.selectedProduct) return;
 
-    this.loading = true;
+    this.isUpdatingProduct = true; 
+
     this.productService.updateProduct(this.selectedProduct.id, this.selectedProduct, false).subscribe({
       next: () => {
         this.notificationService.showSuccess('Success', 'Product updated successfully');
-        this.loading = false;
+        this.isUpdatingProduct = false; 
       },
       error: (err) => {
         this.notificationService.showError('Error', 'Failed to update product');
-        this.loading = false;
+        this.isUpdatingProduct = false; 
       }
     });
   }
@@ -187,5 +204,9 @@ export class ProductContentComponent implements OnInit {
 
   removeCons(index: number): void {
     this.consList.splice(index, 1);
+  }
+
+  trackByIndex(index: number, item: any): any {
+    return index;
   }
 }

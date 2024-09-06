@@ -12,7 +12,7 @@ export class AIService {
   constructor(private httpService: HttpService) {}
 
   getProviders(featureName: string, subfeatureName: string): Observable<any> {
-    const url = `${this.endpoint}providers?feature_name=${featureName}&subfeature_name=${subfeatureName}`;
+    const url = `${this.endpoint}providers?feature=${featureName}&subfeature=${subfeatureName}`;
     return this.httpService.get<any>(url);
   }
 

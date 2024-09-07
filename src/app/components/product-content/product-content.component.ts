@@ -14,48 +14,43 @@ import { NotificationService } from '../../services/notification/notification.se
 export class ProductContentComponent implements OnInit {
   products: Product[] = [];
   private _selectedProduct: Product | null = null;
-
   get selectedProduct(): Product | null {
     return this._selectedProduct;
   }
-
   set selectedProduct(product: Product | null) {
     this._selectedProduct = product;
-    if (product) {
-      this.prosList = product.pros || [];
-      this.consList = product.cons || [];
-    } else {
-      this.prosList = [];
-      this.consList = [];
-    }
+    this.prosList = product?.pros || [];
+    this.consList = product?.cons || [];
   }
+
+  sectionState: { [key: string]: any } = {
+    review: {
+      prompts: [] as Prompt[],
+      selectedPrompt: null as Prompt | null,
+      provider: null as string | null,
+      model: null as { model: string, cost: string } | null,
+      models: [] as { model: string, cost: string }[],
+      enabled: false,
+      isGenerating: false,
+      cost: ''
+    },
+    prosCons: {
+      prompts: [] as Prompt[],
+      selectedPrompt: null as Prompt | null,
+      provider: null as string | null,
+      model: null as { model: string, cost: string } | null,
+      models: [] as { model: string, cost: string }[],
+      enabled: false,
+      isGenerating: false,
+      cost: ''
+    }
+  };
 
   providers: string[] = [];
   models: { provider: string, model: string, cost: string }[] = [];
-
-  reviewPrompts: Prompt[] = [];
-  selectedReviewPrompt: Prompt | null = null;
-  selectedReviewProvider: string | null = null;
-  reviewModels: { model: string, cost: string }[] = [];
-  selectedReviewModel: { model: string, cost: string } | null = null;
-  reviewCost: string = '';
-
-  prosConsPrompts: Prompt[] = [];
-  selectedProsConsPrompt: Prompt | null = null;
-  selectedProsConsProvider: string | null = null;
-  prosConsModels: { model: string, cost: string }[] = [];
-  selectedProsConsModel: { model: string, cost: string } | null = null;
-  prosConsCost: string = '';
-
   prosList: string[] = [];
   consList: string[] = [];
-
-  reviewEnabled: boolean = false;
-  prosConsEnabled: boolean = false;
-
-  isGeneratingReview: boolean = false; 
-  isGeneratingProsCons: boolean = false;
-  isUpdatingProduct: boolean = false; 
+  isUpdatingProduct: boolean = false;
 
   constructor(
     private productService: ProductService,
@@ -103,23 +98,11 @@ export class ProductContentComponent implements OnInit {
     });
   }
 
-  onReviewProviderChange(provider: string): void {
-    this.selectedReviewProvider = provider;
-    this.reviewModels = this.models.filter(model => model.provider === provider);
-    this.selectedReviewModel = null;
-  }
-
-  onProsConsProviderChange(provider: string): void {
-    this.selectedProsConsProvider = provider;
-    this.prosConsModels = this.models.filter(model => model.provider === provider);
-    this.selectedProsConsModel = null;
-  }
-
   loadPrompts(): void {
     this.promptService.getPromptsByTypeAndOptionalSubtype('Product').subscribe({
       next: (prompts) => {
-        this.reviewPrompts = prompts.filter(p => p.subtype === 'Review');
-        this.prosConsPrompts = prompts.filter(p => p.subtype === 'Pros & Cons');
+        this.sectionState['review'].prompts = prompts.filter(p => p.subtype === 'Review');
+        this.sectionState['prosCons'].prompts = prompts.filter(p => p.subtype === 'Pros & Cons');
       },
       error: (err) => {
         this.notificationService.showError('Error', 'Failed to load prompts');
@@ -127,48 +110,35 @@ export class ProductContentComponent implements OnInit {
     });
   }
 
-  generateReviewContent(): void {
-    if (!this.selectedProduct || !this.selectedReviewPrompt || !this.selectedReviewProvider || !this.selectedReviewModel) return;
-
-    this.isGeneratingReview = true;
-
-    this.aiService.generateProductText(this.selectedProduct.id, this.selectedReviewPrompt!.id!, this.selectedReviewProvider, this.selectedReviewModel.model).subscribe({
-      next: (data) => {
-        this.selectedProduct = {
-          ...data.product,
-          displayName: `ID: ${data.product.id}, ${data.product.name} - ${data.product.seo_keyword}`
-        };
-        this.reviewCost = data.cost;
-        this.notificationService.showSuccess('Success', 'Review generated successfully');
-        this.isGeneratingReview = false;
-      },
-      error: (err) => {
-        this.notificationService.showError('Error', 'Failed to generate review');
-        this.isGeneratingReview = false;
-      }
-    });
+  onProviderChange(section: string, provider: string): void {
+    this.sectionState[section].provider = provider;
+    this.sectionState[section].models = this.models.filter(model => model.provider === provider);
+    this.sectionState[section].model = null;
   }
 
-  generateProsConsContent(): void {
-    if (!this.selectedProduct || !this.selectedProsConsPrompt || !this.selectedProsConsProvider || !this.selectedProsConsModel) return;
+  generateContent(section: string): void {
+    const productId = this.selectedProduct?.id;
+    const prompt = this.sectionState[section].selectedPrompt;
+    const provider = this.sectionState[section].provider;
+    const model = this.sectionState[section].model;
 
-    this.isGeneratingProsCons = true;
+    if (!productId || !prompt || !provider || !model) return;
 
-    this.aiService.generateProductText(this.selectedProduct.id, this.selectedProsConsPrompt!.id!, this.selectedProsConsProvider, this.selectedProsConsModel.model).subscribe({
+    this.sectionState[section].isGenerating = true;
+
+    this.aiService.generateProductText(productId, prompt.id!, provider, model.model).subscribe({
       next: (data) => {
         this.selectedProduct = {
           ...data.product,
           displayName: `ID: ${data.product.id}, ${data.product.name} - ${data.product.seo_keyword}`
         };
-        this.prosConsCost = data.cost;
-        this.prosList = this.selectedProduct!.pros || [];
-        this.consList = this.selectedProduct!.cons || [];
-        this.notificationService.showSuccess('Success', 'Pros & Cons generated successfully');
-        this.isGeneratingProsCons = false;
+        this.sectionState[section].cost = data.cost;
+        this.notificationService.showSuccess('Success', `${section} generated successfully`);
+        this.sectionState[section].isGenerating = false;
       },
       error: (err) => {
-        this.notificationService.showError('Error', 'Failed to generate pros & cons');
-        this.isGeneratingProsCons = false;
+        this.notificationService.showError('Error', `Failed to generate ${section}`);
+        this.sectionState[section].isGenerating = false;
       }
     });
   }
@@ -176,16 +146,16 @@ export class ProductContentComponent implements OnInit {
   updateProduct(): void {
     if (!this.selectedProduct) return;
 
-    this.isUpdatingProduct = true; 
+    this.isUpdatingProduct = true;
 
     this.productService.updateProduct(this.selectedProduct.id, this.selectedProduct, false).subscribe({
       next: () => {
         this.notificationService.showSuccess('Success', 'Product updated successfully');
-        this.isUpdatingProduct = false; 
+        this.isUpdatingProduct = false;
       },
       error: (err) => {
         this.notificationService.showError('Error', 'Failed to update product');
-        this.isUpdatingProduct = false; 
+        this.isUpdatingProduct = false;
       }
     });
   }
@@ -208,5 +178,9 @@ export class ProductContentComponent implements OnInit {
 
   trackByIndex(index: number, item: any): any {
     return index;
+  }
+
+  isAnySectionEnabled(): boolean {
+    return Object.values(this.sectionState).some(section => section.enabled);
   }
 }

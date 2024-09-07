@@ -67,11 +67,6 @@
   
       <p-dialog [(visible)]="addDialog" [style]="{ width: '50vw' }" header="Add Prompt" [modal]="true" styleClass="p-fluid">
         <ng-template pTemplate="content">
-          <div *ngIf="loading" class="dialog-loading-overlay">
-            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
-          </div>
-      
-          <div [ngClass]="{'dialog-loading-blur': loading}">
             <div class="field">
               <label for="name">Name</label>
               <input type="text" pInputText id="name" [(ngModel)]="prompt.name" class="mt-2" required autofocus />
@@ -99,6 +94,8 @@
                     <button type="button" class="ql-bold" aria-label="Bold"></button>
                     <button type="button" class="ql-italic" aria-label="Italic"></button>
                     <button type="button" class="ql-underline" aria-label="Underline"></button>
+                    <button type="button" class="ql-list" value="ordered"></button>
+                    <button type="button" class="ql-list" value="bullet"></button>
                     <button type="button" class="ql-link" aria-label="Insert Link"></button>
                   </span>
                   <span class="ql-formats">
@@ -119,7 +116,6 @@
                 The text must contain the placeholder {{ '{' }}output{{ '}' }}.
             </small>            
             </div>
-          </div>
       
           <div class="field mt-4">
             <label>Placeholders</label>
@@ -144,17 +140,12 @@
       
         <ng-template pTemplate="footer">
           <p-button label="Cancel" icon="pi pi-times" [text]="true" (onClick)="hideDialog()" [disabled]="loading" />
-          <p-button label="Save" icon="pi pi-check" [text]="true" (onClick)="savePrompt()" [disabled]="loading" />
+          <p-button label="Save" icon="pi pi-check" (onClick)="savePrompt()" [disabled]="loading" [loading]="loading"/>
         </ng-template>
       </p-dialog>      
   
       <p-dialog [(visible)]="editDialog" [style]="{ width: '50vw' }" header="Edit Prompt" [modal]="true" styleClass="p-fluid">
         <ng-template pTemplate="content">
-          <div *ngIf="loading" class="dialog-loading-overlay">
-            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
-          </div>
-  
-          <div [ngClass]="{'dialog-loading-blur': loading}">
             <div class="field">
               <label for="name">Name</label>
               <input type="text" pInputText id="name" [(ngModel)]="prompt.name" class="mt-2" required autofocus />
@@ -181,6 +172,8 @@
                     <button type="button" class="ql-bold" aria-label="Bold"></button>
                     <button type="button" class="ql-italic" aria-label="Italic"></button>
                     <button type="button" class="ql-underline" aria-label="Underline"></button>
+                    <button type="button" class="ql-list" value="ordered"></button>
+                    <button type="button" class="ql-list" value="bullet"></button>
                     <button type="button" class="ql-link" aria-label="Insert Link"></button>
                   </span>
                   <span class="ql-formats">
@@ -201,7 +194,6 @@
                 The text must contain the placeholder {{ '{' }}output{{ '}' }}.
             </small>            
             </div>
-          </div>
   
           <div class="field mt-4">
             <label>Placeholders</label>
@@ -220,7 +212,7 @@
   
         <ng-template pTemplate="footer">
           <p-button label="Cancel" icon="pi pi-times" [text]="true" (onClick)="hideDialog()" [disabled]="loading" />
-          <p-button label="Save" icon="pi pi-check" [text]="true" (onClick)="updatePrompt()" [disabled]="loading" />
+          <p-button label="Save" icon="pi pi-check" (onClick)="updatePrompt()" [disabled]="loading" [loading]="loading"/>
         </ng-template>
       </p-dialog>
   

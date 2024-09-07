@@ -110,11 +110,7 @@
     styleClass="p-fluid">
     
     <ng-template pTemplate="content">
-        <div *ngIf="loading" class="dialog-loading-overlay">
-            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
-        </div>
 
-        <div [ngClass]="{'dialog-loading-blur': loading}">
             <div class="p-grid p-dir-col">
                 
                 <div class="p-col-12">
@@ -275,6 +271,7 @@
                             field="displayName" 
                             [multiple]="true"
                             [forceSelection]="true"
+                            [dropdown]="true"
                             id="products_id_list" 
                             styleClass="mt-2"
                             required
@@ -285,7 +282,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
@@ -299,9 +295,9 @@
         <p-button
             label="Save" 
             icon="pi pi-check" 
-            [text]="true" 
             (onClick)="saveArticle()" 
             [disabled]="loading"
+            [loading]="loading"
         />
     </ng-template>
 </p-dialog>
@@ -315,11 +311,6 @@
     styleClass="p-fluid">
 
     <ng-template pTemplate="content">
-        <div *ngIf="loading" class="dialog-loading-overlay">
-            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
-        </div>
-
-        <div [ngClass]="{'dialog-loading-blur': loading}">
             <div class="p-grid p-dir-col">
 
                 <div class="p-col-12">
@@ -399,6 +390,7 @@
                                 field="displayName" 
                                 [multiple]="true"
                                 [forceSelection]="true"
+                                [dropdown]="true"
                                 id="products_id_list" 
                                 styleClass="mt-2"
                                 required
@@ -496,29 +488,61 @@
                     <div class="p-grid p-align-start p-justify-between">
                         <div class="p-col-12">
                             <label for="introduction">Introduction</label>
-                            <textarea 
-                                pInputTextarea 
-                                id="introduction" 
-                                [(ngModel)]="article.introduction" 
-                                rows="3" 
-                                class="mt-2">
-                            </textarea>
+                            <p-editor #editorEdit [(ngModel)]="article.introduction" [style]="{ height: '200px' }" id="introduction" styleClass="mt-2">
+                                <ng-template pTemplate="header">
+                                  <span class="ql-formats">
+                                    <button type="button" class="ql-bold" aria-label="Bold"></button>
+                                    <button type="button" class="ql-italic" aria-label="Italic"></button>
+                                    <button type="button" class="ql-underline" aria-label="Underline"></button>
+                                    <button type="button" class="ql-list" value="ordered"></button>
+                                    <button type="button" class="ql-list" value="bullet"></button>
+                                    <button type="button" class="ql-link" aria-label="Insert Link"></button>
+                                  </span>
+                                  <span class="ql-formats">
+                                    <select class="ql-header" aria-label="Select Heading">
+                                      <option value="1">H1</option>
+                                      <option value="2">H2</option>
+                                      <option value="3">H3</option>
+                                      <option value="4">H4</option>
+                                      <option value="5">H5</option>
+                                      <option value="6">H6</option>
+                                      <option selected>Normal</option>
+                                    </select>
+                                  </span>
+                                </ng-template>
+                              </p-editor>
                         </div>
-                        <div class="p-col-12 mt-4">
+                        <div class="p-col-12 mt-8">
                             <label for="buyers_guide">Buyers Guide</label>
-                            <textarea 
-                                pInputTextarea 
-                                id="buyers_guide" 
-                                [(ngModel)]="article.buyers_guide" 
-                                rows="3" 
-                                class="mt-2">
-                            </textarea>
+                            <p-editor #editorEdit [(ngModel)]="article.buyers_guide" [style]="{ height: '300px' }" id="buyers_guide" styleClass="mt-2">
+                                <ng-template pTemplate="header">
+                                  <span class="ql-formats">
+                                    <button type="button" class="ql-bold" aria-label="Bold"></button>
+                                    <button type="button" class="ql-italic" aria-label="Italic"></button>
+                                    <button type="button" class="ql-underline" aria-label="Underline"></button>
+                                    <button type="button" class="ql-list" value="ordered"></button>
+                                    <button type="button" class="ql-list" value="bullet"></button>
+                                    <button type="button" class="ql-link" aria-label="Insert Link"></button>
+                                  </span>
+                                  <span class="ql-formats">
+                                    <select class="ql-header" aria-label="Select Heading">
+                                      <option value="1">H1</option>
+                                      <option value="2">H2</option>
+                                      <option value="3">H3</option>
+                                      <option value="4">H4</option>
+                                      <option value="5">H5</option>
+                                      <option value="6">H6</option>
+                                      <option selected>Normal</option>
+                                    </select>
+                                  </span>
+                                </ng-template>
+                              </p-editor>
                         </div>
 
-                        <div class="p-col-12 mt-4">
+                        <div class="p-col-12 mt-8">
                             <label for="faqs">FAQs</label>
                             <div class="flex flex-row mt-2">
-                                <div class="p-col-5 mr-2">
+                                <div class="p-col-5 mr-2 w-2/6">
                                     <input 
                                         type="text" 
                                         pInputText 
@@ -526,7 +550,7 @@
                                         placeholder="Title"
                                     />
                                 </div>
-                                <div class="p-col-5 mr-2">
+                                <div class="p-col-5 mr-2 w-3/6">
                                     <input 
                                         type="text" 
                                         pInputText 
@@ -534,7 +558,7 @@
                                         placeholder="Description"
                                     />
                                 </div>
-                                <div class="p-col-2">
+                                <div class="p-col-2 w-1/6">
                                     <p-button 
                                         icon="pi pi-plus" 
                                         (onClick)="addFaq()"
@@ -544,11 +568,14 @@
                                 </div>
                             </div>
                             <div *ngIf="article.faqs && article.faqs.length">
-                                <ul>
+                                <ul class="list-none pl-0">
                                     <ng-container *ngFor="let faq of article.faqs">
                                     <li *ngIf="faq.title && faq.description">
-                                        <div class="flex flex-row items-center h-8">
-                                            <strong class="pr-1.5">{{ faq.title }}: </strong> {{ faq.description }}
+                                        <div class="flex flex-row items-center">
+                                            <div class="flex flex-col">
+                                            <strong class="pr-1.5">{{ faq.title }}</strong> 
+                                            <p>{{ faq.description }}</p>
+                                        </div>
                                             <p-button 
                                                 icon="pi pi-times" 
                                                 class="ml-2" 
@@ -564,21 +591,36 @@
                             </div>
                         </div>
 
-                        <div class="p-col-12 mt-4">
+                        <div class="p-col-12 mt-8">
                             <label for="conclusion">Conclusion</label>
-                            <textarea 
-                                pInputTextarea 
-                                id="conclusion" 
-                                [(ngModel)]="article.conclusion" 
-                                rows="3" 
-                                class="mt-2">
-                            </textarea>
+                            <p-editor #editorEdit [(ngModel)]="article.conclusion" [style]="{ height: '100px' }" id="conclusion" styleClass="mt-2">
+                                <ng-template pTemplate="header">
+                                  <span class="ql-formats">
+                                    <button type="button" class="ql-bold" aria-label="Bold"></button>
+                                    <button type="button" class="ql-italic" aria-label="Italic"></button>
+                                    <button type="button" class="ql-underline" aria-label="Underline"></button>
+                                    <button type="button" class="ql-list" value="ordered"></button>
+                                    <button type="button" class="ql-list" value="bullet"></button>
+                                    <button type="button" class="ql-link" aria-label="Insert Link"></button>
+                                  </span>
+                                  <span class="ql-formats">
+                                    <select class="ql-header" aria-label="Select Heading">
+                                      <option value="1">H1</option>
+                                      <option value="2">H2</option>
+                                      <option value="3">H3</option>
+                                      <option value="4">H4</option>
+                                      <option value="5">H5</option>
+                                      <option value="6">H6</option>
+                                      <option selected>Normal</option>
+                                    </select>
+                                  </span>
+                                </ng-template>
+                              </p-editor>
                         </div>
                     </div>
                 </div>
 
             </div>
-        </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
@@ -592,9 +634,9 @@
         <p-button
             label="Save" 
             icon="pi pi-check" 
-            [text]="true" 
             (onClick)="updateArticle()" 
             [disabled]="loading"
+            [loading]="loading"
         />
     </ng-template>
 </p-dialog>
@@ -760,7 +802,7 @@
                     <tbody>
                         <tr>
                             <td class="border px-4 py-2 break-words">
-                                <p>{{ selectedArticle.introduction || 'Not generated yet.' }}</p>
+                                <div [innerHTML]="selectedArticle.introduction || 'Not generated yet.'"></div>
                             </td>
                         </tr>
                     </tbody>
@@ -774,7 +816,7 @@
                     <tbody>
                         <tr>
                             <td class="border px-4 py-2 break-words">
-                                <p>{{ selectedArticle.buyers_guide || 'Not generated yet.' }}</p>
+                                <div [innerHTML]="selectedArticle.buyers_guide || 'Not generated yet.'"></div>
                             </td>
                         </tr>
                     </tbody>
@@ -793,8 +835,9 @@
                                         Not generated yet.
                                     </li>
                                     <ng-container *ngFor="let faq of selectedArticle.faqs">
-                                        <li *ngIf="faq.title && faq.description">
-                                          <strong>{{ faq.title }}</strong>: {{ faq.description }}
+                                        <li *ngIf="faq.title && faq.description" class="mt-4">
+                                          <strong>{{ faq.title }}</strong><br>
+                                          {{ faq.description }}
                                         </li>
                                       </ng-container>
                                 </ul>
@@ -812,7 +855,7 @@
                     <tbody>
                         <tr>
                             <td class="border px-4 py-2 break-words">
-                                <p>{{ selectedArticle.conclusion || 'Not generated yet.' }}</p>
+                                <div [innerHTML]="selectedArticle.conclusion || 'Not generated yet.'"></div>
                             </td>
                         </tr>
                     </tbody>

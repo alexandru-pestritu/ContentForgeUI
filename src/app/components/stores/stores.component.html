@@ -99,11 +99,6 @@
     styleClass="p-fluid">
 
     <ng-template pTemplate="content">
-        <div class="dialog-loading-overlay" *ngIf="loading">
-            <p-progressSpinner [style]="{'width': '50px', 'height': '50px'}" strokeWidth="5"></p-progressSpinner>
-        </div>
-
-        <div [class.dialog-loading-blur]="loading">
             <div class="field">
                 <label for="name">Name</label>
                 <input 
@@ -138,7 +133,6 @@
                   inputId="upload_to_wordpress"></p-checkbox>
               <label for="upload_to_wordpress" class="ml-2">Upload to WordPress</label>
           </div>
-        </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
@@ -152,9 +146,9 @@
         <p-button
             label="Save" 
             icon="pi pi-check" 
-            [text]="true" 
             (onClick)="saveStore()" 
             [disabled]="loading"
+            [loading]="loading"
         />
     </ng-template>
 </p-dialog>

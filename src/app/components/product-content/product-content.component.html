@@ -81,7 +81,29 @@
             ></p-button>
           </div>
         </div>
-        <p-editor [(ngModel)]="selectedProduct!.review" [style]="{ height: '200px' }" styleClass="mt-5"></p-editor>
+        <p-editor [(ngModel)]="selectedProduct!.review" [style]="{ height: '200px' }" styleClass="mt-5">
+          <ng-template pTemplate="header">
+            <span class="ql-formats">
+              <button type="button" class="ql-bold" aria-label="Bold"></button>
+              <button type="button" class="ql-italic" aria-label="Italic"></button>
+              <button type="button" class="ql-underline" aria-label="Underline"></button>
+              <button type="button" class="ql-list" value="ordered"></button>
+              <button type="button" class="ql-list" value="bullet"></button>
+              <button type="button" class="ql-link" aria-label="Insert Link"></button>
+            </span>
+            <span class="ql-formats">
+              <select class="ql-header" aria-label="Select Heading">
+                <option value="1">H1</option>
+                <option value="2">H2</option>
+                <option value="3">H3</option>
+                <option value="4">H4</option>
+                <option value="5">H5</option>
+                <option value="6">H6</option>
+                <option selected>Normal</option>
+              </select>
+            </span>
+          </ng-template>
+        </p-editor>
         <div class="flex flex-row justify-end">
             <p-button 
             label="Update Review" 

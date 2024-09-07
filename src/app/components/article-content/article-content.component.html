@@ -1,0 +1,264 @@
+<div class="min-h-screen flex items-start justify-center bg-gray-100">
+    <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
+      <h1 class="text-3xl font-bold mb-6">Article Content</h1>
+  
+      <div class="grid grid-cols-1 gap-4 w-1/2">
+        <div class="col-span-1">
+          <label for="article_autocomplete">Search Article</label>
+          <p-autoComplete 
+            [(ngModel)]="selectedArticle" 
+            [suggestions]="articles" 
+            (completeMethod)="searchArticles($event)" 
+            field="displayName" 
+            [forceSelection]="true" 
+            [dropdown]="true" 
+            placeholder="Type to search..." 
+            id="article_autocomplete"
+            styleClass="mt-2 w-full"
+          ></p-autoComplete>
+        </div>
+  
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <label class="mb-2">Enable Introduction</label>
+            <p-inputSwitch [(ngModel)]="sectionEnabled['introduction']" [disabled]="selectedArticle == null"></p-inputSwitch>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-2">Enable Buyers Guide</label>
+            <p-inputSwitch [(ngModel)]="sectionEnabled['buyersGuide']" [disabled]="selectedArticle == null"></p-inputSwitch>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-2">Enable FAQs</label>
+            <p-inputSwitch [(ngModel)]="sectionEnabled['faqs']" [disabled]="selectedArticle == null"></p-inputSwitch>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-2">Enable Conclusion</label>
+            <p-inputSwitch [(ngModel)]="sectionEnabled['conclusion']" [disabled]="selectedArticle == null"></p-inputSwitch>
+          </div>
+        </div>
+      </div>
+  
+      <div *ngIf="sectionEnabled['introduction']" class="mt-12">
+        <p-divider></p-divider>
+        <h2 class="text-2xl font-bold mb-8 mt-8">Generate Introduction</h2>
+        <div class="grid grid-cols-12 gap-5">
+          <div class="col-span-3 flex flex-col">
+            <label for="prompt_introduction">Select Prompt</label>
+            <p-dropdown 
+              [options]="sectionPrompts['introduction']" 
+              [(ngModel)]="selectedSectionPrompts['introduction']" 
+              optionLabel="name" 
+              placeholder="Select a Prompt"
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="provider_introduction">Select Provider</label>
+            <p-dropdown 
+              [options]="providers" 
+              [(ngModel)]="selectedSectionProviders['introduction']" 
+              placeholder="Select Provider" 
+              (onChange)="onProviderChange('introduction', $event.value)" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="model_introduction">Select Model</label>
+            <p-dropdown 
+              [options]="sectionModels['introduction']" 
+              [(ngModel)]="selectedSectionModels['introduction']" 
+              optionLabel="model" 
+              placeholder="Select Model" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col justify-end">
+            <small *ngIf="selectedSectionModels['introduction']" class="text-center">{{ selectedSectionModels['introduction'].cost }}</small>
+            <p-button 
+              label="Generate Introduction" 
+              icon="pi pi-sync" 
+              (onClick)="generateContent('introduction')" 
+              [disabled]="!selectedArticle || !selectedSectionPrompts['introduction'] || !selectedSectionProviders['introduction'] || !selectedSectionModels['introduction'] || isGeneratingContent['introduction']"
+              styleClass="w-full mt-1"
+              severity="secondary"
+              [loading]="isGeneratingContent['introduction']"
+            ></p-button>
+          </div>
+        </div>
+        <p-editor [(ngModel)]="selectedArticle!.introduction" [style]="{ height: '200px' }" styleClass="mt-5"></p-editor>
+      </div>
+  
+      <div *ngIf="sectionEnabled['buyersGuide']" class="mt-12">
+        <p-divider></p-divider>
+        <h2 class="text-2xl font-bold mb-8 mt-8">Generate Buyers Guide</h2>
+        <div class="grid grid-cols-12 gap-5">
+          <div class="col-span-3 flex flex-col">
+            <label for="prompt_buyersGuide">Select Prompt</label>
+            <p-dropdown 
+              [options]="sectionPrompts['buyersGuide']" 
+              [(ngModel)]="selectedSectionPrompts['buyersGuide']" 
+              optionLabel="name" 
+              placeholder="Select a Prompt"
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="provider_buyersGuide">Select Provider</label>
+            <p-dropdown 
+              [options]="providers" 
+              [(ngModel)]="selectedSectionProviders['buyersGuide']" 
+              placeholder="Select Provider" 
+              (onChange)="onProviderChange('buyersGuide', $event.value)" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="model_buyersGuide">Select Model</label>
+            <p-dropdown 
+              [options]="sectionModels['buyersGuide']" 
+              [(ngModel)]="selectedSectionModels['buyersGuide']" 
+              optionLabel="model" 
+              placeholder="Select Model" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col justify-end">
+            <small *ngIf="selectedSectionModels['buyersGuide']" class="text-center">{{ selectedSectionModels['buyersGuide'].cost }}</small>
+            <p-button 
+              label="Generate Buyers Guide" 
+              icon="pi pi-sync" 
+              (onClick)="generateContent('buyersGuide')" 
+              [disabled]="!selectedArticle || !selectedSectionPrompts['buyersGuide'] || !selectedSectionProviders['buyersGuide'] || !selectedSectionModels['buyersGuide'] || isGeneratingContent['buyersGuide']"
+              styleClass="w-full mt-1"
+              severity="secondary"
+              [loading]="isGeneratingContent['buyersGuide']"
+            ></p-button>
+          </div>
+        </div>
+        <p-editor [(ngModel)]="selectedArticle!.buyers_guide" [style]="{ height: '200px' }" styleClass="mt-5"></p-editor>
+      </div>
+  
+      <div *ngIf="sectionEnabled['faqs']" class="mt-12">
+        <p-divider></p-divider>
+        <h2 class="text-2xl font-bold mb-8 mt-8">Manage FAQs</h2>
+        <div class="grid grid-cols-12 gap-5">
+          <div class="col-span-3 flex flex-col">
+            <label for="prompt_faqs">Select Prompt</label>
+            <p-dropdown 
+              [options]="sectionPrompts['faqs']" 
+              [(ngModel)]="selectedSectionPrompts['faqs']" 
+              optionLabel="name" 
+              placeholder="Select a Prompt"
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="provider_faqs">Select Provider</label>
+            <p-dropdown 
+              [options]="providers" 
+              [(ngModel)]="selectedSectionProviders['faqs']" 
+              placeholder="Select Provider" 
+              (onChange)="onProviderChange('faqs', $event.value)" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="model_faqs">Select Model</label>
+            <p-dropdown 
+              [options]="sectionModels['faqs']" 
+              [(ngModel)]="selectedSectionModels['faqs']" 
+              optionLabel="model" 
+              placeholder="Select Model" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col justify-end">
+            <small *ngIf="selectedSectionModels['faqs']" class="text-center">{{ selectedSectionModels['faqs'].cost }}</small>
+            <p-button 
+              label="Generate FAQs" 
+              icon="pi pi-sync" 
+              (onClick)="generateContent('faqs')" 
+              [disabled]="!selectedArticle || !selectedSectionPrompts['faqs'] || !selectedSectionProviders['faqs'] || !selectedSectionModels['faqs'] || isGeneratingContent['faqs']"
+              styleClass="w-full mt-1"
+              severity="secondary"
+              [loading]="isGeneratingContent['faqs']"
+            ></p-button>
+          </div>
+        </div>
+  
+        <div class="grid grid-cols-1 gap-4 mt-6">
+          <div *ngFor="let faq of faqsList; let i = index; trackBy: trackByIndex" class="mb-4">
+            <div class="flex flex-row items-center">
+              <input type="text" [(ngModel)]="faq.title" placeholder="FAQ Title" class="p-inputtext w-full mr-4" />
+              <p-button icon="pi pi-times" (onClick)="removeFAQ(i)" severity="danger"></p-button>
+            </div>
+            <textarea [(ngModel)]="faq.description" placeholder="FAQ Description" rows="4" class="p-inputtext mt-2 w-full"></textarea>
+          </div>
+          <div class="flex justify-start">
+            <p-button icon="pi pi-plus" (onClick)="addFAQ()" label="Add FAQ" severity="success"></p-button>
+          </div>
+        </div>
+      </div>
+  
+      <div *ngIf="sectionEnabled['conclusion']" class="mt-12">
+        <p-divider></p-divider>
+        <h2 class="text-2xl font-bold mb-8 mt-8">Generate Conclusion</h2>
+        <div class="grid grid-cols-12 gap-5">
+          <div class="col-span-3 flex flex-col">
+            <label for="prompt_conclusion">Select Prompt</label>
+            <p-dropdown 
+              [options]="sectionPrompts['conclusion']" 
+              [(ngModel)]="selectedSectionPrompts['conclusion']" 
+              optionLabel="name" 
+              placeholder="Select a Prompt"
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="provider_conclusion">Select Provider</label>
+            <p-dropdown 
+              [options]="providers" 
+              [(ngModel)]="selectedSectionProviders['conclusion']" 
+              placeholder="Select Provider" 
+              (onChange)="onProviderChange('conclusion', $event.value)" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col">
+            <label for="model_conclusion">Select Model</label>
+            <p-dropdown 
+              [options]="sectionModels['conclusion']" 
+              [(ngModel)]="selectedSectionModels['conclusion']" 
+              optionLabel="model" 
+              placeholder="Select Model" 
+              styleClass="mt-2 w-full"
+            ></p-dropdown>
+          </div>
+          <div class="col-span-3 flex flex-col justify-end">
+            <small *ngIf="selectedSectionModels['conclusion']" class="text-center">{{ selectedSectionModels['conclusion'].cost }}</small>
+            <p-button 
+              label="Generate Conclusion" 
+              icon="pi pi-sync" 
+              (onClick)="generateContent('conclusion')" 
+              [disabled]="!selectedArticle || !selectedSectionPrompts['conclusion'] || !selectedSectionProviders['conclusion'] || !selectedSectionModels['conclusion'] || isGeneratingContent['conclusion']"
+              styleClass="w-full mt-1"
+              severity="secondary"
+              [loading]="isGeneratingContent['conclusion']"
+            ></p-button>
+          </div>
+        </div>
+        <p-editor [(ngModel)]="selectedArticle!.conclusion" [style]="{ height: '200px' }" styleClass="mt-5"></p-editor>
+      </div>
+  
+      <div *ngIf="isAnySectionEnabled()" class="flex justify-end mt-12">
+        <p-button 
+          label="Update Article" 
+          icon="pi pi-save" 
+          (onClick)="updateArticle()" 
+          [disabled]="!selectedArticle" 
+          severity="primary"
+        ></p-button>
+      </div>
+    </div>
+  </div>
+  

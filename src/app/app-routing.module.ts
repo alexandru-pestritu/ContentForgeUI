@@ -9,6 +9,7 @@ import { ProductsComponent } from './components/products/products.component';
 import { ArticlesComponent } from './components/articles/articles.component';
 import { PromptsComponent } from './components/prompts/prompts.component';
 import { ProductContentComponent } from './components/product-content/product-content.component';
+import { ArticleContentComponent } from './components/article-content/article-content.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'articles', component: ArticlesComponent, canActivate: [AuthGuard]},
   { path:'ai/prompts', component: PromptsComponent, canActivate: [AuthGuard]},
   { path: 'ai/product', component: ProductContentComponent, canActivate: [AuthGuard]},
+  { path: 'ai/article', component: ArticleContentComponent, canActivate: [AuthGuard]},
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: '/dashboard' }
 ];

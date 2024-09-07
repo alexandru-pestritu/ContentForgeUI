@@ -44,6 +44,7 @@ import { EditorModule } from 'primeng/editor';
 import { PromptsComponent } from './components/prompts/prompts.component';
 import { ProductContentComponent } from './components/product-content/product-content.component';
 import { DividerModule } from 'primeng/divider';
+import { ArticleContentComponent } from './components/article-content/article-content.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -53,7 +54,8 @@ import { DividerModule } from 'primeng/divider';
     ProductsComponent,
     ArticlesComponent,
     PromptsComponent,
-    ProductContentComponent
+    ProductContentComponent,
+    ArticleContentComponent
   ],
   imports: [
     BrowserModule,

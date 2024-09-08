@@ -6,6 +6,7 @@ import { ConfirmationService } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { StoreService } from '../../services/store/store.service';
 import { forkJoin } from 'rxjs';
+import { isValidUrl } from '../../services/validators/validators';
 
 @Component({
   selector: 'app-products',
@@ -130,7 +131,7 @@ export class ProductsComponent implements OnInit {
 
   saveProduct() {
     this.submitted = true;
-    if (this.isValidProduct(this.product)) {
+    if (this.isValidAddProduct()) {
         this.loading = true; 
         this.product.store_ids = this.selectedStores.map(store => store.id);
         this.productService.createProduct(this.product, this.uploadToWordPress).subscribe({
@@ -151,7 +152,7 @@ export class ProductsComponent implements OnInit {
 
   updateProduct() {
     this.submitted = true;
-    if (this.isValidProduct(this.product)) {
+    if (this.isValidEditProduct()) {
         this.loading = true; 
         this.product.store_ids = this.selectedStores.map(store => store.id);
         this.productService.updateProduct(this.product.id, this.product, this.uploadToWordPress).subscribe({
@@ -228,13 +229,6 @@ export class ProductsComponent implements OnInit {
     }
   }
 
-  private isValidProduct(product: Product): boolean {
-    return !!product.name && 
-           this.selectedStores.length > 0 && 
-           product.affiliate_urls.length > 0 && 
-           !!product.rating;
-  }
-
   addSpecification() {
     if (this.newSpecificationKey && this.newSpecificationValue) {
       if (!this.product.specifications) {
@@ -270,5 +264,47 @@ export class ProductsComponent implements OnInit {
       }
     });
   }
+
+  isValidUrl(url: string): boolean {
+    return isValidUrl(url);
+  }
+
+  isAffiliateUrlsValid(): boolean {
+    return this.product.affiliate_urls && this.product.affiliate_urls.every(url => this.isValidUrl(url));
+  }
+  
+  isImageUrlsValid(): boolean {
+    return this.product.image_urls! && this.product.image_urls!.every(url => this.isValidUrl(url));
+  }
+
+  isValidAddProduct(): boolean {
+    if (!this.product.name) return false;
+    if (this.selectedStores.length === 0) return false;
+    if (this.product.affiliate_urls.length === 0) return false;
+    if (!this.product.seo_keyword) return false;
+    if (!this.product.rating) return false;
+    if (!this.isAffiliateUrlsValid()) return false;
+  
+    return true;
+  }
+
+  isValidEditProduct(): boolean {
+    if (!this.product.name) return false;
+    if (this.selectedStores.length === 0) return false;
+    if (this.product.affiliate_urls.length === 0) return false;
+    if (!this.product.seo_keyword) return false;
+    if (!this.product.rating) return false;
+    if (!this.isAffiliateUrlsValid()) return false;
+  
+    if (!this.product.full_name) return false;
+    if (!this.product.description) return false;
+    if (!this.product.specifications || Object.keys(this.product.specifications).length === 0) return false;
+    if (this.product.image_urls?.length === 0) return false;
+    if (!this.isImageUrlsValid()) return false;
+  
+    return true;
+  }
+  
+  
 }
 

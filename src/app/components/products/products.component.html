@@ -158,6 +158,9 @@
             <small class="p-error pt-2" *ngIf="submitted && (!product.affiliate_urls || !product.affiliate_urls.length)">
                 At least one Affiliate URL is required.
             </small>
+            <small class="p-error pt-2" *ngIf="submitted && !(!product.affiliate_urls || !product.affiliate_urls.length) && !isAffiliateUrlsValid()">
+                Please enter valid URLs.
+            </small>
         </div>
 
         <div class="field mt-4">
@@ -169,6 +172,9 @@
                 [(ngModel)]="product.seo_keyword" 
                 class="mt-2"
             />
+            <small class="p-error pt-2" *ngIf="submitted && !product.seo_keyword">
+                SEO Keyword is required.
+            </small>
         </div>
 
         <div class="field mt-4">
@@ -182,6 +188,9 @@
                 [max]="5"
                 [step]="0.1"
             ></p-inputNumber>
+            <small class="p-error pt-2" *ngIf="submitted && !product.rating">
+                Rating is required.
+            </small>
         </div>
         
         <div class="field-checkbox mt-4">
@@ -269,6 +278,9 @@
                         <small class="p-error pt-2" *ngIf="submitted && (!product.affiliate_urls || !product.affiliate_urls.length)">
                             At least one Affiliate URL is required.
                         </small>
+                        <small class="p-error pt-2" *ngIf="submitted && !(!product.affiliate_urls || !product.affiliate_urls.length) && !isAffiliateUrlsValid()">
+                            Please enter valid URLs.
+                        </small>
                     </div>
                     <div class="p-col-4 mt-4">
                         <label for="seo_keyword">SEO Keyword</label>
@@ -279,6 +291,9 @@
                             [(ngModel)]="product.seo_keyword" 
                             class="mt-2"
                         />
+                        <small class="p-error pt-2" *ngIf="submitted && !product.seo_keyword">
+                            SEO Keyword is required.
+                        </small>
                     </div>
                     <div class="p-col-4 mt-4">
                         <label for="rating">Rating</label>
@@ -291,6 +306,9 @@
                             [max]="5"
                             [step]="0.1"
                         ></p-inputNumber>
+                        <small class="p-error pt-2" *ngIf="submitted && !product.rating">
+                            Rating is required.
+                        </small>
                     </div>
                     <div class="field-checkbox mt-4">
                         <p-checkbox 
@@ -314,6 +332,9 @@
                             [(ngModel)]="product.full_name" 
                             class="mt-2"
                         />
+                        <small class="p-error pt-2" *ngIf="submitted && !product.full_name">
+                            Full Name is required.
+                        </small>
                     </div>
                     <div class="p-col-12 mt-4">
                         <label for="description">Description</label>
@@ -340,6 +361,9 @@
                               </span>
                             </ng-template>
                           </p-editor>
+                          <small class="p-error pt-2" *ngIf="submitted && !product.description">
+                            Description is required.
+                        </small>
                     </div>
                     <div class="p-col-12 mt-4">
                         <label for="specifications">Specifications</label>
@@ -386,6 +410,9 @@
                                 </li>
                             </ul>
                         </div>
+                        <small class="p-error pt-2" *ngIf="submitted && (!product.specifications || objectKeys(product.specifications).length === 0)">
+                            At least one specification is required.
+                        </small>
                     </div>
                     <div class="p-col-12 mt-4">
                         <label for="image_urls">Image URLs</label>
@@ -395,15 +422,12 @@
                             styleClass="mt-2"
                             [allowDuplicate]="false"
                         ></p-chips>
-                    </div>
-                    <div class="p-col-12 mt-4">
-                        <label for="image_ids">Image IDs</label>
-                        <p-chips 
-                            [(ngModel)]="product.image_ids" 
-                            id="image_ids" 
-                            styleClass="mt-2"
-                            [allowDuplicate]="false"
-                        ></p-chips>
+                        <small class="p-error pt-2" *ngIf="submitted && (!product.image_urls || !product.image_urls.length)">
+                            At least one Image URL is required.
+                        </small>
+                        <small class="p-error pt-2" *ngIf="submitted && product.image_urls!.length > 0 && !isImageUrlsValid()">
+                            Please enter valid Image URLs.
+                        </small>
                     </div>
                     <div class="p-col-6 mt-4">
                         <p-checkbox 

@@ -4,6 +4,8 @@ import { Store } from '../../models/store/store';
 import { NotificationService } from '../../services/notification/notification.service';
 import { ConfirmationService } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { urlValidator } from '../../services/validators/validators';
 
 @Component({
   selector: 'app-stores',
@@ -24,13 +26,21 @@ export class StoresComponent implements OnInit {
   uploadToWordPress: boolean = false;
   loading: boolean = false;
 
+  storeForm!: FormGroup;
+
   constructor(
     private storeService: StoreService,
     private notificationService: NotificationService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.storeForm = this.formBuilder.group({
+      id: [null],
+      name: ['', Validators.required], 
+      base_url: ['', [Validators.required, urlValidator()]]
+    });
   }
 
   loadStores(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
@@ -58,7 +68,7 @@ export class StoresComponent implements OnInit {
   }
 
   openNewStore() {
-    this.store = {} as Store;
+    this.storeForm.reset();
     this.uploadToWordPress = false;
     this.submitted = false;
     this.storeDialog = true;
@@ -71,46 +81,52 @@ export class StoresComponent implements OnInit {
 
   saveStore() {
     this.submitted = true;
-    
-    if (this.store.name && this.store.base_url) {
-      this.loading = true; 
-      this.submitted = false;
-      if (this.store.id) {
-        this.storeService.updateStore(this.store.id, this.store, this.uploadToWordPress).subscribe({
+  
+    if (this.storeForm.valid) {
+      this.loading = true;
+      const storeData = this.storeForm.value;
+  
+      if (storeData.id) {
+        this.storeService.updateStore(storeData.id, storeData, this.uploadToWordPress).subscribe({
           next: () => {
             this.notificationService.showSuccess('Success', 'Store updated successfully.');
             this.loadStores(0, this.rows);
-            this.loading = false; 
-            this.storeDialog = false;
+            this.loading = false;
+            this.storeDialog = false; 
           },
           error: () => {
             this.notificationService.showError('Error', 'Failed to update store.');
-            this.loading = false; 
+            this.loading = false;
           }
         });
       } else {
-        this.storeService.createStore(this.store, this.uploadToWordPress).subscribe({
+        this.storeService.createStore(storeData, this.uploadToWordPress).subscribe({
           next: () => {
             this.notificationService.showSuccess('Success', 'Store created successfully.');
-            this.loadStores(0, this.rows);
-            this.loading = false; 
-            this.storeDialog = false;
+            this.loadStores(0, this.rows); 
+            this.loading = false;
+            this.storeDialog = false; 
           },
           error: () => {
             this.notificationService.showError('Error', 'Failed to create store.');
-            this.loading = false; 
+            this.loading = false;
           }
         });
       }
-      this.store = {} as Store;
     }
   }
+  
 
   editStore(store: Store) {
-    this.store = { ...store };
+    this.storeForm.patchValue({
+      id: store.id,           
+      name: store.name,
+      base_url: store.base_url
+    });
     this.uploadToWordPress = false;
     this.storeDialog = true;
   }
+  
 
   deleteStore(store: Store): void {
     this.confirmationService.confirm({

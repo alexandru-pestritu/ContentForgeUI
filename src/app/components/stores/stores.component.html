@@ -122,9 +122,12 @@
                     [(ngModel)]="store.base_url" 
                     class="mt-2"
                     required />
-                <small class="p-error pt-2" *ngIf="submitted && !store.base_url">
-                    Base URL is required.
-                </small>
+                    <small class="p-error pt-2" *ngIf="submitted && !store.base_url">
+                      Base URL is required.
+                  </small>
+                  <small class="p-error pt-2" *ngIf="submitted && store.base_url && !isValidUrl(store.base_url)">
+                      Please enter a valid URL.
+                  </small>
             </div>
             <div class="field-checkbox mt-4">
               <p-checkbox 

@@ -4,6 +4,7 @@ import { Store } from '../../models/store/store';
 import { NotificationService } from '../../services/notification/notification.service';
 import { ConfirmationService } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
+import { isValidUrl } from '../../services/validators/validators';
 
 @Component({
   selector: 'app-stores',
@@ -31,6 +32,10 @@ export class StoresComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+  }
+
+  isValidUrl(url: string): boolean {
+    return isValidUrl(url);
   }
 
   loadStores(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
@@ -72,7 +77,7 @@ export class StoresComponent implements OnInit {
   saveStore() {
     this.submitted = true;
     
-    if (this.store.name && this.store.base_url) {
+    if (this.store.name && this.store.base_url && isValidUrl(this.store.base_url)) {
       this.loading = true; 
       this.submitted = false;
       if (this.store.id) {

@@ -289,12 +289,7 @@ export class ProductsComponent implements OnInit {
   }
 
   isValidEditProduct(): boolean {
-    if (!this.product.name) return false;
-    if (this.selectedStores.length === 0) return false;
-    if (this.product.affiliate_urls.length === 0) return false;
-    if (!this.product.seo_keyword) return false;
-    if (!this.product.rating) return false;
-    if (!this.isAffiliateUrlsValid()) return false;
+    if(!this.isValidAddProduct()) return false;
   
     if (!this.product.full_name) return false;
     if (!this.product.description) return false;

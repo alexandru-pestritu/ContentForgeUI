@@ -10,6 +10,7 @@ import { ProductService } from '../../services/product/product.service';
 import { Product } from '../../models/product/product';
 import { forkJoin } from 'rxjs';
 import { WordpressService } from '../../services/wordpress/wordpress.service';
+import { isValidUrl } from '../../services/validators/validators';
 
 @Component({
   selector: 'app-articles',
@@ -164,7 +165,7 @@ export class ArticlesComponent implements OnInit {
 
   saveArticle() {
     this.submitted = true;
-    if (this.isValidArticle(this.article)) {
+    if (this.isValidAddArticle()) {
         this.loading = true; 
         this.article.products_id_list = this.selectedProducts.map(product => product.id);
         this.articleService.createArticle(this.article, this.uploadToWordPress).subscribe({
@@ -185,7 +186,7 @@ export class ArticlesComponent implements OnInit {
 
   updateArticle() {
     this.submitted = true;
-    if (this.isValidArticle(this.article)) {
+    if (this.isValidEditArticle()) {
         this.loading = true; 
         this.article.products_id_list = this.selectedProducts.map(product => product.id);
         this.articleService.updateArticle(this.article.id, this.article, this.uploadToWordPress).subscribe({
@@ -296,10 +297,6 @@ export class ArticlesComponent implements OnInit {
     });
   }
 
-  private isValidArticle(article: ArticleCreateDTO | ArticleUpdateDTO): boolean {
-    return !!article.title && !!article.slug && this.selectedProducts.length > 0;
-  }
-
   loadWordPressUsers(): void {
     this.wordpressService.getUsers().subscribe({
       next: (data) => {
@@ -328,6 +325,35 @@ export class ArticlesComponent implements OnInit {
         this.notificationService.showError('Error', 'Failed to load WordPress categories.');
       }
     });
+  }
+
+  private isValidArticle(article: ArticleCreateDTO | ArticleUpdateDTO): boolean {
+    return !!article.title && !!article.slug && this.selectedProducts.length > 0;
+  }
+
+  isValidUrl(url: string): boolean {
+    return isValidUrl(url);
+  }
+
+  isValidAddArticle(): boolean {
+    if (!this.article.title) return false;
+    if (!this.article.slug) return false;
+    if (!this.article.author_id) return false;
+    if (this.article.categories_id_list!.length === 0) return false;
+    if (this.article.seo_keywords?.length === 0) return false;
+    if (!this.article.meta_title) return false;
+    if (!this.article.meta_description) return false;
+    if (!this.article.main_image_url || !this.isValidUrl(this.article.main_image_url)) return false;
+    if (!this.article.buyers_guide_image_url || !this.isValidUrl(this.article.buyers_guide_image_url)) return false;
+    if (this.selectedProducts.length === 0) return false;
+  
+    return true;
+  }  
+
+  isValidEditArticle(): boolean {
+    if(!this.isValidAddArticle()) return false;
+
+    return true;
   }
   
 }

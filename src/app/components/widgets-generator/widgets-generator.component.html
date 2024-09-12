@@ -1,0 +1,115 @@
+<div class="min-h-screen flex items-start justify-center bg-gray-100">
+    <div class="w-full m-3 bg-white rounded-lg p-8 shadow-lg">
+      <h1 class="text-3xl font-bold mb-6">Widgets Generator</h1>
+  
+      <p-tabView styleClass="tabview-custom">
+        <p-tabPanel header="Product" class="w-full">
+          <ng-template pTemplate="header">
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-shopping-cart"></i>
+              <span>Product</span>
+            </div>
+          </ng-template>
+  
+          <div class="flex items-center gap-4 w-full mt-2">
+            <div class="flex-grow">
+              <label for="product_autocomplete">Search Product</label>
+              <p-autoComplete 
+                [(ngModel)]="selectedProduct" 
+                [suggestions]="products" 
+                (completeMethod)="searchProducts($event)" 
+                field="displayName" 
+                [forceSelection]="true" 
+                [dropdown]="true" 
+                placeholder="Type to search..." 
+                id="product_autocomplete"
+                styleClass="mt-2 w-full"
+              ></p-autoComplete>
+            </div>
+  
+            <div class="mt-6">
+              <p-button 
+                label="Generate" 
+                icon="pi pi-cog" 
+                class="w-full" 
+                (click)="generateProductWidget()"
+                [disabled]="!selectedProduct"
+                [loading]="productLoading">
+              </p-button>
+            </div>
+          </div>
+
+          <div class="col-span-1 mt-6 w-full">
+            <label for="product_content">Generated Content</label>
+            <textarea 
+              id="product_content" 
+              class="w-full p-3 border rounded-lg mt-2" 
+              rows="15" 
+              pInputTextarea 
+              [(ngModel)]="productWidgetContent"
+              readonly>
+            </textarea>
+          </div>
+        </p-tabPanel>
+  
+        <p-tabPanel header="Article">
+          <ng-template pTemplate="header">
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-align-left"></i>
+              <span>Article</span>
+            </div>
+          </ng-template>
+  
+          <div class="flex items-center gap-4 w-full mt-2">
+            <div class="flex-grow">
+              <label for="article_autocomplete">Search Article</label>
+              <p-autoComplete 
+                [(ngModel)]="selectedArticle" 
+                [suggestions]="articles" 
+                (completeMethod)="searchArticles($event)" 
+                field="displayName" 
+                [forceSelection]="true" 
+                [dropdown]="true" 
+                placeholder="Type to search..." 
+                id="article_autocomplete"
+                styleClass="mt-2 w-full"
+              ></p-autoComplete>
+            </div>
+  
+            <div class="mt-6 flex items-center">
+              <p-checkbox 
+                [(ngModel)]="publishToWP" 
+                binary="true" 
+                inputId="publishToWP">
+              </p-checkbox>
+              <label for="publishToWP" class="ml-2">Publish to WordPress</label>
+            </div>
+  
+            <div class="mt-6">
+              <p-button 
+                label="Generate" 
+                icon="pi pi-cog" 
+                class="w-full" 
+                (click)="generateArticleWidget()"
+                [disabled]="!selectedArticle"
+                [loading]="articleLoading">
+              </p-button>
+            </div>
+          </div>
+
+          <div class="col-span-1 mt-6 w-full">
+            <label for="article_content">Generated Content</label>
+            <textarea 
+              id="article_content" 
+              class="w-full p-3 border rounded-lg mt-2" 
+              rows="15" 
+              pInputTextarea 
+              [(ngModel)]="articleWidgetContent"
+              readonly>
+            </textarea>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+  

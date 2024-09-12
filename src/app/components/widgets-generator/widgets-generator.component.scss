@@ -1,0 +1,13 @@
+::ng-deep .p-tabview .p-tabview-nav li {
+    width: 50%!important;
+}
+
+::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    display: flex!important;
+    justify-content: center!important;
+}
+
+::ng-deep .p-autocomplete-dd .p-autocomplete-dropdown {
+    background:#64748b;
+    border:#64748b;
+}

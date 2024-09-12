@@ -76,23 +76,7 @@ export class AppComponent implements OnInit {
         {
             label: 'Widgets Generator',
             icon: 'pi pi-fw pi-th-large',
-            items: [
-              {
-                label: 'Single Widget',
-                icon: 'pi pi-fw pi-stop',
-                routerLink: '/widgets/single'
-              },
-              {
-                label: 'Product Widgets',
-                icon: 'pi pi-fw pi-shopping-cart',
-                routerLink: '/widgets/product'
-              },
-              {
-                label: 'Article Widgets',
-                icon: 'pi pi-fw pi-align-left',
-                routerLink: '/widgets/article'
-              }
-            ]
+            routerLink: '/widgets/generate'
         }
       ];
   

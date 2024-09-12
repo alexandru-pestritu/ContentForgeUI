@@ -45,6 +45,7 @@ import { PromptsComponent } from './components/prompts/prompts.component';
 import { ProductContentComponent } from './components/product-content/product-content.component';
 import { DividerModule } from 'primeng/divider';
 import { ArticleContentComponent } from './components/article-content/article-content.component';
+import { WidgetsGeneratorComponent } from './components/widgets-generator/widgets-generator.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +56,8 @@ import { ArticleContentComponent } from './components/article-content/article-co
     ArticlesComponent,
     PromptsComponent,
     ProductContentComponent,
-    ArticleContentComponent
+    ArticleContentComponent,
+    WidgetsGeneratorComponent
   ],
   imports: [
     BrowserModule,

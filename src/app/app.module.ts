@@ -47,6 +47,9 @@ import { DividerModule } from 'primeng/divider';
 import { ArticleContentComponent } from './components/article-content/article-content.component';
 import { WidgetsGeneratorComponent } from './components/widgets-generator/widgets-generator.component';
 import { CardModule } from 'primeng/card';
+import { DataViewModule } from 'primeng/dataview';
+import { TruncatePipe } from './pipes/truncate-pipe';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,7 +61,8 @@ import { CardModule } from 'primeng/card';
     PromptsComponent,
     ProductContentComponent,
     ArticleContentComponent,
-    WidgetsGeneratorComponent
+    WidgetsGeneratorComponent,
+    TruncatePipe
   ],
   imports: [
     BrowserModule,
@@ -94,7 +98,8 @@ import { CardModule } from 'primeng/card';
     MultiSelectModule,
     EditorModule,
     DividerModule,
-    CardModule
+    CardModule,
+    DataViewModule
   ],
   providers: [
     provideClientHydration(),

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Product } from '../../models/product/product';
 import { ProductCreateDTO } from '../../models/product/product-create-dto';
 import { ProductUpdateDTO } from '../../models/product/product-update-dto';
+import { Article } from '../../models/article/article';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +40,9 @@ export class ProductService {
 
   deleteProduct(id: number): Observable<Product> {
     return this.httpService.delete<Product>(`${this.endpoint}${id}`);
+  }
+
+  getOutOfStockProducts(): Observable<{ product: Product, articles: Article[] }[]> {
+    return this.httpService.get<{ product: Product, articles: Article[] }[]>(`${this.endpoint}out-of-stock`);
   }
 }

@@ -39,4 +39,8 @@ export class ArticleService {
   deleteArticle(id: number): Observable<Article> {
     return this.httpService.delete<Article>(`${this.endpoint}${id}`);
   }
+
+  getLatestArticles(limit: number = 5): Observable<Article[]> {
+    return this.httpService.get<Article[]>(`${this.endpoint}latest?limit=${limit}`);
+  }
 }

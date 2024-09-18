@@ -86,4 +86,8 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
+  openAffiliateUrl(url: string): void {
+    window.open(url, '_blank');
+  }  
 }

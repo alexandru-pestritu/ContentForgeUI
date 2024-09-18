@@ -1,9 +1,9 @@
 <div class="min-h-screen bg-gray-100 p-3">
-    <div class="w-full bg-white rounded-lg p-8 shadow-lg mb-6">
+    <div class="w-full bg-white rounded-lg p-8 shadow mb-6">
       <h1 class="text-3xl font-bold mt-0 mb-6">Dashboard</h1>
       <div class="flex flex-row gap-8">
         
-        <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#3B82F6' }">
+        <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#22c55e' }">
             <div class="flex items-center w-full">
               <div class="flex-1">
                 <div class="text-5xl font-bold">
@@ -15,7 +15,7 @@
             </div>
           </p-card>
           
-          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#64748b' }">
+          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#f97316' }">
             <div class="flex items-center w-full">
               <div class="flex-1">
                 <div class="text-5xl font-bold">
@@ -27,7 +27,7 @@
             </div>
           </p-card>
           
-          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#22c55e' }">
+          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#64748b' }">
             <div class="flex items-center w-full">
               <div class="flex-1">
                 <div class="text-5xl font-bold">
@@ -39,7 +39,7 @@
             </div>
           </p-card>
           
-          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#EF4444' }">
+          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#3B82F6' }">
             <div class="flex items-center w-full">
               <div class="flex-1">
                 <div class="text-5xl font-bold">
@@ -56,12 +56,44 @@
     </div>
   
     <div class="grid grid-cols-1 lg:grid-cols-10 gap-6 mb-6">
-      <div class="lg:col-span-6 bg-white rounded-lg p-8 shadow-lg">
+      <div class="lg:col-span-6 bg-white rounded-lg p-8 shadow">
         <h1 class="text-3xl font-bold mt-0 mb-6">Stock Check Logs</h1>
       </div>
   
-      <div class="lg:col-span-4 bg-white rounded-lg p-8 shadow-lg">
+      <div class="lg:col-span-4 bg-white rounded-lg p-8 shadow">
         <h1 class="text-3xl font-bold mt-0 mb-6">Latest Articles</h1>
+        <div>
+            <p-dataView [value]="latestArticles">
+              <ng-template pTemplate="list" let-article>
+                <div class="grid grid-cols-1 gap-4">
+                  <div *ngFor="let item of latestArticles; let first = first" class="col-12">
+                    <div class="flex flex-col md:flex-row items-center gap-4 border-t" [ngClass]="{ 'border-t-0': first }">
+                      
+                      <div class="w-2/5 h-36 relative">
+                        <img *ngIf="item.main_image_url" [src]="item.main_image_url" class="w-full h-full object-cover rounded-lg" [alt]="item.title" />
+                        <img *ngIf="!item.main_image_url" src="../../../assets/image-not-found.png" class="w-full h-full object-cover rounded-lg" alt="No image available" />
+                        
+                        <p-tag *ngIf="item.status === 'publish'" severity="success" class="absolute top-2 left-2">Publish</p-tag>
+                        <p-tag *ngIf="item.status === 'draft'" severity="warning" class="absolute top-2 left-2">Draft</p-tag>
+                      </div>
+                      
+                      <div class="flex-1 flex flex-col md:flex-row justify-between items-start md:items-center w-full">
+                        <div>
+                          <div class="text-lg font-semibold text-gray-900">{{ item.title | truncate:50}}</div>
+                          <p class="text-sm text-gray-500 mt-1">
+                            {{ item.meta_description! | truncate:160}}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </p-dataView>
+            <div class="flex justify-center mt-4">
+                <p-button label="View All" icon="pi pi-align-left" class="w-full sm:w-auto" routerLink="/articles"></p-button>
+              </div>              
+        </div>             
       </div>
     </div>
   

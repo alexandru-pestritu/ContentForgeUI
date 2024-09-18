@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadLatestArticles(): void {
-    this.articleService.getLatestArticles(5).subscribe({
+    this.articleService.getLatestArticles(3).subscribe({
       next: (articles: Article[]) => {
         this.latestArticles = articles;
         console.log('Latest Articles:', this.latestArticles);

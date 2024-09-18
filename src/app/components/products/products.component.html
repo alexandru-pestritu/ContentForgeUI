@@ -48,15 +48,15 @@
       >
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 3rem;" class="border-l border-t rounded-tl-md rounded-bl-md">
+            <th class="w-16 border-l border-t rounded-tl-md rounded-bl-md">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <th pSortableColumn="id" class="border-t">ID <p-sortIcon field="id"></p-sortIcon></th>
-            <th pSortableColumn="name" class="border-t">Name <p-sortIcon field="name"></p-sortIcon></th>
-            <th pSortableColumn="in_stock" class="border-t">In Stock <p-sortIcon field="in_stock"></p-sortIcon></th>
-            <th pSortableColumn="seo_keyword" class="border-t">SEO Keyword <p-sortIcon field="seo_keyword"></p-sortIcon></th>
+            <th pSortableColumn="id" class="w-16 border-t">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="name" class="w-1/4 border-t">Name <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="in_stock" class="w-32 border-t">In Stock <p-sortIcon field="in_stock"></p-sortIcon></th>
+            <th pSortableColumn="seo_keyword" class="w-1/4 border-t">SEO Keyword <p-sortIcon field="seo_keyword"></p-sortIcon></th>
             <th pSortableColumn="rating" class="border-t">Rating <p-sortIcon field="rating"></p-sortIcon></th>
-            <th class="border-r border-t rounded-tr-md rounded-br-md">Actions</th>
+            <th class="w-32 border-r border-t rounded-tr-md rounded-br-md">Actions</th>
           </tr>
         </ng-template>
   
@@ -66,12 +66,12 @@
               <p-tableCheckbox [value]="product"></p-tableCheckbox>
             </td>
             <td>{{ product.id }}</td>
-            <td>{{ product.name }}</td>
+            <td class="whitespace-normal break-words">{{ product.name }}</td>
             <td><p-tag *ngIf="product.in_stock" severity="success" value="In Stock"/>
                 <p-tag *ngIf="!product.in_stock" severity="danger" value="Out of Stock"/></td>
-            <td>{{ product.seo_keyword }}</td>
+            <td class="whitespace-normal break-words">{{ product.seo_keyword }}</td>
             <td>{{ product.rating }}<i class="pi pi-star-fill pl-1.5 text-yellow-500"></i></td>
-            <td>
+            <td class="whitespace-nowrap">
               <p-button 
                 icon="pi pi-info-circle" 
                 class="mr-2" 

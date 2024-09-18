@@ -1,1 +1,72 @@
-<p>dashboard works!</p>
+<div class="min-h-screen bg-gray-100 p-3">
+    <div class="w-full bg-white rounded-lg p-8 shadow-lg mb-6">
+      <h1 class="text-3xl font-bold mt-0 mb-6">Dashboard</h1>
+      <div class="flex flex-row gap-8">
+        
+        <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#3B82F6' }">
+            <div class="flex items-center w-full">
+              <div class="flex-1">
+                <div class="text-5xl font-bold">
+                  {{ dashboardStats?.published_articles_count || '0' }}
+                </div>
+                <h2 class="text-xl mt-3">Published articles</h2>
+              </div>
+              <i class="pi pi-file text-6xl flex-shrink-0 ml-4"></i>
+            </div>
+          </p-card>
+          
+          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#64748b' }">
+            <div class="flex items-center w-full">
+              <div class="flex-1">
+                <div class="text-5xl font-bold">
+                  {{ dashboardStats?.draft_articles_count || '0' }}
+                </div>
+                <h2 class="text-xl mt-3">Draft articles</h2>
+              </div>
+              <i class="pi pi-file-edit text-6xl flex-shrink-0 ml-4"></i>
+            </div>
+          </p-card>
+          
+          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#22c55e' }">
+            <div class="flex items-center w-full">
+              <div class="flex-1">
+                <div class="text-5xl font-bold">
+                  {{ dashboardStats?.total_products_count || '0' }}
+                </div>
+                <h2 class="text-xl mt-3">Total products</h2>
+              </div>
+              <i class="pi pi-box text-6xl flex-shrink-0 ml-4"></i>
+            </div>
+          </p-card>
+          
+          <p-card styleClass="text-white" class="flex-grow flex-basis-0" [style]="{ background: '#EF4444' }">
+            <div class="flex items-center w-full">
+              <div class="flex-1">
+                <div class="text-5xl font-bold">
+                  {{ dashboardStats?.out_of_stock_products_count || '0' }}
+                </div>
+                <h2 class="text-xl mt-3">Out of stock</h2>
+              </div>
+              <i class="pi pi-times-circle text-6xl flex-shrink-0 ml-4"></i>
+            </div>
+          </p-card>
+          
+  
+      </div>
+    </div>
+  
+    <div class="grid grid-cols-1 lg:grid-cols-10 gap-6 mb-6">
+      <div class="lg:col-span-6 bg-white rounded-lg p-8 shadow-lg">
+        <h1 class="text-3xl font-bold mt-0 mb-6">Stock Check Logs</h1>
+      </div>
+  
+      <div class="lg:col-span-4 bg-white rounded-lg p-8 shadow-lg">
+        <h1 class="text-3xl font-bold mt-0 mb-6">Latest Articles</h1>
+      </div>
+    </div>
+  
+    <div class="w-full bg-white rounded-lg p-8 shadow-lg">
+      <h1 class="text-3xl font-bold mt-0 mb-6">Out of Stock Products</h1>
+    </div>
+  </div>
+  

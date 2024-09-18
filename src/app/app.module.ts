@@ -46,6 +46,7 @@ import { ProductContentComponent } from './components/product-content/product-co
 import { DividerModule } from 'primeng/divider';
 import { ArticleContentComponent } from './components/article-content/article-content.component';
 import { WidgetsGeneratorComponent } from './components/widgets-generator/widgets-generator.component';
+import { CardModule } from 'primeng/card';
 @NgModule({
   declarations: [
     AppComponent,
@@ -92,7 +93,8 @@ import { WidgetsGeneratorComponent } from './components/widgets-generator/widget
     DropdownModule,
     MultiSelectModule,
     EditorModule,
-    DividerModule
+    DividerModule,
+    CardModule
   ],
   providers: [
     provideClientHydration(),

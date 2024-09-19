@@ -16,7 +16,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { Menu, MenuModule } from 'primeng/menu';
 import { PasswordModule } from 'primeng/password';
 import { AuthInterceptor } from './services/http/interceptors/auth.interceptor';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, provideHttpClient, withFetch } from '@angular/common/http';
 import {AvatarModule} from 'primeng/avatar';
 import {ImageModule} from 'primeng/image';
 import {TableModule} from 'primeng/table';
@@ -107,6 +107,7 @@ import { ChartModule } from 'primeng/chart';
     ChartModule
   ],
   providers: [
+    provideHttpClient(withFetch()),
     provideClientHydration(),
     provideAnimationsAsync(),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

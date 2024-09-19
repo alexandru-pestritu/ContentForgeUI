@@ -52,6 +52,7 @@ import { TruncatePipe } from './pipes/truncate-pipe';
 import { CalendarModule } from 'primeng/calendar';
 import { ChartModule } from 'primeng/chart';
 
+
 @NgModule({
   declarations: [
     AppComponent,

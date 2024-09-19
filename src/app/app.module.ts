@@ -49,6 +49,8 @@ import { WidgetsGeneratorComponent } from './components/widgets-generator/widget
 import { CardModule } from 'primeng/card';
 import { DataViewModule } from 'primeng/dataview';
 import { TruncatePipe } from './pipes/truncate-pipe';
+import { CalendarModule } from 'primeng/calendar';
+import { ChartModule } from 'primeng/chart';
 
 @NgModule({
   declarations: [
@@ -99,7 +101,9 @@ import { TruncatePipe } from './pipes/truncate-pipe';
     EditorModule,
     DividerModule,
     CardModule,
-    DataViewModule
+    DataViewModule,
+    CalendarModule,
+    ChartModule
   ],
   providers: [
     provideClientHydration(),

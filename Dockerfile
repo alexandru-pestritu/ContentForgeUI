@@ -16,6 +16,8 @@ WORKDIR /usr/app
 
 COPY --from=build /app/src/dist/content-forge-ui ./
 
+ENV API_URL=http://your-production-api-url.com/api/v1
+
 CMD node server/server.mjs
 
 EXPOSE 4200

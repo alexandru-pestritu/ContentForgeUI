@@ -1,4 +1,5 @@
 export const environment = {
-  production: true,
-  apiUrl: window['__env'].apiUrl || 'http://default-url.com/api/v1'
-};
+    production: true,
+    apiUrl: 'http://192.168.0.115:8000/api/v1' 
+  };
+  

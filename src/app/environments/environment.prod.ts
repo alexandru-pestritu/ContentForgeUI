@@ -1,5 +1,4 @@
 export const environment = {
-    production: true,
-    apiUrl: 'https://contentforgeapi.alehh.com/api/v1' 
-  };
-  
+  production: true,
+  apiUrl: 'API_URL_PLACEHOLDER',
+};

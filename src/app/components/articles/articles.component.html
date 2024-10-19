@@ -121,6 +121,7 @@
                                 pInputText 
                                 id="title" 
                                 [(ngModel)]="article.title" 
+                                (ngModelChange)="article.slug = generateSlug($event)"
                                 class="mt-2"
                                 required 
                                 autofocus 

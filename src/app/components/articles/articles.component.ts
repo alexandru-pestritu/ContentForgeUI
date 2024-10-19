@@ -317,7 +317,7 @@ export class ArticlesComponent implements OnInit {
       next: (data) => {
         this.categories = data.map(category => ({
           id: category.id,
-          displayName: `ID: ${category.id} - ${category.name}`
+          displayName: `ID: ${category.id} - ${this.decodeHtml(category.name)}`
         }));
       },
       error: (err) => {
@@ -356,4 +356,18 @@ export class ArticlesComponent implements OnInit {
     return true;
   }
   
+  generateSlug(title: string): string {
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')   
+        .replace(/\s+/g, '-');  
+}
+
+decodeHtml(encodedString: string): string {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(encodedString, 'text/html');
+  return doc.documentElement.textContent || encodedString;
+}
+
+
 }

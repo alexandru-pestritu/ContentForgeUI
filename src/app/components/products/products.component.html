@@ -184,9 +184,11 @@
                 id="rating" 
                 class="mt-2"
                 mode="decimal"
-                [min]="0"
+                [min]="1"
                 [max]="5"
-                [step]="0.1"
+                [step]="0.5"
+                [showButtons]="true"
+                suffix=" ★"
             ></p-inputNumber>
             <small class="p-error pt-2" *ngIf="submitted && !product.rating">
                 Rating is required.
@@ -302,9 +304,11 @@
                             id="rating" 
                             class="mt-2"
                             mode="decimal"
-                            [min]="0"
+                            [min]="1"
                             [max]="5"
-                            [step]="0.1"
+                            [step]="0.5"
+                            [showButtons]="true"
+                            suffix=" ★"
                         ></p-inputNumber>
                         <small class="p-error pt-2" *ngIf="submitted && !product.rating">
                             Rating is required.

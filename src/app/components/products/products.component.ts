@@ -73,7 +73,7 @@ export class ProductsComponent implements OnInit {
     this.product = {} as Product;
     this.addDialog = true;
     this.submitted = false;
-    this.uploadToWordPress = false;
+    this.uploadToWordPress = true;
     this.selectedStores = [];
   }
 

@@ -20,7 +20,7 @@ export class WidgetsGeneratorComponent implements OnInit {
   articles: Article[] = [];
   selectedArticle: Article | null = null;
   articleWidgetContent: string = '';
-  publishToWP: boolean = false;
+  publishToWP: boolean = true;
 
   productLoading: boolean = false;
   articleLoading: boolean = false;

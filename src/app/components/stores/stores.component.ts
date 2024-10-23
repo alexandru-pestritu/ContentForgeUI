@@ -22,7 +22,7 @@ export class StoresComponent implements OnInit {
   store: Store = {} as Store;
   selectedStores: Store[] = [];
   submitted: boolean = false;
-  uploadToWordPress: boolean = false;
+  uploadToWordPress: boolean = true;
   loading: boolean = false;
 
   constructor(

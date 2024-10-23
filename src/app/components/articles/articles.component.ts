@@ -93,7 +93,7 @@ export class ArticlesComponent implements OnInit {
     this.article = {} as Article
     this.addDialog = true;
     this.submitted = false;
-    this.uploadToWordPress = false;
+    this.uploadToWordPress = true;
     this.selectedProducts = [];
   }
 

@@ -21,6 +21,12 @@ export class ArticleContentComponent implements OnInit {
 
   set selectedArticle(article: Article | null) {
     this._selectedArticle = article;
+
+    const isEnabled = article !== null;
+    this.sectionEnabled['introduction'] = isEnabled;
+    this.sectionEnabled['buyersGuide'] = isEnabled;
+    this.sectionEnabled['faqs'] = isEnabled;
+    this.sectionEnabled['conclusion'] = isEnabled;
     if (article) {
       this.faqsList = article.faqs || [];
     } else {

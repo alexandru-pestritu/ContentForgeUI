@@ -21,6 +21,10 @@ export class ProductContentComponent implements OnInit {
     this._selectedProduct = product;
     this.prosList = product?.pros || [];
     this.consList = product?.cons || [];
+
+    const isEnabled = product !== null;
+    this.sectionState['review'].enabled = isEnabled;
+    this.sectionState['prosCons'].enabled = isEnabled;
   }
 
   sectionState: { [key: string]: any } = {
@@ -78,6 +82,7 @@ export class ProductContentComponent implements OnInit {
       }
     });
   }
+
   
   loadProvidersAndModels(): void {
     this.aiService.getProviders('text', 'chat').subscribe({

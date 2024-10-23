@@ -66,7 +66,7 @@ export class ProductContentComponent implements OnInit {
 
   searchProducts(event: any) {
     const query = event.query;
-    this.productService.getProducts(0, 10, undefined, undefined, query).subscribe({
+    this.productService.getProducts(0, 10, "id", -1, query).subscribe({
       next: (data) => {
         this.products = data.products.map(product => ({
           ...product,

@@ -91,7 +91,7 @@ export class ArticleContentComponent implements OnInit {
 
   searchArticles(event: any) {
     const query = event.query;
-    this.articleService.getArticles(0, 10, undefined, undefined, query).subscribe({
+    this.articleService.getArticles(0, 10, "id", -1, query).subscribe({
       next: (data) => {
         this.articles = data.articles.map(article => ({
           ...article,

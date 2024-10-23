@@ -75,6 +75,7 @@ export class ProductsComponent implements OnInit {
     this.submitted = false;
     this.uploadToWordPress = true;
     this.selectedStores = [];
+    this.searchStores({ query: '' });
   }
 
   editProduct(product: Product) {
@@ -257,6 +258,10 @@ export class ProductsComponent implements OnInit {
           name: store.name,
           displayName: `ID: ${store.id}, ${store.name}`
         }));
+        
+        if (this.stores.length > 0 && this.selectedStores.length === 0) {
+          this.selectedStores.push(this.stores[0]);
+        }
       },
       error: (err) => {
         console.error('Error fetching stores', err);
@@ -264,6 +269,7 @@ export class ProductsComponent implements OnInit {
       }
     });
   }
+  
 
   isValidUrl(url: string): boolean {
     return isValidUrl(url);

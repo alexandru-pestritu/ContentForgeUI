@@ -108,6 +108,8 @@ export class ProductContentComponent implements OnInit {
       next: (prompts) => {
         this.sectionState['review'].prompts = prompts.filter(p => p.subtype === 'Review');
         this.sectionState['prosCons'].prompts = prompts.filter(p => p.subtype === 'Pros & Cons');
+        this.sectionState['review'].selectedPrompt = this.sectionState['review'].prompts[0];
+        this.sectionState['prosCons'].selectedPrompt = this.sectionState['prosCons'].prompts[0];
       },
       error: (err) => {
         this.notificationService.showError('Error', 'Failed to load prompts');

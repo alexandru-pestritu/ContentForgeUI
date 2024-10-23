@@ -136,6 +136,11 @@ export class ArticleContentComponent implements OnInit {
         this.sectionPrompts['buyersGuide'] = prompts.filter(p => p.subtype === "Buyer's Guide");
         this.sectionPrompts['faqs'] = prompts.filter(p => p.subtype === 'FAQs');
         this.sectionPrompts['conclusion'] = prompts.filter(p => p.subtype === 'Conclusion');
+
+        this.selectedSectionPrompts['introduction'] = this.sectionPrompts['introduction'][0];
+        this.selectedSectionPrompts['buyersGuide'] = this.sectionPrompts['buyersGuide'][0];
+        this.selectedSectionPrompts['faqs'] = this.sectionPrompts['faqs'][0];
+        this.selectedSectionPrompts['conclusion'] = this.sectionPrompts['conclusion'][0];
       },
       error: (err) => {
         this.notificationService.showError('Error', 'Failed to load Article prompts');

@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit {
     this.loadOutOfStockProducts();
     this.initializeChartOptions();
     this.populateQuickFilters();
-    this.applyQuickFilter({ value: 'last14days' });
+    this.applyQuickFilter({ value: 'lastSixMonths' });
   }
 
   loadDashboardStats(): void {

@@ -77,7 +77,11 @@ export class DashboardComponent implements OnInit {
         this.updateChartData();
       },
       error: (error: any) => {
-        this.notificationService.showError('Stock Check Logs Error', 'Failed to load stock check logs.');
+        if (error.status === 404) {
+          this.notificationService.showError('Stock Check Logs Not Found', 'No stock check logs found for the specified date range.');
+        } else {
+          this.notificationService.showError('Stock Check Logs Error', 'Failed to load stock check logs.');
+        }
       }
     });
   }

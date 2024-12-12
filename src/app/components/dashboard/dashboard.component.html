@@ -119,7 +119,15 @@
     <div class="w-full bg-white rounded-lg p-8 shadow-lg overflow-x-auto">
         <h1 class="text-3xl font-bold mt-0 mb-6">Out of Stock Products</h1>
   
-        <p-table [value]="outOfStockProducts" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 25]" [totalRecords]="outOfStockProducts.length" dataKey="product.id" class="min-w-full">
+        <p-table 
+        [value]="outOfStockProducts" 
+        [paginator]="true" [rows]="5" 
+        [rowsPerPageOptions]="[5, 10, 25]" 
+        [totalRecords]="outOfStockProducts.length" 
+        dataKey="product.id" 
+        class="min-w-full"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+        [showCurrentPageReport]="true">
             <ng-template pTemplate="header">
                 <tr>
                     <th pSortableColumn="product.id" class="w-20 border-l border-t rounded-tl-md rounded-bl-md">ID <p-sortIcon field="product.id"></p-sortIcon></th>

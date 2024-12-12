@@ -41,7 +41,9 @@
           [(selection)]="selectedStores"
           dataKey="id"
           [tableStyle]="{ 'min-width': '75rem' }"
-          [rowHover]="true">
+          [rowHover]="true"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} stores"
+          [showCurrentPageReport]="true">
 
           <ng-template pTemplate="header">
             <tr>

@@ -28,7 +28,8 @@
         dataKey="id"
         [tableStyle]="{ 'min-width': '50rem'}"
         [rowHover]="true"
-      >
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} prompts"
+        [showCurrentPageReport]="true">
         <ng-template pTemplate="header">
           <tr>
             <th style="width: 3rem;" class="border-l border-t rounded-tl-md rounded-bl-md">

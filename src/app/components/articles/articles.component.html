@@ -45,7 +45,9 @@
             dataKey="id"
             [tableStyle]="{ 'min-width': '75rem' }"
             [rowHover]="true"
-        >
+            [rowHover]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} articles"
+            [showCurrentPageReport]="true">
         <ng-template pTemplate="header">
             <tr>
                 <th class="w-12 border-l border-t rounded-tl-md rounded-bl-md">

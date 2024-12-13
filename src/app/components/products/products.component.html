@@ -6,7 +6,7 @@
         <ng-template pTemplate="left">
           <p-button
             severity="success" 
-            label="New Product" 
+            label="New" 
             icon="pi pi-plus" 
             class="mr-2" 
             (onClick)="openNewProduct()" 
@@ -101,8 +101,6 @@
           </tr>
         </ng-template>
       </p-table>
-  
-      <p-confirmDialog></p-confirmDialog>
   
       <p-dialog 
     [(visible)]="addDialog" 

@@ -51,7 +51,7 @@ export class StoreService {
       queryParams += `&filter=${filter}`;
     }
   
-    return this.httpService.getBlob(`${this.endpoint}export${queryParams}`);
+    return this.httpService.getCSVBlob(`${this.endpoint}export${queryParams}`);
   }
   
 }

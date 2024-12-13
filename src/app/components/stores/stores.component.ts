@@ -192,7 +192,7 @@ export class StoresComponent implements OnInit {
       error: (err) => {
         console.error('Error exporting stores', err);
         this.notificationService.showError('Error', 'Failed to export stores.');
-        this.loading = false; 
+        this.loading = false;
       }
     });
   }

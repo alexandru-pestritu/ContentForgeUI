@@ -28,8 +28,8 @@ export class HttpService {
     return this.http.delete<T>(`${this.apiUrl}/${endpoint}`, { headers });
   }
 
-  getBlob(url: string): Observable<Blob> {
-    return this.http.get(url, { responseType: 'blob' });
+  getCSVBlob(endpoint: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${endpoint}`, { headers: { accept: "text/csv" }, responseType: 'blob' });
   }
   
 }

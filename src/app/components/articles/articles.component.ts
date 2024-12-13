@@ -361,13 +361,41 @@ export class ArticlesComponent implements OnInit {
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '')   
         .replace(/\s+/g, '-');  
-}
+  }
 
-decodeHtml(encodedString: string): string {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(encodedString, 'text/html');
-  return doc.documentElement.textContent || encodedString;
-}
+  decodeHtml(encodedString: string): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(encodedString, 'text/html');
+    return doc.documentElement.textContent || encodedString;
+  }
 
+  exportArticles(): void {
+    const sortField = this.dt?.sortField || undefined;
+    const sortOrder = this.dt?.sortOrder || undefined;
+    const globalFilter = Array.isArray(this.dt?.filters?.['global'])
+    ? this.dt?.filters?.['global']?.[0]?.value
+    : this.dt?.filters?.['global']?.value || undefined;
 
+    const skip = this.dt?.first || 0;
+    const limit = this.dt?.rows || this.rows;
+    
+    this.loading = true;
+    this.articleService.exportArticles(skip, limit, sortField, sortOrder, globalFilter).subscribe({
+      next: (blob) => {
+        const a = document.createElement('a');
+        const objectUrl = URL.createObjectURL(blob);
+        a.href = objectUrl;
+        a.download = 'articles_export.csv';
+        a.click();
+        URL.revokeObjectURL(objectUrl);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error exporting articles', err);
+        this.notificationService.showError('Error', 'Failed to export articles.');
+        this.loading = false;
+      }
+    });
+  }
+  
 }

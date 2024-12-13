@@ -56,4 +56,16 @@ export class PromptService {
     }
     return this.httpService.get<Prompt[]>(url);
   }
+
+  exportPrompts(skip: number = 0, limit: number = 10, sortField?: string, sortOrder?: number, filter?: string): Observable<Blob> {
+    let queryParams = `?skip=${skip}&limit=${limit}`;
+    if (sortField) {
+      queryParams += `&sort_field=${sortField}&sort_order=${sortOrder}`;
+    }
+    if (filter) {
+      queryParams += `&filter=${filter}`;
+    }
+  
+    return this.httpService.getCSVBlob(`${this.endpoint}export${queryParams}`);
+  }
 }

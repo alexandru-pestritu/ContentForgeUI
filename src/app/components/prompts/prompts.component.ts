@@ -248,4 +248,34 @@ export class PromptsComponent implements OnInit {
     return !!prompt.name && !!prompt.type && !!prompt.subtype && !!prompt.text && 
     prompt.text.includes("{output}");
   }
+
+  exportPrompts(): void {
+    const sortField = this.dt?.sortField || undefined;
+    const sortOrder = this.dt?.sortOrder || undefined;
+    const globalFilter = Array.isArray(this.dt?.filters?.['global'])
+    ? this.dt?.filters?.['global']?.[0]?.value
+    : this.dt?.filters?.['global']?.value || undefined;
+
+    const skip = this.dt?.first || 0;
+    const limit = this.dt?.rows || this.rows;
+    
+    this.loading = true;
+    this.promptService.exportPrompts(skip, limit, sortField, sortOrder, globalFilter).subscribe({
+      next: (blob) => {
+        const a = document.createElement('a');
+        const objectUrl = URL.createObjectURL(blob);
+        a.href = objectUrl;
+        a.download = 'prompts_export.csv';
+        a.click();
+        URL.revokeObjectURL(objectUrl);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error exporting prompts', err);
+        this.notificationService.showError('Error', 'Failed to export prompts.');
+        this.loading = false;
+      }
+    });
+  }
+  
 }

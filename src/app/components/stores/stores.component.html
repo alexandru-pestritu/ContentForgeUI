@@ -18,6 +18,19 @@
                   [disabled]="!selectedStores || !selectedStores.length" />
           </ng-template>
           <ng-template pTemplate="right">
+            <p-button 
+            severity="primary" 
+            label="Import" 
+            icon="pi pi-plus"
+            class="mr-2"/>
+            <p-button 
+            severity="help" 
+            label="Export" 
+            icon="pi pi-upload"
+            (onClick)="exportStores()"
+            [disabled]="loading"
+            [loading]="loading"
+            class="mr-2"/>
               <span class="p-input-icon-left">
                   <i class="pi pi-search"></i>
                   <input 

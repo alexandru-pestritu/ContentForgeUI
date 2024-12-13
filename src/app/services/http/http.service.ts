@@ -27,4 +27,9 @@ export class HttpService {
   delete<T>(endpoint: string, headers?: HttpHeaders): Observable<T> {
     return this.http.delete<T>(`${this.apiUrl}/${endpoint}`, { headers });
   }
+
+  getBlob(url: string): Observable<Blob> {
+    return this.http.get(url, { responseType: 'blob' });
+  }
+  
 }

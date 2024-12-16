@@ -28,13 +28,13 @@
                 (onClick)="importDialog.open()"/>
                 <app-export-button
                 [entityType]="'article'"
-                [skip]="currentSkip"
-                [limit]="currentLimit"
-                [sortField]="currentSortField"
-                [sortOrder]="currentSortOrder"
-                [filter]="currentFilter"
+                [skip]="_currentSkip"
+                [limit]="_currentLimit"
+                [sortField]="_currentSortField"
+                [sortOrder]="_currentSortOrder"
+                [filter]="_currentFilter"
                 [loading]="loading"
-                ></app-export-button>
+              ></app-export-button>
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
                     <input 

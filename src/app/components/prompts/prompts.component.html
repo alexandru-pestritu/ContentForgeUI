@@ -15,13 +15,13 @@
             class="mr-2"
             (onClick)="importDialog.open()"/>
             <app-export-button
-              [entityType]="'prompt'"
-              [skip]="currentSkip"
-              [limit]="currentLimit"
-              [sortField]="currentSortField"
-              [sortOrder]="currentSortOrder"
-              [filter]="currentFilter"
-              [loading]="loading"
+                [entityType]="'article'"
+                [skip]="_currentSkip"
+                [limit]="_currentLimit"
+                [sortField]="_currentSortField"
+                [sortOrder]="_currentSortOrder"
+                [filter]="_currentFilter"
+                [loading]="loading"
               ></app-export-button>
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>

@@ -33,6 +33,12 @@ export class StoresComponent implements OnInit {
   importTaskId: string | null = null;
   taskComplete: boolean = false;
 
+  _currentSkip: number = 0;
+  _currentLimit: number = 10;
+  _currentSortField?: string;
+  _currentSortOrder?: number;
+  _currentFilter?: string;
+
   constructor(
     private storeService: StoreService,
     private notificationService: NotificationService,
@@ -67,6 +73,12 @@ export class StoresComponent implements OnInit {
     const sortField = Array.isArray(event.sortField) ? event.sortField[0] : event.sortField || undefined;
     const sortOrder = event.sortOrder || undefined;
     const globalFilter = Array.isArray(event.globalFilter) ? event.globalFilter[0] : event.globalFilter || undefined;
+
+    this._currentSkip = skip;
+    this._currentLimit = limit;
+    this._currentSortField = sortField;
+    this._currentSortOrder = sortOrder;
+    this._currentFilter = globalFilter;
 
     this.loadStores(skip, limit, sortField, sortOrder, globalFilter);
   }
@@ -175,29 +187,6 @@ export class StoresComponent implements OnInit {
     if (this.dt) {
       this.dt.filterGlobal(target.value, 'contains');
     }
-  }
-
-  get currentSortField(): string | undefined {
-    return Array.isArray(this.dt?.sortField) ? this.dt?.sortField[0] : this.dt?.sortField || undefined;
-  }
-
-  get currentSortOrder(): number | undefined {
-    return this.dt?.sortOrder || undefined;
-  }
-
-  get currentFilter(): string | undefined {
-    const globalFilter = Array.isArray(this.dt?.filters?.['global'])
-      ? this.dt?.filters?.['global']?.[0]?.value
-      : this.dt?.filters?.['global']?.value || undefined;
-    return globalFilter;
-  }
-
-  get currentSkip(): number {
-    return this.dt?.first || 0;
-  }
-
-  get currentLimit(): number {
-    return this.dt?.rows || this.rows;
   }
 
   handleImportDialogClosed() {

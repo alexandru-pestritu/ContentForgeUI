@@ -1,0 +1,92 @@
+<p-dialog 
+  [(visible)]="visible" 
+  [style]="{ width: '800px' }" 
+  header="Import {{entityType | titlecase}}" 
+  [modal]="true" 
+  (onHide)="close()"
+>
+  <ng-template pTemplate="content">
+    <p-fileUpload 
+      name="file" 
+      [customUpload]="true" 
+      accept=".csv" 
+      (uploadHandler)="startImport()" 
+      (onSelect)="onFileSelected($event)"
+      (onRemove)="onFileRemoved($event)"
+      [disabled]="importloading || retryloading || taskComplete"
+    >
+      <ng-template 
+        pTemplate="header" 
+        let-chooseCallback="chooseCallback" 
+        let-uploadCallback="uploadCallback"
+      >
+        <div class="flex justify-content-between align-items-center">
+          <div class="flex gap-2">
+            <p-button 
+              label="Choose File" 
+              icon="pi pi-folder-open" 
+              class="p-button-primary" 
+              (onClick)="chooseCallback()"
+              [disabled]="importloading || retryloading || taskComplete"
+              severity="secondary"
+            ></p-button>
+            
+            <p-button 
+              label="Start Import" 
+              icon="pi pi-play" 
+              class="p-button-success" 
+              (onClick)="uploadCallback()"
+              [disabled]="!selectedFile || importloading || retryloading || taskComplete"
+              severity="primary"
+              [loading]="importloading"
+            ></p-button>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="file">
+        <p *ngIf="selectedFile">
+              <i class="pi pi-file-excel"></i>  {{ selectedFile.name }} - {{ formatSize(selectedFile.size) }}
+        </p>
+    </ng-template>
+    </p-fileUpload>
+
+    <p-table 
+      [value]="importEntries"
+      [tableStyle]="{'min-width': '45rem'}"
+      styleClass="mt-4"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="border-l border-t rounded-tl-md rounded-bl-md">Index</th>
+          <th class="border-t">Name</th>
+          <th class="border-t">Status</th>
+          <th class="border-r border-t rounded-tr-md rounded-br-md">Error</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-entry let-i="rowIndex">
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ entry.data?.name }}</td>
+          <td>
+            <p-tag *ngIf="entry.status == 'pending'" severity="warning" value="Pending" styleClass="w-16"></p-tag>
+            <p-tag *ngIf="entry.status == 'success'" severity="success" value="Success" styleClass="w-16"></p-tag>
+            <p-tag *ngIf="entry.status == 'failed'" severity="danger" value="Failed" styleClass="w-16"></p-tag>
+          </td>
+          <td>{{ entry.error_message }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Retry Failed" 
+      icon="pi pi-refresh" 
+      class="mt-2"
+      (onClick)="retryFailed()"
+      [disabled]="importloading || retryloading || !taskComplete"
+      [loading]="retryloading"
+      severity="secondary"
+    ></p-button>
+  </ng-template>
+</p-dialog>

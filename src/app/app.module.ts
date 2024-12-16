@@ -51,6 +51,8 @@ import { DataViewModule } from 'primeng/dataview';
 import { TruncatePipe } from './pipes/truncate-pipe';
 import { CalendarModule } from 'primeng/calendar';
 import { ChartModule } from 'primeng/chart';
+import { FileUploadModule } from 'primeng/fileupload';
+import { ImportDialogComponent } from './components/import-dialog/import-dialog.component';
 
 
 @NgModule({
@@ -65,7 +67,8 @@ import { ChartModule } from 'primeng/chart';
     ProductContentComponent,
     ArticleContentComponent,
     WidgetsGeneratorComponent,
-    TruncatePipe
+    TruncatePipe,
+    ImportDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -104,7 +107,8 @@ import { ChartModule } from 'primeng/chart';
     CardModule,
     DataViewModule,
     CalendarModule,
-    ChartModule
+    ChartModule,
+    FileUploadModule
   ],
   providers: [
     provideHttpClient(withFetch()),

@@ -5,6 +5,8 @@ import { NotificationService } from '../../services/notification/notification.se
 import { ConfirmationService } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { isValidUrl } from '../../services/validators/validators';
+import { WebsocketImportService } from '../../services/websocket/websocket-import.service';
+import {ImportEntry} from '../../models/import/import-entry';
 
 @Component({
   selector: 'app-stores',
@@ -25,10 +27,17 @@ export class StoresComponent implements OnInit {
   uploadToWordPress: boolean = true;
   loading: boolean = false;
 
+  importDialog: boolean = false;
+  selectedFile: File | null = null;
+  importEntries: ImportEntry[] = [];
+  importTaskId: string | null = null;
+  taskComplete: boolean = false;
+
   constructor(
     private storeService: StoreService,
     private notificationService: NotificationService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private webSocketImportService: WebsocketImportService
   ) {}
 
   ngOnInit(): void {
@@ -196,5 +205,8 @@ export class StoresComponent implements OnInit {
       }
     });
   }
-  
+
+  handleImportDialogClosed() {
+    this.loadStores(0, this.rows);
+  }
 }

@@ -12,7 +12,8 @@
             severity="primary" 
             label="Import" 
             icon="pi pi-plus"
-            class="mr-2"/>
+            class="mr-2"
+            (onClick)="importDialog.open()"/>
             <p-button 
             severity="help" 
             label="Export" 
@@ -271,6 +272,11 @@
           </div>
         </ng-template>
       </p-dialog>
+      <app-import-dialog 
+  #importDialog
+  [entityType]="'prompt'"
+  (closed)="handleImportDialogClosed()"
+></app-import-dialog>
     </div>
   </div>
   

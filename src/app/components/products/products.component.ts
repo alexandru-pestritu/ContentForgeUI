@@ -335,5 +335,8 @@ export class ProductsComponent implements OnInit {
     });
   }
   
+  handleImportDialogClosed() {
+    this.loadProducts(0, this.rows);
+  }
 }
 

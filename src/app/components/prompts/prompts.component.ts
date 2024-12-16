@@ -278,4 +278,7 @@ export class PromptsComponent implements OnInit {
     });
   }
   
+  handleImportDialogClosed() {
+    this.loadPrompts(0, this.rows);
+  }
 }

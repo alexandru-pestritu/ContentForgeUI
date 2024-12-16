@@ -398,4 +398,7 @@ export class ArticlesComponent implements OnInit {
     });
   }
   
+  handleImportDialogClosed() {
+    this.loadArticles(0, this.rows);
+  }
 }

@@ -15,7 +15,7 @@ export class ExportButtonComponent implements OnInit {
   @Input() sortField?: string;
   @Input() sortOrder?: number;
   @Input() filter?: string;
-  @Input() loading: boolean = false;
+  loading: boolean = false;
 
   constructor(
     private exporterService: ExporterService,

@@ -249,33 +249,27 @@ export class PromptsComponent implements OnInit {
     prompt.text.includes("{output}");
   }
 
-  exportPrompts(): void {
-    const sortField = this.dt?.sortField || undefined;
-    const sortOrder = this.dt?.sortOrder || undefined;
-    const globalFilter = Array.isArray(this.dt?.filters?.['global'])
-    ? this.dt?.filters?.['global']?.[0]?.value
-    : this.dt?.filters?.['global']?.value || undefined;
+  get currentSortField(): string | undefined {
+    return Array.isArray(this.dt?.sortField) ? this.dt?.sortField[0] : this.dt?.sortField || undefined;
+  }
 
-    const skip = this.dt?.first || 0;
-    const limit = this.dt?.rows || this.rows;
-    
-    this.loading = true;
-    this.promptService.exportPrompts(skip, limit, sortField, sortOrder, globalFilter).subscribe({
-      next: (blob) => {
-        const a = document.createElement('a');
-        const objectUrl = URL.createObjectURL(blob);
-        a.href = objectUrl;
-        a.download = 'prompts_export.csv';
-        a.click();
-        URL.revokeObjectURL(objectUrl);
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error exporting prompts', err);
-        this.notificationService.showError('Error', 'Failed to export prompts.');
-        this.loading = false;
-      }
-    });
+  get currentSortOrder(): number | undefined {
+    return this.dt?.sortOrder || undefined;
+  }
+
+  get currentFilter(): string | undefined {
+    const globalFilter = Array.isArray(this.dt?.filters?.['global'])
+      ? this.dt?.filters?.['global']?.[0]?.value
+      : this.dt?.filters?.['global']?.value || undefined;
+    return globalFilter;
+  }
+
+  get currentSkip(): number {
+    return this.dt?.first || 0;
+  }
+
+  get currentLimit(): number {
+    return this.dt?.rows || this.rows;
   }
   
   handleImportDialogClosed() {

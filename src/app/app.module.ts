@@ -53,6 +53,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { ChartModule } from 'primeng/chart';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ImportDialogComponent } from './components/import-dialog/import-dialog.component';
+import { ExportButtonComponent } from './components/export-button/export-button.component';
 
 
 @NgModule({
@@ -68,7 +69,8 @@ import { ImportDialogComponent } from './components/import-dialog/import-dialog.
     ArticleContentComponent,
     WidgetsGeneratorComponent,
     TruncatePipe,
-    ImportDialogComponent
+    ImportDialogComponent,
+    ExportButtonComponent
   ],
   imports: [
     BrowserModule,

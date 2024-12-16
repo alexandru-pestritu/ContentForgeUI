@@ -26,14 +26,15 @@
             icon="pi pi-plus"
             class="mr-2"
             (onClick)="importDialog.open()"/>
-            <p-button 
-            severity="help" 
-            label="Export" 
-            icon="pi pi-upload"
-            (onClick)="exportProducts()"
-            [disabled]="loading"
-            [loading]="loading" 
-            class="mr-2"/>
+            <app-export-button
+              [entityType]="'product'"
+              [skip]="currentSkip"
+              [limit]="currentLimit"
+              [sortField]="currentSortField"
+              [sortOrder]="currentSortOrder"
+              [filter]="currentFilter"
+              [loading]="loading"
+            ></app-export-button>
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input 

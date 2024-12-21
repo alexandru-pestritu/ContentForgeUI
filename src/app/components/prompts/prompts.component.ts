@@ -7,6 +7,7 @@ import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { forkJoin, Observable } from 'rxjs';
 import { TypesAndSubtypesResponse } from '../../models/prompt/types-and-subtypes-response';
 import { Editor } from 'primeng/editor';
+import { PlaceholderService } from '../../services/placeholder/placeholder.service';
 
 @Component({
   selector: 'app-prompts',
@@ -44,6 +45,7 @@ export class PromptsComponent implements OnInit {
 
   constructor(
     private promptService: PromptService,
+    private placeholderService: PlaceholderService,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService
   ) {}
@@ -230,7 +232,7 @@ export class PromptsComponent implements OnInit {
 
   loadPlaceholders(type: string) {
     this.placeholders = [];
-    this.promptService.getPlaceholdersByType(type).subscribe({
+    this.placeholderService.getPlaceholdersByType(type).subscribe({
       next: (data) => {
         this.placeholders = data;
       },

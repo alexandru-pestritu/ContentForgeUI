@@ -43,11 +43,6 @@ export class PromptService {
   getTypesAndSubtypes(): Observable<TypesAndSubtypesResponse> {
     return this.httpService.get<TypesAndSubtypesResponse>(`${this.endpoint}types-subtypes/`);
   }
-  
-
-  getPlaceholdersByType(type: string): Observable<string[]> {
-    return this.httpService.get<string[]>(`${this.endpoint}placeholders/${type}`);
-  }
 
   getPromptsByTypeAndOptionalSubtype(type: string, subtype?: string): Observable<Prompt[]> {
     let url = `${this.endpoint}${type}`;

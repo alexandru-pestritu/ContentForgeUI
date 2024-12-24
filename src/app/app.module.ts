@@ -54,6 +54,7 @@ import { ChartModule } from 'primeng/chart';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ImportDialogComponent } from './components/import-dialog/import-dialog.component';
 import { ExportButtonComponent } from './components/export-button/export-button.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { ExportButtonComponent } from './components/export-button/export-button.
     WidgetsGeneratorComponent,
     TruncatePipe,
     ImportDialogComponent,
-    ExportButtonComponent
+    ExportButtonComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

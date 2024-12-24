@@ -11,6 +11,7 @@ import { PromptsComponent } from './components/prompts/prompts.component';
 import { ProductContentComponent } from './components/product-content/product-content.component';
 import { ArticleContentComponent } from './components/article-content/article-content.component';
 import { WidgetsGeneratorComponent } from './components/widgets-generator/widgets-generator.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'ai/product', component: ProductContentComponent, canActivate: [AuthGuard]},
   { path: 'ai/article', component: ArticleContentComponent, canActivate: [AuthGuard]},
   { path: 'widgets/generate', component: WidgetsGeneratorComponent, canActivate: [AuthGuard]},
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: '/dashboard' }
 ];

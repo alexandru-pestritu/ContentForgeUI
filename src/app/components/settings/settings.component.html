@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-gray-100 p-1">
+  <div *ngFor="let category of categories" class="m-3 bg-white rounded-lg p-8 shadow mb-6">
+    <div class="flex items-center mb-6">
+      <i class="pi" [ngClass]="getIconForCategory(category)" class="mr-2 text-2xl" style="color: #3B82F6; font-weight: bold;"></i>
+      <h2 class="text-2xl font-bold mt-0 mb-0">{{ category }}</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div *ngFor="let setting of getSortedSettingsByCategory(category)" class="mt-1">
+        <label class="block mb-2">{{ setting.description }}</label>
+        <ng-container *ngIf="isApiKeySetting(setting.key); else regularInput">
+          <p-password
+            [(ngModel)]="setting.value"
+            [toggleMask]="true"
+            (onInput)="onInputChange(setting, $event)"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+            [feedback]="false"
+          ></p-password>
+        </ng-container>
+        <ng-template #regularInput>
+          <ng-container *ngIf="isAIProviderSetting(setting.key); else aiModel">
+            <p-dropdown
+              [options]="aiProviders"
+              [(ngModel)]="setting.value"
+              (onChange)="onAIProviderChange(setting.value)"
+              placeholder="Select AI Provider"
+              styleClass="w-full"
+            ></p-dropdown>
+          </ng-container>
+          <ng-template #aiModel>
+            <ng-container *ngIf="isAIModelSetting(setting.key); else defaultInput">
+              <p-dropdown
+                [options]="filteredModels"
+                [(ngModel)]="selectedAIModel"
+                (onChange)="onAIModelChange(selectedAIModel || '')"
+                placeholder="Select AI Model"
+                styleClass="w-full"
+              ></p-dropdown>
+            </ng-container>
+            <ng-template #defaultInput>
+              <input
+                pInputText
+                [type]="setting.type === 'integer' || setting.type === 'float' ? 'number' : 'text'"
+                [value]="setting.value"
+                (change)="onInputChange(setting, $event)"
+                class="w-full"
+              />
+            </ng-template>
+          </ng-template>
+        </ng-template>
+      </div>
+    </div>
+    <div *ngIf="category.startsWith('Images - ')">
+        <p class="pt-2 mb-0">Available placeholders: <p-tag *ngFor="let placeholder of placeholdersByType[getPlaceholderType(category)]" value="{{ placeholder }}" severity="secondary" styleClass="mr-1"/></p>
+    </div>
+  </div>
+</div>

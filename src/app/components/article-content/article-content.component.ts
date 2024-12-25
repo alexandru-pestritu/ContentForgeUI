@@ -5,6 +5,7 @@ import { AIService } from '../../services/ai/ai.service';
 import { Article } from '../../models/article/article';
 import { Prompt } from '../../models/prompt/prompt';
 import { NotificationService } from '../../services/notification/notification.service';
+import { SettingsService } from '../../services/settings/settings.service';
 
 @Component({
   selector: 'app-article-content',
@@ -36,6 +37,8 @@ export class ArticleContentComponent implements OnInit {
 
   providers: string[] = [];
   models: { provider: string, model: string, cost: string }[] = [];
+  defaultProvider: string | null = null;
+  defaultModel: string | null = null;
   
   sectionPrompts: { [key: string]: Prompt[] } = {};
   selectedSectionPrompts: { [key: string]: Prompt | null } = {
@@ -87,10 +90,12 @@ export class ArticleContentComponent implements OnInit {
     private articleService: ArticleService,
     private promptService: PromptService,
     private aiService: AIService,
+    private settingsService: SettingsService,
     private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
+    this.loadDefaults();
     this.loadPrompts();
     this.loadProvidersAndModels();
   }
@@ -122,9 +127,46 @@ export class ArticleContentComponent implements OnInit {
             });
           }
         }
+
+        if (this.defaultProvider) {
+          Object.keys(this.sectionEnabled).forEach(section => {
+            if (this.defaultProvider) {
+              this.updateModelsForProvider(section, this.defaultProvider);
+            }
+          });
+        }
       },
-      error: (err) => {
+      error: () => {
         this.notificationService.showError('Error', 'Failed to load providers');
+      }
+    });
+  }
+
+  updateModelsForProvider(section: string, provider: string): void {
+    this.sectionModels[section] = this.models.filter(model => model.provider === provider);
+
+    if (this.defaultModel) {
+      const defaultModel = this.sectionModels[section].find(m => m.model === this.defaultModel);
+      this.selectedSectionModels[section] = defaultModel || null;
+    }
+  }
+
+  loadDefaults(): void {
+    this.settingsService.getSettings().subscribe({
+      next: (settings) => {
+        const providerSetting = settings.find(s => s.key === 'ai.provider.default');
+        const modelSetting = settings.find(s => s.key === 'ai.model.default');
+        this.defaultProvider = providerSetting?.value || null;
+        this.defaultModel = modelSetting?.value || null;
+
+        if (this.defaultProvider) {
+          Object.keys(this.sectionEnabled).forEach(section => {
+            this.selectedSectionProviders[section] = this.defaultProvider;
+          });
+        }
+      },
+      error: () => {
+        this.notificationService.showError('Error', 'Failed to load default settings.');
       }
     });
   }

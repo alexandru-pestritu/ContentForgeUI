@@ -5,6 +5,7 @@ import { AIService } from '../../services/ai/ai.service';
 import { Product } from '../../models/product/product';
 import { Prompt } from '../../models/prompt/prompt';
 import { NotificationService } from '../../services/notification/notification.service';
+import { SettingsService } from '../../services/settings/settings.service';
 
 @Component({
   selector: 'app-product-content',
@@ -52,6 +53,9 @@ export class ProductContentComponent implements OnInit {
 
   providers: string[] = [];
   models: { provider: string, model: string, cost: string }[] = [];
+  defaultProvider: string | null = null;
+  defaultModel: string | null = null;
+
   prosList: string[] = [];
   consList: string[] = [];
   isUpdatingProduct: boolean = false;
@@ -60,10 +64,12 @@ export class ProductContentComponent implements OnInit {
     private productService: ProductService,
     private promptService: PromptService,
     private aiService: AIService,
+    private settingsService: SettingsService,
     private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
+    this.loadDefaults();
     this.loadPrompts();
     this.loadProvidersAndModels();
   }
@@ -90,15 +96,48 @@ export class ProductContentComponent implements OnInit {
         this.providers = Object.keys(data);
         for (const provider in data) {
           if (data.hasOwnProperty(provider)) {
-            const models = data[provider]; 
+            const models = data[provider];
             models.forEach((modelInfo: { model: string, cost: string }) => {
               this.models.push({ provider: provider, model: modelInfo.model, cost: modelInfo.cost });
             });
           }
         }
+
+        if (this.defaultProvider) {
+          this.updateModelsForProvider('review', this.defaultProvider);
+          this.updateModelsForProvider('prosCons', this.defaultProvider);
+        }
       },
-      error: (err) => {
+      error: () => {
         this.notificationService.showError('Error', 'Failed to load providers');
+      }
+    });
+  }
+
+  updateModelsForProvider(section: string, provider: string): void {
+    this.sectionState[section].models = this.models.filter(model => model.provider === provider);
+
+    if (this.defaultModel) {
+      const defaultModel = this.sectionState[section].models.find((m: { provider: string, model: string, cost: string }) => m.model === this.defaultModel);
+      this.sectionState[section].model = defaultModel || null;
+    }
+  }
+
+  loadDefaults(): void {
+    this.settingsService.getSettings().subscribe({
+      next: (settings) => {
+        const providerSetting = settings.find(s => s.key === 'ai.provider.default');
+        const modelSetting = settings.find(s => s.key === 'ai.model.default');
+        this.defaultProvider = providerSetting?.value || null;
+        this.defaultModel = modelSetting?.value || null;
+
+        if (this.defaultProvider) {
+          this.sectionState['review'].provider = this.defaultProvider;
+          this.sectionState['prosCons'].provider = this.defaultProvider;
+        }
+      },
+      error: () => {
+        this.notificationService.showError('Error', 'Failed to load default settings.');
       }
     });
   }

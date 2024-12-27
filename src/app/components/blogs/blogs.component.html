@@ -1,0 +1,179 @@
+<div class="min-h-screen flex items-start justify-center bg-gray-100">
+    <div class="w-full m-3 p-8">
+  
+      <h1 class="text-3xl font-bold mb-6">Manage Blogs</h1>
+  
+      <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 w-full">
+        <div 
+          *ngFor="let blog of blogs"
+          class="flex flex-col cursor-pointer justify-center items-center"
+        >
+          <p-card
+            [class]="cardClass + ' w-full'"
+            styleClass="h-48"
+          >
+            <ng-template pTemplate="header">
+              <div class="relative flex justify-center items-center">
+                <i 
+                  class="pi pi-cog absolute top-0 right-0 m-3 text-xl cursor-pointer"
+                  (click)="onEditBlog(blog)"
+                ></i>
+              </div>
+            </ng-template>
+  
+            <div 
+              class="text-center p-2"
+              (click)="onSelectBlog(blog)"
+            >
+            <img 
+                  *ngIf="blog.logo_url"
+                  [src]="blog.logo_url" 
+                  alt="Blog Logo" 
+                  class="h-12 w-3/4 object-contain" 
+                />
+
+              <p class="text-gray-500 break-all">{{ blog.base_url }}</p>
+            </div>
+          </p-card>
+        </div>
+  
+        <div 
+          class="flex flex-col cursor-pointer justify-center items-center"
+        >
+          <p-card
+            class="w-full"
+            styleClass="h-48"
+          >
+            <div 
+              class="text-center p-2 mt-2"
+              (click)="onAddNewBlog()"
+            >
+                <i class="pi pi-plus text-2xl"></i>
+              <p class="text-lg font-bold">Add a new blog</p>
+            </div>
+          </p-card>
+        </div>
+      </div>
+  
+      <p-dialog 
+        [(visible)]="blogDialogVisible" 
+        [style]="{ width: '450px' }" 
+        [modal]="true"
+        header="{{ editingBlog.id ? 'Edit Blog' : 'New Blog' }}"
+        styleClass="p-fluid"
+      >
+        <ng-template pTemplate="content">
+          <div class="field">
+            <label for="blog_name">Name</label>
+            <input 
+              id="blog_name"
+              type="text" 
+              pInputText 
+              [(ngModel)]="editingBlog.name"
+              class="mt-2" 
+              required
+            />
+            <small 
+              class="p-error pt-2" 
+              *ngIf="submitted && !editingBlog.name"
+            >
+              Name is required.
+            </small>
+          </div>
+  
+          <div class="field mt-4">
+            <label for="base_url">Base URL</label>
+            <input 
+              id="base_url"
+              type="text" 
+              pInputText 
+              [(ngModel)]="editingBlog.base_url"
+              class="mt-2" 
+              required
+            />
+            <small 
+              class="p-error pt-2" 
+              *ngIf="submitted && !editingBlog.base_url"
+            >
+              Base URL is required.
+            </small>
+          </div>
+  
+          <div class="field mt-4">
+            <label for="username">Username</label>
+            <input 
+              id="username"
+              type="text" 
+              pInputText 
+              [(ngModel)]="editingBlog.username"
+              class="mt-2" 
+              required
+            />
+            <small 
+              class="p-error pt-2" 
+              *ngIf="submitted && !editingBlog.username"
+            >
+              Username is required.
+            </small>
+          </div>
+  
+          <div class="field mt-4">
+            <label for="api_key">API Key</label>
+            <p-password
+            [(ngModel)]="editingBlog.api_key"
+            [toggleMask]="true"
+            styleClass="w-full mt-2"
+            inputStyleClass="w-full"
+            [feedback]="false"
+          ></p-password>
+            <small 
+              class="p-error pt-2" 
+              *ngIf="submitted && !editingBlog.api_key"
+            >
+              API Key is required.
+            </small>
+          </div>
+  
+          <div class="field mt-4">
+            <label for="logo_url">Logo URL</label>
+            <input 
+              id="logo_url"
+              type="text" 
+              pInputText 
+              [(ngModel)]="editingBlog.logo_url"
+              class="mt-2"
+            />
+          </div>
+        </ng-template>
+  
+        <ng-template pTemplate="footer">
+          <p-button 
+            *ngIf="editingBlog?.id"
+            label="Delete"
+            icon="pi pi-trash" 
+            severity="danger"
+            styleClass="mr-2"
+            (onClick)="onDeleteBlog()" 
+            [disabled]="loading" 
+          ></p-button>
+  
+          <p-button
+            *ngIf="!editingBlog?.id" 
+            label="Cancel" 
+            icon="pi pi-times" 
+            [text]="true"
+            (onClick)="hideDialog()" 
+            [disabled]="loading"
+          ></p-button>
+          <p-button 
+            label="Save"
+            icon="pi pi-check"
+            (onClick)="saveBlog()" 
+            [disabled]="loading"
+            [loading]="loading"
+          ></p-button>
+        </ng-template>
+      </p-dialog>
+    </div>
+  </div>
+  

@@ -55,6 +55,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { ImportDialogComponent } from './components/import-dialog/import-dialog.component';
 import { ExportButtonComponent } from './components/export-button/export-button.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { BlogsComponent } from './components/blogs/blogs.component';
 
 
 @NgModule({
@@ -72,7 +73,8 @@ import { SettingsComponent } from './components/settings/settings.component';
     TruncatePipe,
     ImportDialogComponent,
     ExportButtonComponent,
-    SettingsComponent
+    SettingsComponent,
+    BlogsComponent
   ],
   imports: [
     BrowserModule,

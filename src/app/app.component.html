@@ -6,16 +6,66 @@
         <p-image src="../assets/logo.png" height="55" class="mr-3 ml-1"></p-image>
     </ng-template>
     <ng-template pTemplate="end">
-        <div class="flex items-center">
-            <p-menu #userMenu [popup]="true" [model]="userItems" class="border-0"></p-menu>
-            <p-avatar 
-                icon="pi pi-user" 
-                styleClass="mr-2" 
-                [style]="{ 'background-color': '#dee9fc', color: '#1a2551', cursor: 'pointer'}" 
-                size="large" 
-                (click)="userMenu.toggle($event)"/>
-        </div>
+      <p-dropdown
+        #blogDropdown
+        *ngIf="blogDropdownOptions.length"
+        [options]="blogDropdownOptions"
+        [filter]="false"
+        [showClear]="false"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="selectedBlogId"
+        placeholder="Select Blog..."
+        (onChange)="onChangeBlog($event)"
+        styleClass="mr-3"
+      >
+        <ng-template let-opt pTemplate="item">
+          <div class="flex items-center">
+            <img
+                *ngIf="opt.favicon_url"
+                [src]="opt.favicon_url"
+                alt=""
+                style="width: 20px; height: 20px; margin-right: 8px;"
+            />
+            <span>{{ opt.label }}</span>
+          </div>
+        </ng-template>
+        <ng-template let-opt pTemplate="selectedItem">
+            <div class="flex items-center">
+              <img
+                  *ngIf="opt.favicon_url"
+                  [src]="opt.favicon_url"
+                  alt=""
+                  style="width: 20px; height: 20px; margin-right: 8px;"
+              />
+              <span>{{ opt.label }}</span>
+            </div>
+          </ng-template>
+        <ng-template pTemplate="footer">
+            <div>
+              <p-button 
+                label="Manage Blogs" 
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                (click)="gotoManageBlogs(blogDropdown)"
+                styleClass="w-full bg-transparent text-left border-white border-t-gray-200 rounded-none text-gray-500 text-sm py-2 px-4 text-center focus:shadow-none font-normal" 
+              ></p-button>
+            </div>
+          </ng-template>
+
+      </p-dropdown>
+  
+      <p-menu #userMenu [popup]="true" [model]="userItems"></p-menu>
+      <p-avatar 
+        icon="pi pi-user" 
+        styleClass="mr-2" 
+        [style]="{ 'background-color': '#dee9fc', color: '#1a2551', cursor: 'pointer'}" 
+        size="large" 
+        (click)="userMenu.toggle($event)"
+      >
+      </p-avatar>
     </ng-template>
-</p-menubar>
+  </p-menubar>
+  
 
 <router-outlet></router-outlet>

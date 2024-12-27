@@ -12,20 +12,26 @@ import { ProductContentComponent } from './components/product-content/product-co
 import { ArticleContentComponent } from './components/article-content/article-content.component';
 import { WidgetsGeneratorComponent } from './components/widgets-generator/widgets-generator.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { BlogsComponent } from './components/blogs/blogs.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'stores', component: StoresComponent, canActivate: [AuthGuard] },
-  { path:'products', component: ProductsComponent, canActivate: [AuthGuard]},
-  { path: 'articles', component: ArticlesComponent, canActivate: [AuthGuard]},
-  { path:'ai/prompts', component: PromptsComponent, canActivate: [AuthGuard]},
-  { path: 'ai/product', component: ProductContentComponent, canActivate: [AuthGuard]},
-  { path: 'ai/article', component: ArticleContentComponent, canActivate: [AuthGuard]},
-  { path: 'widgets/generate', component: WidgetsGeneratorComponent, canActivate: [AuthGuard]},
-  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: '/dashboard' }
+  
+  { path: 'blogs', component: BlogsComponent, canActivate: [AuthGuard] },
+
+  { path: ':blogId/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: ':blogId/stores', component: StoresComponent, canActivate: [AuthGuard] },
+  { path: ':blogId/products', component: ProductsComponent, canActivate: [AuthGuard] },
+  { path: ':blogId/articles', component: ArticlesComponent, canActivate: [AuthGuard] },
+  { path: ':blogId/ai/prompts', component: PromptsComponent, canActivate: [AuthGuard] },
+  { path: ':blogId/ai/product', component: ProductContentComponent, canActivate: [AuthGuard] },
+  { path: ':blogId/ai/article', component: ArticleContentComponent, canActivate: [AuthGuard] },
+  { path: ':blogId/widgets/generate', component: WidgetsGeneratorComponent, canActivate: [AuthGuard] },
+  
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+
+  { path: '', redirectTo: '/blogs', pathMatch: 'full' },
+  { path: '**', redirectTo: '/blogs' }
 ];
 
 @NgModule({

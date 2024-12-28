@@ -56,6 +56,8 @@ import { ImportDialogComponent } from './components/import-dialog/import-dialog.
 import { ExportButtonComponent } from './components/export-button/export-button.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { BlogsComponent } from './components/blogs/blogs.component';
+import { SetupComponent } from './components/setup/setup.component';
+import { StepperModule } from 'primeng/stepper';
 
 
 @NgModule({
@@ -74,7 +76,8 @@ import { BlogsComponent } from './components/blogs/blogs.component';
     ImportDialogComponent,
     ExportButtonComponent,
     SettingsComponent,
-    BlogsComponent
+    BlogsComponent,
+    SetupComponent
   ],
   imports: [
     BrowserModule,
@@ -114,7 +117,8 @@ import { BlogsComponent } from './components/blogs/blogs.component';
     DataViewModule,
     CalendarModule,
     ChartModule,
-    FileUploadModule
+    FileUploadModule,
+    StepperModule
   ],
   providers: [
     provideHttpClient(withFetch()),

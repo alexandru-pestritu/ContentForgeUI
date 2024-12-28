@@ -13,22 +13,74 @@ import { ArticleContentComponent } from './components/article-content/article-co
 import { WidgetsGeneratorComponent } from './components/widgets-generator/widgets-generator.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { BlogsComponent } from './components/blogs/blogs.component';
+import { SetupComponent } from './components/setup/setup.component';
+import { SetupGuard } from './services/guards/setup-guard';
+import { SetupCompletedGuard } from './services/guards/setup-completed-guard';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
-  
-  { path: 'blogs', component: BlogsComponent, canActivate: [AuthGuard] },
+  {
+    path: 'setup',
+    component: SetupComponent,
+    canActivate: [SetupCompletedGuard]
+  },
 
-  { path: ':blogId/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: ':blogId/stores', component: StoresComponent, canActivate: [AuthGuard] },
-  { path: ':blogId/products', component: ProductsComponent, canActivate: [AuthGuard] },
-  { path: ':blogId/articles', component: ArticlesComponent, canActivate: [AuthGuard] },
-  { path: ':blogId/ai/prompts', component: PromptsComponent, canActivate: [AuthGuard] },
-  { path: ':blogId/ai/product', component: ProductContentComponent, canActivate: [AuthGuard] },
-  { path: ':blogId/ai/article', component: ArticleContentComponent, canActivate: [AuthGuard] },
-  { path: ':blogId/widgets/generate', component: WidgetsGeneratorComponent, canActivate: [AuthGuard] },
+  { 
+    path: 'login', 
+    component: LoginComponent, 
+    canActivate: [SetupGuard, LoginGuard] 
+  },
   
-  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+  { 
+    path: 'blogs', 
+    component: BlogsComponent, 
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+
+  {
+    path: ':blogId/dashboard',
+    component: DashboardComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: ':blogId/stores',
+    component: StoresComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: ':blogId/products',
+    component: ProductsComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: ':blogId/articles',
+    component: ArticlesComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: ':blogId/ai/prompts',
+    component: PromptsComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: ':blogId/ai/product',
+    component: ProductContentComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: ':blogId/ai/article',
+    component: ArticleContentComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: ':blogId/widgets/generate',
+    component: WidgetsGeneratorComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
+    canActivate: [SetupGuard, AuthGuard] 
+  },
 
   { path: '', redirectTo: '/blogs', pathMatch: 'full' },
   { path: '**', redirectTo: '/blogs' }

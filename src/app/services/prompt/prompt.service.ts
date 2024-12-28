@@ -19,7 +19,7 @@ export class PromptService {
     sortOrder?: number,
     filter?: string
   ): Observable<{ prompts: Prompt[], total_records: number }> {
-    let endpoint = `${blogId}/prompts`;
+    let endpoint = `${blogId}/prompts/`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
 
     if (sortField) {
@@ -40,7 +40,7 @@ export class PromptService {
   }
 
   createPrompt(blogId: number, prompt: Prompt): Observable<Prompt> {
-    const url = `${blogId}/prompts`;
+    const url = `${blogId}/prompts/`;
     return this.httpService.post<Prompt>(url, prompt);
   }
 

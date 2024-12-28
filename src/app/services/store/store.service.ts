@@ -20,7 +20,7 @@ export class StoreService {
     sortOrder?: number,
     filter?: string
   ): Observable<{ stores: Store[], total_records: number }> {
-    let endpoint = `${blogId}/stores`;
+    let endpoint = `${blogId}/stores/`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
     
     if (sortField) {
@@ -39,7 +39,7 @@ export class StoreService {
   }
 
   createStore(blogId: number, store: StoreCreateDTO, uploadToWordPress: boolean): Observable<Store> {
-    const endpoint = `${blogId}/stores?upload_to_wordpress=${uploadToWordPress}`;
+    const endpoint = `${blogId}/stores/?upload_to_wordpress=${uploadToWordPress}`;
     return this.httpService.post<Store>(endpoint, store);
   }
 

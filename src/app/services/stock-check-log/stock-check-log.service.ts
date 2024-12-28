@@ -10,7 +10,7 @@ export class StockCheckLogService {
   constructor(private httpService: HttpService) {}
 
   getStockCheckLogs(blogId: number, startDate?: string, endDate?: string): Observable<StockCheckLog[]> {
-    let endpoint = `${blogId}/stock-check-logs`;
+    let endpoint = `${blogId}/stock-check-logs/`;
 
     let queryParams = '';
     if (startDate) {

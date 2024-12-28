@@ -21,7 +21,7 @@ export class ProductService {
     sortOrder?: number,
     filter?: string
   ): Observable<{ products: Product[], total_records: number }> {
-    let endpoint = `${blogId}/products`;
+    let endpoint = `${blogId}/products/`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
 
     if (sortField) {
@@ -40,7 +40,7 @@ export class ProductService {
   }
 
   createProduct(blogId: number, product: ProductCreateDTO, uploadToWordPress: boolean): Observable<Product> {
-    const endpoint = `${blogId}/products?upload_to_wordpress=${uploadToWordPress}`;
+    const endpoint = `${blogId}/products/?upload_to_wordpress=${uploadToWordPress}`;
     return this.httpService.post<Product>(endpoint, product);
   }
 

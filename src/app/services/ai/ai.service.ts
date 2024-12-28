@@ -15,12 +15,12 @@ export class AIService {
   }
 
   generateProductText(blogId: number, productId: number, promptId: number, provider: string, model: string): Observable<any> {
-    const url = `${blogId}/ai/generate-product-text?product_id=${productId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
+    const url = `${blogId}/ai/generate-product-text/?product_id=${productId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
     return this.httpService.post<any>(url, {});
   }
 
   generateArticleText(blogId: number, articleId: number, promptId: number, provider: string, model: string): Observable<any> {
-    const url = `${blogId}/ai/generate-article-text?article_id=${articleId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
+    const url = `${blogId}/ai/generate-article-text/?article_id=${articleId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
     return this.httpService.post<any>(url, {});
   }
 }

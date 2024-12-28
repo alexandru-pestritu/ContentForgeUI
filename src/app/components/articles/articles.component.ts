@@ -11,6 +11,7 @@ import { Product } from '../../models/product/product';
 import { forkJoin } from 'rxjs';
 import { WordpressService } from '../../services/wordpress/wordpress.service';
 import { isValidUrl } from '../../services/validators/validators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-articles',
@@ -58,22 +59,35 @@ export class ArticlesComponent implements OnInit {
   _currentSortOrder?: number;
   _currentFilter?: string;
 
+  blogId: number | null = null;
+
   constructor(
     private articleService: ArticleService,
     private productService: ProductService,
     private wordpressService: WordpressService,
     private notificationService: NotificationService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadArticles(0, this.rows);
-    this.loadWordPressUsers();
-    this.loadWordPressCategories();
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+        this.loadArticles(0, this.rows);
+        this.loadWordPressUsers();
+        this.loadWordPressCategories();
+      }
+    });
   }
 
   loadArticles(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
-    this.articleService.getArticles(skip, limit, sortField, sortOrder, filter).subscribe({
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
+    this.articleService.getArticles(this.blogId, skip, limit, sortField, sortOrder, filter).subscribe({
       next: (data) => {
         this.articles = data.articles;
         this.totalRecords = data.total_records;
@@ -110,6 +124,9 @@ export class ArticlesComponent implements OnInit {
   }
 
   editArticle(article: Article) {
+    if (!this.blogId) {
+      return;
+    }
     this.article = { ...article };
     this.editDialog = true;
     this.submitted = false;
@@ -117,7 +134,7 @@ export class ArticlesComponent implements OnInit {
     this.selectedProducts = [];
 
     if (article.products_id_list && article.products_id_list.length > 0) {
-      const productObservables = article.products_id_list.map(productId => this.productService.getProductById(productId));
+      const productObservables = article.products_id_list.map(productId => this.productService.getProductById(this.blogId!, productId));
       
       forkJoin(productObservables).subscribe({
           next: (products) => {
@@ -136,13 +153,16 @@ export class ArticlesComponent implements OnInit {
   }
 
   viewArticle(article: Article) {
+    if (!this.blogId) {
+      return;
+    }
     this.selectedArticle = { ...article };
     this.viewDialog = true;
     this.selectedProducts = [];
 
     if (article.products_id_list && article.products_id_list.length > 0) {
       article.products_id_list.forEach((productId) => {
-          this.productService.getProductById(productId).subscribe({
+          this.productService.getProductById(this.blogId!, productId).subscribe({
               next: (product) => {
                   this.selectedProducts.push({
                       id: product.id,
@@ -176,11 +196,15 @@ export class ArticlesComponent implements OnInit {
   }
 
   saveArticle() {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     this.submitted = true;
     if (this.isValidAddArticle()) {
         this.loading = true; 
         this.article.products_id_list = this.selectedProducts.map(product => product.id);
-        this.articleService.createArticle(this.article, this.uploadToWordPress).subscribe({
+        this.articleService.createArticle(this.blogId, this.article, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Article created successfully.');
                 this.loadArticles(0, this.rows);
@@ -197,11 +221,14 @@ export class ArticlesComponent implements OnInit {
   }
 
   updateArticle() {
+    if (!this.blogId) {
+      return;
+    }
     this.submitted = true;
     if (this.isValidEditArticle()) {
         this.loading = true; 
         this.article.products_id_list = this.selectedProducts.map(product => product.id);
-        this.articleService.updateArticle(this.article.id, this.article, this.uploadToWordPress).subscribe({
+        this.articleService.updateArticle(this.blogId, this.article.id, this.article, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Article updated successfully.');
                 this.loadArticles(0, this.rows);
@@ -218,12 +245,15 @@ export class ArticlesComponent implements OnInit {
   }
 
   deleteArticle(article: Article): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${article.title}?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.articleService.deleteArticle(article.id).subscribe({
+        this.articleService.deleteArticle(this.blogId!, article.id).subscribe({
           next: () => {
             this.articles = this.articles.filter(a => a.id !== article.id);
             this.notificationService.showSuccess('Success', `Article ${article.title} deleted successfully.`);
@@ -238,6 +268,9 @@ export class ArticlesComponent implements OnInit {
   }
 
   deleteSelectedArticles(): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete the selected articles?',
       header: 'Confirm',
@@ -245,7 +278,7 @@ export class ArticlesComponent implements OnInit {
       accept: () => {
         const selectedIds = this.selectedArticles.map(article => article.id);
         selectedIds.forEach(id => {
-          this.articleService.deleteArticle(id).subscribe({
+          this.articleService.deleteArticle(this.blogId!, id).subscribe({
             next: () => {
               this.articles = this.articles.filter(a => a.id !== id);
             },
@@ -293,8 +326,11 @@ export class ArticlesComponent implements OnInit {
   }
 
   searchProducts(event: any) {
+    if (!this.blogId) {
+      return;
+    }
     const query = event.query;
-    this.productService.getProducts(0, 10, "id", -1, query).subscribe({
+    this.productService.getProducts(this.blogId, 0, 10, "id", -1, query).subscribe({
       next: (data) => {
         this.products = data.products.map(product => ({
           id: product.id,
@@ -310,7 +346,10 @@ export class ArticlesComponent implements OnInit {
   }
 
   loadWordPressUsers(): void {
-    this.wordpressService.getUsers().subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.wordpressService.getUsers(this.blogId).subscribe({
       next: (data) => {
         this.users = data.map(user => ({
           id: user.id,
@@ -325,7 +364,10 @@ export class ArticlesComponent implements OnInit {
   }
   
   loadWordPressCategories(): void {
-    this.wordpressService.getCategories().subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.wordpressService.getCategories(this.blogId).subscribe({
       next: (data) => {
         this.categories = data.map(category => ({
           id: category.id,

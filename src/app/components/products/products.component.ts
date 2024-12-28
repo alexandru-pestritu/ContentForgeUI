@@ -7,6 +7,7 @@ import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { StoreService } from '../../services/store/store.service';
 import { forkJoin } from 'rxjs';
 import { isValidUrl } from '../../services/validators/validators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -43,17 +44,33 @@ export class ProductsComponent implements OnInit {
   _currentSortOrder?: number;
   _currentFilter?: string;
 
+  blogId: number | null = null;
+
   constructor(
     private productService: ProductService,
     private storeService: StoreService,
     private notificationService: NotificationService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private route: ActivatedRoute
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+        this.loadProducts(0, this.rows);
+      }
+    });
+    
+  }
 
   loadProducts(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
-    this.productService.getProducts(skip, limit, sortField, sortOrder, filter).subscribe({
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
+    this.productService.getProducts(this.blogId, skip, limit, sortField, sortOrder, filter).subscribe({
       next: (data) => {
         this.products = data.products;
         this.totalRecords = data.total_records;
@@ -98,7 +115,7 @@ export class ProductsComponent implements OnInit {
     this.selectedStores = [];
 
     if (product.store_ids && product.store_ids.length > 0) {
-        const storeObservables = product.store_ids.map(storeId => this.storeService.getStoreById(storeId));
+        const storeObservables = product.store_ids.map(storeId => this.storeService.getStoreById(this.blogId!, storeId));
         
         forkJoin(storeObservables).subscribe({
             next: (stores) => {
@@ -124,7 +141,7 @@ export class ProductsComponent implements OnInit {
 
     if (product.store_ids && product.store_ids.length > 0) {
         product.store_ids.forEach((storeId) => {
-            this.storeService.getStoreById(storeId).subscribe({
+            this.storeService.getStoreById(this.blogId!, storeId).subscribe({
                 next: (store) => {
                     this.selectedStores.push({
                         id: store.id,
@@ -144,10 +161,14 @@ export class ProductsComponent implements OnInit {
 
   saveProduct() {
     this.submitted = true;
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     if (this.isValidAddProduct()) {
         this.loading = true; 
         this.product.store_ids = this.selectedStores.map(store => store.id);
-        this.productService.createProduct(this.product, this.uploadToWordPress).subscribe({
+        this.productService.createProduct(this.blogId, this.product, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Product created successfully.');
                 this.loadProducts(0, this.rows);
@@ -165,10 +186,14 @@ export class ProductsComponent implements OnInit {
 
   updateProduct() {
     this.submitted = true;
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     if (this.isValidEditProduct()) {
         this.loading = true; 
         this.product.store_ids = this.selectedStores.map(store => store.id);
-        this.productService.updateProduct(this.product.id, this.product, this.uploadToWordPress).subscribe({
+        this.productService.updateProduct(this.blogId, this.product.id, this.product, this.uploadToWordPress).subscribe({
             next: () => {
                 this.notificationService.showSuccess('Success', 'Product updated successfully.');
                 this.loadProducts(0, this.rows);
@@ -185,12 +210,15 @@ export class ProductsComponent implements OnInit {
   }
 
   deleteProduct(product: Product): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${product.name}?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.productService.deleteProduct(product.id).subscribe({
+        this.productService.deleteProduct(this.blogId!, product.id).subscribe({
           next: () => {
             this.products = this.products.filter(p => p.id !== product.id);
             this.notificationService.showSuccess('Success', `Product ${product.name} deleted successfully.`);
@@ -205,6 +233,9 @@ export class ProductsComponent implements OnInit {
   }
 
   deleteSelectedProducts(): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete the selected products?',
       header: 'Confirm',
@@ -212,7 +243,7 @@ export class ProductsComponent implements OnInit {
       accept: () => {
         const selectedIds = this.selectedProducts.map(product => product.id);
         selectedIds.forEach(id => {
-          this.productService.deleteProduct(id).subscribe({
+          this.productService.deleteProduct(this.blogId!, id).subscribe({
             next: () => {
               this.products = this.products.filter(p => p.id !== id);
             },

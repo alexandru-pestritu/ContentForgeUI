@@ -33,6 +33,7 @@
                 [sortField]="_currentSortField"
                 [sortOrder]="_currentSortOrder"
                 [filter]="_currentFilter"
+                [blogId]="blogId"
               ></app-export-button>
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
@@ -911,6 +912,7 @@
 <app-import-dialog 
   #importDialog
   [entityType]="'article'"
+  [blogId]="blogId"
   (closed)="handleImportDialogClosed()"
 ></app-import-dialog>
     </div>

@@ -10,6 +10,7 @@ import { WebsocketImportService } from '../../services/websocket/websocket-impor
   styleUrl: './import-dialog.component.scss'
 })
 export class ImportDialogComponent {
+  @Input() blogId: number | null = null;
   @Input() entityType!: string;
   @Output() closed = new EventEmitter<void>();
 
@@ -62,8 +63,12 @@ export class ImportDialogComponent {
       return;
     }
 
+    if (!this.blogId) {
+      return;
+    }
+
     this.importloading = true;
-    this.importerService.importEntities(this.entityType, this.selectedFile).subscribe({
+    this.importerService.importEntities(this.blogId, this.entityType, this.selectedFile).subscribe({
       next: (res) => {
         this.importTaskId = res.task_id;
         this.importEntries = res.entries.map((e: any) => {
@@ -100,8 +105,12 @@ export class ImportDialogComponent {
   retryFailed() {
     if (!this.importTaskId) return;
 
+    if (!this.blogId) {
+      return;
+    }
+
     this.retryloading = true;
-    this.importerService.retryImportTask(this.importTaskId, this.entityType).subscribe({
+    this.importerService.retryImportTask(this.blogId, this.importTaskId, this.entityType).subscribe({
       next: (resp) => {
         resp.entries.forEach((e: any, i: number) => {
           if (e.status === 'failed') {

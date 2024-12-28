@@ -7,6 +7,7 @@ import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { isValidUrl } from '../../services/validators/validators';
 import { WebsocketImportService } from '../../services/websocket/websocket-import.service';
 import {ImportEntry} from '../../models/import/import-entry';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-stores',
@@ -39,14 +40,24 @@ export class StoresComponent implements OnInit {
   _currentSortOrder?: number;
   _currentFilter?: string;
 
+  blogId: number | null = null;
+
   constructor(
     private storeService: StoreService,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService,
-    private webSocketImportService: WebsocketImportService
+    private webSocketImportService: WebsocketImportService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+        this.loadStores(0, this.rows);
+      }
+    });
   }
 
   isValidUrl(url: string): boolean {
@@ -54,7 +65,11 @@ export class StoresComponent implements OnInit {
   }
 
   loadStores(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
-    this.storeService.getStores(skip, limit, sortField, sortOrder, filter).subscribe({
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
+    this.storeService.getStores(this.blogId, skip, limit, sortField, sortOrder, filter).subscribe({
       next: (data) => {
         this.stores = data.stores;
         this.totalRecords = data.total_records;
@@ -96,13 +111,17 @@ export class StoresComponent implements OnInit {
   }
 
   saveStore() {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     this.submitted = true;
     
     if (this.store.name && this.store.base_url && isValidUrl(this.store.base_url)) {
       this.loading = true; 
       this.submitted = false;
       if (this.store.id) {
-        this.storeService.updateStore(this.store.id, this.store, this.uploadToWordPress).subscribe({
+        this.storeService.updateStore(this.blogId, this.store.id, this.store, this.uploadToWordPress).subscribe({
           next: () => {
             this.notificationService.showSuccess('Success', 'Store updated successfully.');
             this.loadStores(0, this.rows);
@@ -115,7 +134,7 @@ export class StoresComponent implements OnInit {
           }
         });
       } else {
-        this.storeService.createStore(this.store, this.uploadToWordPress).subscribe({
+        this.storeService.createStore(this.blogId, this.store, this.uploadToWordPress).subscribe({
           next: () => {
             this.notificationService.showSuccess('Success', 'Store created successfully.');
             this.loadStores(0, this.rows);
@@ -139,12 +158,15 @@ export class StoresComponent implements OnInit {
   }
 
   deleteStore(store: Store): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${store.name}?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.storeService.deleteStore(store.id).subscribe({
+        this.storeService.deleteStore(this.blogId!, store.id).subscribe({
           next: () => {
             this.stores = this.stores.filter(s => s.id !== store.id);
             this.notificationService.showSuccess('Success', `Store ${store.name} deleted successfully.`);
@@ -159,6 +181,9 @@ export class StoresComponent implements OnInit {
   }
 
   deleteSelectedStores(): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete the selected stores?',
       header: 'Confirm',
@@ -166,7 +191,7 @@ export class StoresComponent implements OnInit {
       accept: () => {
         const selectedIds = this.selectedStores.map(store => store.id);
         selectedIds.forEach(id => {
-          this.storeService.deleteStore(id).subscribe({
+          this.storeService.deleteStore(this.blogId!, id).subscribe({
             next: () => {
               this.stores = this.stores.filter(s => s.id !== id);
             },

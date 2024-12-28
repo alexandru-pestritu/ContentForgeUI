@@ -9,6 +9,7 @@ import { NotificationService } from '../../services/notification/notification.se
 })
 export class ExportButtonComponent implements OnInit {
   
+  @Input() blogId: number | null = null;
   @Input() entityType!: string;
   @Input() skip: number = 0;
   @Input() limit: number = 10;
@@ -25,8 +26,11 @@ export class ExportButtonComponent implements OnInit {
   ngOnInit(): void {}
 
   export() {
+    if (!this.blogId) {
+      return;
+    }
     this.loading = true;
-    this.exporterService.exportEntities(this.entityType, this.skip, this.limit, this.sortField, this.sortOrder, this.filter).subscribe({
+    this.exporterService.exportEntities(this.blogId, this.entityType, this.skip, this.limit, this.sortField, this.sortOrder, this.filter).subscribe({
       next: (blob) => {
         const filename = `${this.entityType}_export.csv`;
         const a = document.createElement('a');

@@ -8,6 +8,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { TypesAndSubtypesResponse } from '../../models/prompt/types-and-subtypes-response';
 import { Editor } from 'primeng/editor';
 import { PlaceholderService } from '../../services/placeholder/placeholder.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-prompts',
@@ -43,20 +44,33 @@ export class PromptsComponent implements OnInit {
   _currentSortOrder?: number;
   _currentFilter?: string;
 
+  blogId: number | null = null;
+
   constructor(
     private promptService: PromptService,
     private placeholderService: PlaceholderService,
     private notificationService: NotificationService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadPrompts(0, this.rows);
-    this.loadTypesAndSubtypes();
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+        this.loadPrompts(0, this.rows);
+        this.loadTypesAndSubtypes();
+      }
+    });
   }
 
   loadPrompts(skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): void {
-    this.promptService.getPrompts(skip, limit, sortField, sortOrder, filter).subscribe({
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
+    this.promptService.getPrompts(this.blogId, skip, limit, sortField, sortOrder, filter).subscribe({
       next: (data) => {
         this.prompts = data.prompts;
         this.totalRecords = data.total_records;
@@ -110,10 +124,14 @@ export class PromptsComponent implements OnInit {
   }
 
   savePrompt() {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     this.submitted = true;
     if (this.isValidPrompt(this.prompt)) {
       this.loading = true;
-      this.promptService.createPrompt(this.prompt).subscribe({
+      this.promptService.createPrompt(this.blogId, this.prompt).subscribe({
         next: () => {
           this.notificationService.showSuccess('Success', 'Prompt created successfully.');
           this.loadPrompts(0, this.rows);
@@ -130,10 +148,13 @@ export class PromptsComponent implements OnInit {
   }
 
   updatePrompt() {
+    if (!this.blogId) {
+      return;
+    }
     this.submitted = true;
     if (this.isValidPrompt(this.prompt)) {
       this.loading = true;
-      this.promptService.updatePrompt(this.prompt.id!, this.prompt).subscribe({
+      this.promptService.updatePrompt(this.blogId, this.prompt.id!, this.prompt).subscribe({
         next: () => {
           this.notificationService.showSuccess('Success', 'Prompt updated successfully.');
           this.loadPrompts(0, this.rows);
@@ -150,12 +171,15 @@ export class PromptsComponent implements OnInit {
   }
 
   deletePrompt(prompt: Prompt): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${prompt.name}?`,
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.promptService.deletePrompt(prompt.id!).subscribe({
+        this.promptService.deletePrompt(this.blogId!, prompt.id!).subscribe({
           next: () => {
             this.prompts = this.prompts.filter(p => p.id !== prompt.id);
             this.notificationService.showSuccess('Success', `Prompt ${prompt.name} deleted successfully.`);
@@ -170,13 +194,16 @@ export class PromptsComponent implements OnInit {
   }
 
   deleteSelectedPrompts(): void {
+    if (!this.blogId) {
+      return;
+    }
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete the selected prompts?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         const selectedIds = this.selectedPrompts.map(prompt => prompt.id!);
-        forkJoin(selectedIds.map(id => this.promptService.deletePrompt(id))).subscribe({
+        forkJoin(selectedIds.map(id => this.promptService.deletePrompt(this.blogId!, id))).subscribe({
           next: () => {
             this.prompts = this.prompts.filter(p => !selectedIds.includes(p.id!));
             this.notificationService.showSuccess('Success', 'Selected prompts deleted successfully.');
@@ -206,7 +233,10 @@ export class PromptsComponent implements OnInit {
   }
 
   loadTypesAndSubtypes() {
-    this.promptService.getTypesAndSubtypes().subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.promptService.getTypesAndSubtypes(this.blogId).subscribe({
       next: (data: TypesAndSubtypesResponse) => {
         this.types = Object.keys(data.types);
       },
@@ -218,8 +248,11 @@ export class PromptsComponent implements OnInit {
   }
 
   loadSubtypes(type: string) {
+    if (!this.blogId) {
+      return;
+    }
     this.subtypes = [];
-    this.promptService.getTypesAndSubtypes().subscribe({
+    this.promptService.getTypesAndSubtypes(this.blogId).subscribe({
       next: (data: TypesAndSubtypesResponse) => {
         this.subtypes = data.types[type] || [];
       },

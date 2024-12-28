@@ -5,6 +5,7 @@ import { WidgetService } from '../../services/widgets/widget.service';
 import { ArticleService } from '../../services/article/article.service';
 import { NotificationService } from '../../services/notification/notification.service';
 import { Article } from '../../models/article/article';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-widgets-generator',
@@ -25,18 +26,32 @@ export class WidgetsGeneratorComponent implements OnInit {
   productLoading: boolean = false;
   articleLoading: boolean = false;
 
+  blogId: number | null = null;
+
   constructor(
     private productService: ProductService,
     private articleService: ArticleService,
     private widgetService: WidgetService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+      }
+    });
+  }
 
   searchProducts(event: any) {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     const query = event.query;
-    this.productService.getProducts(0, 10, "id", -1, query).subscribe({
+    this.productService.getProducts(this.blogId, 0, 10, "id", -1, query).subscribe({
       next: (data) => {
         this.products = data.products.map(product => ({
           ...product,
@@ -50,8 +65,12 @@ export class WidgetsGeneratorComponent implements OnInit {
   }
 
   searchArticles(event: any) {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     const query = event.query;
-    this.articleService.getArticles(0, 10, "id", -1, query).subscribe({
+    this.articleService.getArticles(this.blogId, 0, 10, "id", -1, query).subscribe({
       next: (data) => {
         this.articles = data.articles.map(article => ({
           ...article,
@@ -65,9 +84,12 @@ export class WidgetsGeneratorComponent implements OnInit {
   }
 
   generateProductWidget() {
+    if (!this.blogId) {
+      return;
+    }
     this.productLoading = true;
     if (this.selectedProduct) {
-      this.widgetService.generateProductWidget(this.selectedProduct.id).subscribe({
+      this.widgetService.generateProductWidget(this.blogId, this.selectedProduct.id).subscribe({
         next: (data) => {
           this.productWidgetContent = data.content;
           this.productLoading = false;
@@ -82,9 +104,12 @@ export class WidgetsGeneratorComponent implements OnInit {
   }
 
   generateArticleWidget() {
+    if (!this.blogId) {
+      return;
+    }
     this.articleLoading = true;
     if (this.selectedArticle) {
-      this.widgetService.generateArticleWidget(this.selectedArticle.id, this.publishToWP).subscribe({
+      this.widgetService.generateArticleWidget(this.blogId, this.selectedArticle.id, this.publishToWP).subscribe({
         next: (data) => {
           this.articleWidgetContent = data.content;
           this.articleLoading = false;

@@ -6,6 +6,7 @@ import { Article } from '../../models/article/article';
 import { Prompt } from '../../models/prompt/prompt';
 import { NotificationService } from '../../services/notification/notification.service';
 import { SettingsService } from '../../services/settings/settings.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-article-content',
@@ -86,23 +87,36 @@ export class ArticleContentComponent implements OnInit {
 
   reviewCost: string = '';
 
+  blogId: number | null = null;
+
   constructor(
     private articleService: ArticleService,
     private promptService: PromptService,
     private aiService: AIService,
     private settingsService: SettingsService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadDefaults();
-    this.loadPrompts();
-    this.loadProvidersAndModels();
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+        this.loadDefaults();
+        this.loadPrompts();
+        this.loadProvidersAndModels();
+      }
+    });
   }
 
   searchArticles(event: any) {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     const query = event.query;
-    this.articleService.getArticles(0, 10, "id", -1, query).subscribe({
+    this.articleService.getArticles(this.blogId, 0, 10, "id", -1, query).subscribe({
       next: (data) => {
         this.articles = data.articles.map(article => ({
           ...article,
@@ -116,7 +130,10 @@ export class ArticleContentComponent implements OnInit {
   }
 
   loadProvidersAndModels(): void {
-    this.aiService.getProviders('text', 'chat').subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.aiService.getProviders(this.blogId, 'text', 'chat').subscribe({
       next: (data) => {
         this.providers = Object.keys(data);
         for (const provider in data) {
@@ -172,7 +189,10 @@ export class ArticleContentComponent implements OnInit {
   }
 
   loadPrompts(): void {
-    this.promptService.getPromptsByTypeAndOptionalSubtype('Article').subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.promptService.getPromptsByTypeAndOptionalSubtype(this.blogId, 'Article').subscribe({
       next: (prompts) => {
         this.sectionPrompts['introduction'] = prompts.filter(p => p.subtype === 'Introduction');
         this.sectionPrompts['buyersGuide'] = prompts.filter(p => p.subtype === "Buyer's Guide");
@@ -205,6 +225,10 @@ export class ArticleContentComponent implements OnInit {
   }
 
   generateContent(section: string): void {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     const articleId = this.selectedArticle?.id;
     const prompt = this.selectedSectionPrompts[section];
     const provider = this.selectedSectionProviders[section];
@@ -213,7 +237,7 @@ export class ArticleContentComponent implements OnInit {
     if (!articleId || !prompt || !provider || !model) return;
 
     this.isGeneratingContent[section] = true;
-    this.aiService.generateArticleText(articleId, prompt!.id!, provider, model.model).subscribe({
+    this.aiService.generateArticleText(this.blogId, articleId, prompt!.id!, provider, model.model).subscribe({
       next: (data) => {
         this.selectedArticle = {
           ...data.article,
@@ -232,7 +256,10 @@ export class ArticleContentComponent implements OnInit {
 
   updateArticle(): void {
     if (!this.selectedArticle) return;
-    this.articleService.updateArticle(this.selectedArticle.id, this.selectedArticle).subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.articleService.updateArticle(this.blogId, this.selectedArticle.id, this.selectedArticle).subscribe({
       next: () => {
         this.notificationService.showSuccess('Success', 'Article updated successfully');
       },

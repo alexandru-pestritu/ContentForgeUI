@@ -6,6 +6,7 @@ import { Product } from '../../models/product/product';
 import { Prompt } from '../../models/prompt/prompt';
 import { NotificationService } from '../../services/notification/notification.service';
 import { SettingsService } from '../../services/settings/settings.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-product-content',
@@ -60,23 +61,36 @@ export class ProductContentComponent implements OnInit {
   consList: string[] = [];
   isUpdatingProduct: boolean = false;
 
+  blogId: number | null = null;
+
   constructor(
     private productService: ProductService,
     private promptService: PromptService,
     private aiService: AIService,
     private settingsService: SettingsService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadDefaults();
-    this.loadPrompts();
-    this.loadProvidersAndModels();
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+        this.loadDefaults();
+        this.loadPrompts();
+        this.loadProvidersAndModels();
+      }
+    });
   }
 
   searchProducts(event: any) {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     const query = event.query;
-    this.productService.getProducts(0, 10, "id", -1, query).subscribe({
+    this.productService.getProducts(this.blogId, 0, 10, "id", -1, query).subscribe({
       next: (data) => {
         this.products = data.products.map(product => ({
           ...product,
@@ -91,7 +105,10 @@ export class ProductContentComponent implements OnInit {
 
   
   loadProvidersAndModels(): void {
-    this.aiService.getProviders('text', 'chat').subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.aiService.getProviders(this.blogId, 'text', 'chat').subscribe({
       next: (data) => {
         this.providers = Object.keys(data);
         for (const provider in data) {
@@ -143,7 +160,10 @@ export class ProductContentComponent implements OnInit {
   }
 
   loadPrompts(): void {
-    this.promptService.getPromptsByTypeAndOptionalSubtype('Product').subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.promptService.getPromptsByTypeAndOptionalSubtype(this.blogId, 'Product').subscribe({
       next: (prompts) => {
         this.sectionState['review'].prompts = prompts.filter(p => p.subtype === 'Review');
         this.sectionState['prosCons'].prompts = prompts.filter(p => p.subtype === 'Pros & Cons');
@@ -163,6 +183,10 @@ export class ProductContentComponent implements OnInit {
   }
 
   generateContent(section: string): void {
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
     const productId = this.selectedProduct?.id;
     const prompt = this.sectionState[section].selectedPrompt;
     const provider = this.sectionState[section].provider;
@@ -172,7 +196,7 @@ export class ProductContentComponent implements OnInit {
 
     this.sectionState[section].isGenerating = true;
 
-    this.aiService.generateProductText(productId, prompt.id!, provider, model.model).subscribe({
+    this.aiService.generateProductText(this.blogId, productId, prompt.id!, provider, model.model).subscribe({
       next: (data) => {
         this.selectedProduct = {
           ...data.product,
@@ -191,10 +215,13 @@ export class ProductContentComponent implements OnInit {
 
   updateProduct(): void {
     if (!this.selectedProduct) return;
+    if (!this.blogId) {
+      return;
+    }
 
     this.isUpdatingProduct = true;
 
-    this.productService.updateProduct(this.selectedProduct.id, this.selectedProduct, false).subscribe({
+    this.productService.updateProduct(this.blogId, this.selectedProduct.id, this.selectedProduct, false).subscribe({
       next: () => {
         this.notificationService.showSuccess('Success', 'Product updated successfully');
         this.isUpdatingProduct = false;

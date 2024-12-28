@@ -4,6 +4,7 @@ import { SettingsService } from '../../services/settings/settings.service';
 import { NotificationService } from '../../services/notification/notification.service';
 import { AIService } from '../../services/ai/ai.service';
 import { PlaceholderService } from '../../services/placeholder/placeholder.service';
+import { BlogContextService } from '../../services/blog/blog-context.service';
 
 @Component({
   selector: 'app-settings',
@@ -38,16 +39,24 @@ export class SettingsComponent {
   selectedAIModel: string | null = null;
   placeholdersByType: { [key: string]: string[] } = {};
 
+  blogId: number | null = null;
+
   constructor(
     private settingsService: SettingsService,
     private notificationService: NotificationService,
     private aiService: AIService,
-    private placeholderService : PlaceholderService
+    private placeholderService : PlaceholderService,
+    private blogContext: BlogContextService
   ) {}
 
   ngOnInit(): void {
+    this.blogContext.activeBlogId$.subscribe((id) => {
+      this.blogId = id;
+      if (id) {
+        this.loadAIProvidersAndModels();
+      }
+    });
     this.loadSettings();
-    this.loadAIProvidersAndModels();
     this.loadPlaceholders();
   }
 
@@ -75,7 +84,11 @@ export class SettingsComponent {
   }
 
   loadAIProvidersAndModels(): void {
-    this.aiService.getProviders('text', 'chat').subscribe({
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'Failed to load AI providers and models.');
+      return;
+    }
+    this.aiService.getProviders(this.blogId, 'text', 'chat').subscribe({
       next: (data) => {
         this.aiProviders = Object.keys(data);
         for (const provider in data) {

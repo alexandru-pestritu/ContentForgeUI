@@ -9,6 +9,7 @@ import { ProductService } from '../../services/product/product.service';
 import { NotificationService } from '../../services/notification/notification.service';
 import { DashboardService } from '../../services/dashboard/dashboard.service';
 import moment from 'moment';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,25 +32,38 @@ export class DashboardComponent implements OnInit {
   chartData: any = {};
   chartOptions: any = {};
 
+  blogId: number | null = null;
+
   constructor(
     private articleService: ArticleService,
     private stockCheckLogService: StockCheckLogService,
     private productService: ProductService,
     private dashboardService: DashboardService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadDashboardStats();
-    this.loadLatestArticles();
-    this.loadOutOfStockProducts();
-    this.initializeChartOptions();
-    this.populateQuickFilters();
-    this.applyQuickFilter({ value: 'lastSixMonths' });
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('blogId');
+      if (idParam) {
+        this.blogId = +idParam;
+        this.loadDashboardStats();
+        this.loadLatestArticles();
+        this.loadOutOfStockProducts();
+        this.initializeChartOptions();
+        this.populateQuickFilters();
+        this.applyQuickFilter({ value: 'lastSixMonths' });
+      }
+    });
   }
 
   loadDashboardStats(): void {
-    this.dashboardService.getDashboardStats().subscribe({
+    if (!this.blogId) {
+      this.notificationService.showError('Error', 'No blog selected!');
+      return;
+    }
+    this.dashboardService.getDashboardStats(this.blogId).subscribe({
       next: (stats: DashboardStats) => {
         this.dashboardStats = stats;
       },
@@ -60,7 +74,10 @@ export class DashboardComponent implements OnInit {
   }
 
   loadLatestArticles(): void {
-    this.articleService.getLatestArticles(5).subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.articleService.getLatestArticles(this.blogId, 5).subscribe({
       next: (articles: Article[]) => {
         this.latestArticles = articles;
       },
@@ -71,7 +88,10 @@ export class DashboardComponent implements OnInit {
   }
 
   loadStockCheckLogs(startDate?: string, endDate?: string): void {
-    this.stockCheckLogService.getStockCheckLogs(startDate, endDate).subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.stockCheckLogService.getStockCheckLogs(this.blogId, startDate, endDate).subscribe({
       next: (logs: StockCheckLog[]) => {
         this.stockCheckLogs = logs;
         this.updateChartData();
@@ -87,7 +107,10 @@ export class DashboardComponent implements OnInit {
   }
 
   loadOutOfStockProducts(): void {
-    this.productService.getOutOfStockProducts().subscribe({
+    if (!this.blogId) {
+      return;
+    }
+    this.productService.getOutOfStockProducts(this.blogId).subscribe({
       next: (data: { product: Product, articles: Article[] }[]) => {
         this.outOfStockProducts = data;
       },

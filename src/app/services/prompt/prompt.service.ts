@@ -19,7 +19,7 @@ export class PromptService {
     sortOrder?: number,
     filter?: string
   ): Observable<{ prompts: Prompt[], total_records: number }> {
-    let endpoint = `/${blogId}/prompts`;
+    let endpoint = `${blogId}/prompts`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
 
     if (sortField) {
@@ -35,32 +35,32 @@ export class PromptService {
   }
 
   getPromptById(blogId: number, id: number): Observable<Prompt> {
-    const url = `/${blogId}/prompts/${id}`;
+    const url = `${blogId}/prompts/${id}`;
     return this.httpService.get<Prompt>(url);
   }
 
   createPrompt(blogId: number, prompt: Prompt): Observable<Prompt> {
-    const url = `/${blogId}/prompts`;
+    const url = `${blogId}/prompts`;
     return this.httpService.post<Prompt>(url, prompt);
   }
 
   updatePrompt(blogId: number, id: number, prompt: Prompt): Observable<Prompt> {
-    const url = `/${blogId}/prompts/${id}`;
+    const url = `${blogId}/prompts/${id}`;
     return this.httpService.put<Prompt>(url, prompt);
   }
 
   deletePrompt(blogId: number, id: number): Observable<Prompt> {
-    const url = `/${blogId}/prompts/${id}`;
+    const url = `${blogId}/prompts/${id}`;
     return this.httpService.delete<Prompt>(url);
   }
 
   getTypesAndSubtypes(blogId: number): Observable<TypesAndSubtypesResponse> {
-    const url = `/${blogId}/prompts/types-subtypes/`;
+    const url = `${blogId}/prompts/types-subtypes/`;
     return this.httpService.get<TypesAndSubtypesResponse>(url);
   }
 
   getPromptsByTypeAndOptionalSubtype(blogId: number, type: string, subtype?: string): Observable<Prompt[]> {
-    let url = `/${blogId}/prompts/${type}`;
+    let url = `${blogId}/prompts/${type}`;
     if (subtype) {
       url += `?subtype=${subtype}`;
     }

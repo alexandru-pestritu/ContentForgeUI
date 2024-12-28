@@ -21,7 +21,7 @@ export class ProductService {
     sortOrder?: number,
     filter?: string
   ): Observable<{ products: Product[], total_records: number }> {
-    let endpoint = `/${blogId}/products`;
+    let endpoint = `${blogId}/products`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
 
     if (sortField) {
@@ -35,27 +35,27 @@ export class ProductService {
   }
 
   getProductById(blogId: number, id: number): Observable<Product> {
-    const endpoint = `/${blogId}/products/${id}`;
+    const endpoint = `${blogId}/products/${id}`;
     return this.httpService.get<Product>(endpoint);
   }
 
   createProduct(blogId: number, product: ProductCreateDTO, uploadToWordPress: boolean): Observable<Product> {
-    const endpoint = `/${blogId}/products?upload_to_wordpress=${uploadToWordPress}`;
+    const endpoint = `${blogId}/products?upload_to_wordpress=${uploadToWordPress}`;
     return this.httpService.post<Product>(endpoint, product);
   }
 
   updateProduct(blogId: number, id: number, product: ProductUpdateDTO, uploadToWordPress: boolean): Observable<Product> {
-    const endpoint = `/${blogId}/products/${id}?upload_to_wordpress=${uploadToWordPress}`;
+    const endpoint = `${blogId}/products/${id}?upload_to_wordpress=${uploadToWordPress}`;
     return this.httpService.put<Product>(endpoint, product);
   }
 
   deleteProduct(blogId: number, id: number): Observable<Product> {
-    const endpoint = `/${blogId}/products/${id}`;
+    const endpoint = `${blogId}/products/${id}`;
     return this.httpService.delete<Product>(endpoint);
   }
 
   getOutOfStockProducts(blogId: number): Observable<{ product: Product, articles: Article[] }[]> {
-    const endpoint = `/${blogId}/products/out-of-stock`;
+    const endpoint = `${blogId}/products/out-of-stock`;
     return this.httpService.get<{ product: Product, articles: Article[] }[]>(endpoint);
   }
 }

@@ -10,7 +10,7 @@ export class DashboardService {
   constructor(private httpService: HttpService) {}
 
   getDashboardStats(blogId: number): Observable<DashboardStats> {
-    const url = `/${blogId}/dashboard/stats`;
+    const url = `${blogId}/dashboard/stats`;
     return this.httpService.get<DashboardStats>(url);
   }
 }

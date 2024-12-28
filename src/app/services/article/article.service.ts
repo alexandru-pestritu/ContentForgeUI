@@ -19,7 +19,7 @@ export class ArticleService {
     sortOrder?: number,
     filter?: string
   ): Observable<{ articles: Article[], total_records: number }> {
-    let endpoint = `/${blogId}/articles`;
+    let endpoint = `${blogId}/articles`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
 
     if (sortField) {
@@ -33,27 +33,27 @@ export class ArticleService {
   }
 
   getArticleById(blogId: number, id: number): Observable<Article> {
-    const url = `/${blogId}/articles/${id}`;
+    const url = `${blogId}/articles/${id}`;
     return this.httpService.get<Article>(url);
   }
 
   createArticle(blogId: number, article: ArticleCreateDTO, uploadToWordPress: boolean = false): Observable<Article> {
-    const url = `/${blogId}/articles?upload_to_wordpress=${uploadToWordPress}`;
+    const url = `${blogId}/articles?upload_to_wordpress=${uploadToWordPress}`;
     return this.httpService.post<Article>(url, article);
   }
 
   updateArticle(blogId: number, id: number, article: ArticleUpdateDTO, uploadToWordPress: boolean = false): Observable<Article> {
-    const url = `/${blogId}/articles/${id}?upload_to_wordpress=${uploadToWordPress}`;
+    const url = `${blogId}/articles/${id}?upload_to_wordpress=${uploadToWordPress}`;
     return this.httpService.put<Article>(url, article);
   }
 
   deleteArticle(blogId: number, id: number): Observable<Article> {
-    const url = `/${blogId}/articles/${id}`;
+    const url = `${blogId}/articles/${id}`;
     return this.httpService.delete<Article>(url);
   }
 
   getLatestArticles(blogId: number, limit: number = 5): Observable<Article[]> {
-    const url = `/${blogId}/articles/latest?limit=${limit}`;
+    const url = `${blogId}/articles/latest?limit=${limit}`;
     return this.httpService.get<Article[]>(url);
   }
 }

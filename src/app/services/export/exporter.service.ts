@@ -25,7 +25,7 @@ export class ExporterService {
       queryParams += `&filter=${filter}`;
     }
 
-    const url = `/${blogId}/export/${queryParams}`;
+    const url = `${blogId}/export/${queryParams}`;
     return this.httpService.getCSVBlob(url);
   }
 }

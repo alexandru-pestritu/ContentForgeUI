@@ -11,12 +11,12 @@ export class WordpressService {
   constructor(private httpService: HttpService) {}
 
   getUsers(blogId: number): Observable<any[]> {
-    const url = `/${blogId}/wordpress/users`;
+    const url = `${blogId}/wordpress/users`;
     return this.httpService.get<any[]>(url);
   }
 
   getCategories(blogId: number): Observable<any[]> {
-    const url = `/${blogId}/wordpress/categories`;
+    const url = `${blogId}/wordpress/categories`;
     return this.httpService.get<any[]>(url);
   }
 }

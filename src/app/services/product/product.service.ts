@@ -11,38 +11,52 @@ import { Article } from '../../models/article/article';
 })
 export class ProductService {
 
-  private endpoint = 'products/'; 
-
   constructor(private httpService: HttpService) {}
 
-  getProducts(skip: number = 0, limit: number = 10, sortField?: string, sortOrder?: number, filter?: string): Observable<{ products: Product[], total_records: number }> {
+  getProducts(
+    blogId: number,
+    skip: number = 0,
+    limit: number = 10,
+    sortField?: string,
+    sortOrder?: number,
+    filter?: string
+  ): Observable<{ products: Product[], total_records: number }> {
+    let endpoint = `/${blogId}/products`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
+
     if (sortField) {
       queryParams += `&sort_field=${sortField}&sort_order=${sortOrder}`;
     }
     if (filter) {
       queryParams += `&filter=${filter}`;
     }
-    return this.httpService.get<{ products: Product[], total_records: number }>(`${this.endpoint}${queryParams}`);
+
+    return this.httpService.get<{ products: Product[], total_records: number }>(endpoint + queryParams);
   }
 
-  getProductById(id: number): Observable<Product> {
-    return this.httpService.get<Product>(`${this.endpoint}${id}`);
+  getProductById(blogId: number, id: number): Observable<Product> {
+    const endpoint = `/${blogId}/products/${id}`;
+    return this.httpService.get<Product>(endpoint);
   }
 
-  createProduct(product: ProductCreateDTO, uploadToWordPress: boolean): Observable<Product> {
-    return this.httpService.post<Product>(`${this.endpoint}?upload_to_wordpress=${uploadToWordPress}`, product);
+  createProduct(blogId: number, product: ProductCreateDTO, uploadToWordPress: boolean): Observable<Product> {
+    const endpoint = `/${blogId}/products?upload_to_wordpress=${uploadToWordPress}`;
+    return this.httpService.post<Product>(endpoint, product);
   }
 
-  updateProduct(id: number, product: ProductUpdateDTO, uploadToWordPress: boolean): Observable<Product> {
-    return this.httpService.put<Product>(`${this.endpoint}${id}?upload_to_wordpress=${uploadToWordPress}`, product);
+  updateProduct(blogId: number, id: number, product: ProductUpdateDTO, uploadToWordPress: boolean): Observable<Product> {
+    const endpoint = `/${blogId}/products/${id}?upload_to_wordpress=${uploadToWordPress}`;
+    return this.httpService.put<Product>(endpoint, product);
   }
 
-  deleteProduct(id: number): Observable<Product> {
-    return this.httpService.delete<Product>(`${this.endpoint}${id}`);
+  deleteProduct(blogId: number, id: number): Observable<Product> {
+    const endpoint = `/${blogId}/products/${id}`;
+    return this.httpService.delete<Product>(endpoint);
   }
 
-  getOutOfStockProducts(): Observable<{ product: Product, articles: Article[] }[]> {
-    return this.httpService.get<{ product: Product, articles: Article[] }[]>(`${this.endpoint}out-of-stock`);
+  getOutOfStockProducts(blogId: number): Observable<{ product: Product, articles: Article[] }[]> {
+    const endpoint = `/${blogId}/products/out-of-stock`;
+    return this.httpService.get<{ product: Product, articles: Article[] }[]>(endpoint);
   }
 }
+

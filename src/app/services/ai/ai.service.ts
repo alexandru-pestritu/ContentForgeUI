@@ -7,22 +7,20 @@ import { Observable } from 'rxjs';
 })
 export class AIService {
   
-  private endpoint = 'ai/';
-
   constructor(private httpService: HttpService) {}
 
-  getProviders(featureName: string, subfeatureName: string): Observable<any> {
-    const url = `${this.endpoint}providers?feature=${featureName}&subfeature=${subfeatureName}`;
+  getProviders(blogId: number, featureName: string, subfeatureName: string): Observable<any> {
+    const url = `/${blogId}/ai/providers?feature=${featureName}&subfeature=${subfeatureName}`;
     return this.httpService.get<any>(url);
   }
 
-  generateProductText(productId: number, promptId: number, provider: string, model: string): Observable<any> {
-    const url = `${this.endpoint}generate-product-text?product_id=${productId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
+  generateProductText(blogId: number, productId: number, promptId: number, provider: string, model: string): Observable<any> {
+    const url = `/${blogId}/ai/generate-product-text?product_id=${productId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
     return this.httpService.post<any>(url, {});
   }
 
-  generateArticleText(articleId: number, promptId: number, provider: string, model: string): Observable<any> {
-    const url = `${this.endpoint}generate-article-text?article_id=${articleId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
+  generateArticleText(blogId: number, articleId: number, promptId: number, provider: string, model: string): Observable<any> {
+    const url = `/${blogId}/ai/generate-article-text?article_id=${articleId}&prompt_id=${promptId}&provider=${provider}&model=${model}`;
     return this.httpService.post<any>(url, {});
   }
 }

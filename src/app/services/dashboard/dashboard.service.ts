@@ -7,11 +7,10 @@ import { DashboardStats } from '../../models/dashboard/dashboard-stats';
   providedIn: 'root'
 })
 export class DashboardService {
-  private endpoint = 'dashboard/';
-
   constructor(private httpService: HttpService) {}
 
-  getDashboardStats(): Observable<DashboardStats> {
-    return this.httpService.get<DashboardStats>(`${this.endpoint}stats`);
+  getDashboardStats(blogId: number): Observable<DashboardStats> {
+    const url = `/${blogId}/dashboard/stats`;
+    return this.httpService.get<DashboardStats>(url);
   }
 }

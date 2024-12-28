@@ -7,13 +7,12 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class StockCheckLogService {
-  private endpoint = 'stock-check-logs/';
-
   constructor(private httpService: HttpService) {}
 
-  getStockCheckLogs(startDate?: string, endDate?: string): Observable<StockCheckLog[]> {
-    let queryParams = '';
+  getStockCheckLogs(blogId: number, startDate?: string, endDate?: string): Observable<StockCheckLog[]> {
+    let endpoint = `/${blogId}/stock-check-logs`;
 
+    let queryParams = '';
     if (startDate) {
       queryParams += `?start_date=${startDate}`;
     }
@@ -21,6 +20,6 @@ export class StockCheckLogService {
       queryParams += startDate ? `&end_date=${endDate}` : `?end_date=${endDate}`;
     }
 
-    return this.httpService.get<StockCheckLog[]>(`${this.endpoint}${queryParams}`);
+    return this.httpService.get<StockCheckLog[]>(endpoint + queryParams);
   }
 }

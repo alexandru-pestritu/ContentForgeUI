@@ -8,16 +8,16 @@ import { Observable } from 'rxjs';
 
 export class WordpressService {
 
-  private endpoint = 'wordpress/';
-
   constructor(private httpService: HttpService) {}
 
-  getUsers(): Observable<any[]> {
-    return this.httpService.get<any[]>(`${this.endpoint}users`);
+  getUsers(blogId: number): Observable<any[]> {
+    const url = `/${blogId}/wordpress/users`;
+    return this.httpService.get<any[]>(url);
   }
 
-  getCategories(): Observable<any[]> {
-    return this.httpService.get<any[]>(`${this.endpoint}categories`);
+  getCategories(blogId: number): Observable<any[]> {
+    const url = `/${blogId}/wordpress/categories`;
+    return this.httpService.get<any[]>(url);
   }
 }
 

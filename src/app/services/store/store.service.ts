@@ -10,35 +10,46 @@ import { StoreUpdateDTO } from '../../models/store/store-update-dto';
 })
 export class StoreService {
 
-  private endpoint = 'stores/'; 
-
   constructor(private httpService: HttpService) {}
 
-  getStores(skip: number = 0, limit: number = 10, sortField?: string, sortOrder?: number, filter?: string): Observable<{ stores: Store[], total_records: number }> {
+  getStores(
+    blogId: number,
+    skip: number = 0,
+    limit: number = 10,
+    sortField?: string,
+    sortOrder?: number,
+    filter?: string
+  ): Observable<{ stores: Store[], total_records: number }> {
+    let endpoint = `/${blogId}/stores`;
     let queryParams = `?skip=${skip}&limit=${limit}`;
+    
     if (sortField) {
       queryParams += `&sort_field=${sortField}&sort_order=${sortOrder}`;
     }
     if (filter) {
       queryParams += `&filter=${filter}`;
     }
-    return this.httpService.get<{ stores: Store[], total_records: number }>(`${this.endpoint}${queryParams}`);
-  }
-  
 
-  getStoreById(id: number): Observable<Store> {
-    return this.httpService.get<Store>(`${this.endpoint}${id}`);
+    return this.httpService.get<{ stores: Store[], total_records: number }>(endpoint + queryParams);
   }
 
-  createStore(store: StoreCreateDTO, uploadToWordPress: boolean): Observable<Store> {
-    return this.httpService.post<Store>(`${this.endpoint}?upload_to_wordpress=${uploadToWordPress}`, store);
+  getStoreById(blogId: number, storeId: number): Observable<Store> {
+    const endpoint = `/${blogId}/stores/${storeId}`;
+    return this.httpService.get<Store>(endpoint);
   }
 
-  updateStore(id: number, store: StoreUpdateDTO, uploadToWordPress: boolean): Observable<Store> {
-    return this.httpService.put<Store>(`${this.endpoint}${id}?upload_to_wordpress=${uploadToWordPress}`, store);
+  createStore(blogId: number, store: StoreCreateDTO, uploadToWordPress: boolean): Observable<Store> {
+    const endpoint = `/${blogId}/stores?upload_to_wordpress=${uploadToWordPress}`;
+    return this.httpService.post<Store>(endpoint, store);
   }
 
-  deleteStore(id: number): Observable<Store> {
-    return this.httpService.delete<Store>(`${this.endpoint}${id}`);
+  updateStore(blogId: number, storeId: number, storeUpdate: StoreUpdateDTO, uploadToWordPress: boolean): Observable<Store> {
+    const endpoint = `/${blogId}/stores/${storeId}?upload_to_wordpress=${uploadToWordPress}`;
+    return this.httpService.put<Store>(endpoint, storeUpdate);
+  }
+
+  deleteStore(blogId: number, storeId: number): Observable<Store> {
+    const endpoint = `/${blogId}/stores/${storeId}`;
+    return this.httpService.delete<Store>(endpoint);
   }
 }

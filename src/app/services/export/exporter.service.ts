@@ -6,12 +6,17 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ExporterService {
-
-  private endpoint = 'export/';
-
   constructor(private httpService: HttpService) {}
 
-  exportEntities(entityType: string, skip: number, limit: number, sortField?: string, sortOrder?: number, filter?: string): Observable<Blob> {
+  exportEntities(
+    blogId: number,
+    entityType: string,
+    skip: number,
+    limit: number,
+    sortField?: string,
+    sortOrder?: number,
+    filter?: string
+  ): Observable<Blob> {
     let queryParams = `?entity_type=${entityType}&skip=${skip}&limit=${limit}`;
     if (sortField) {
       queryParams += `&sort_field=${sortField}&sort_order=${sortOrder}`;
@@ -19,6 +24,8 @@ export class ExporterService {
     if (filter) {
       queryParams += `&filter=${filter}`;
     }
-    return this.httpService.getCSVBlob(`${this.endpoint}${queryParams}`);
+
+    const url = `/${blogId}/export/${queryParams}`;
+    return this.httpService.getCSVBlob(url);
   }
 }

@@ -1,5 +1,6 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="w-full max-w-md bg-white rounded-lg p-8 shadow-lg">
+<div class="min-h-screen flex items-center justify-center flex-col bg-gray-100">
+  <p-image src="../assets/logo.png" height="90" class="mb-8 mt-12"></p-image>
+    <div class="w-full max-w-md bg-white rounded-lg p-8 shadow-lg mb-12">
       <h1 class="text-3xl font-bold mb-6 text-center">Log In</h1>
   
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">

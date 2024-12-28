@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../services/notification/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -30,7 +32,7 @@ export class LoginComponent {
           this.router.navigate(['/']); 
         },
         error: (error) => {
-          console.error(error);
+          this.notificationService.showError('Error', 'Invalid credentials. Please try again.');
         }
       });
     }

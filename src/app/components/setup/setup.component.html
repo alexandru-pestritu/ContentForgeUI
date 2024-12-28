@@ -1,0 +1,178 @@
+<div class="min-h-screen flex items-center justify-center flex-col bg-gray-100">
+    <p-image src="../assets/logo.png" height="90" class="mb-8 mt-12"></p-image>
+    <div class="w-full max-w-2xl bg-white rounded-lg p-8 shadow-lg mb-12">
+  
+      <h2 class="text-3xl font-bold mb-4 text-center">Initial Setup</h2>
+  
+      <p-stepper [linear]="true" [activeStep]="activeStepIndex" styleClass="mb-4">
+        
+        <p-stepperPanel header="Create user">
+          <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+            <form [formGroup]="step1Form" novalidate>
+              <div class="mb-4">
+                <label for="name" class="block text-gray-700">Name</label>
+                <input 
+                  id="name" 
+                  type="text" 
+                  pInputText 
+                  formControlName="name" 
+                  class="w-full mt-2" 
+                />
+              </div>
+              <div class="mb-4">
+                <label for="email" class="block text-gray-700">Email</label>
+                <input 
+                  id="email" 
+                  type="email" 
+                  pInputText 
+                  formControlName="email" 
+                  class="w-full mt-2" 
+                />
+              </div>
+              <div class="mb-4">
+                <label for="password" class="block text-gray-700">Password</label>
+                <p-password
+                    id="password"
+                    formControlName="password" 
+                    [toggleMask]="true"
+                    styleClass="w-full mt-2"
+                    inputStyleClass="w-full"
+                    [feedback]="false"
+                ></p-password>
+              </div>
+  
+              <div class="flex pt-4 justify-end">
+                <p-button 
+                  label="Next" 
+                  icon="pi pi-arrow-right" 
+                  iconPos="right"
+                  (click)="onSubmitStep1(); nextCallback.emit()"
+                  [disabled]="step1Form.invalid"
+                ></p-button>
+              </div>
+            </form>
+          </ng-template>
+        </p-stepperPanel>
+  
+        <p-stepperPanel header="API Keys">
+          <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+            <form [formGroup]="step2Form" novalidate>
+              <div class="mb-4">
+                <label for="crawlbaseApiKey" class="block text-gray-700">Crawlbase API Key</label>
+                <p-password
+                    id="crawlbaseApiKey"
+                    formControlName="crawlbaseApiKey" 
+                    [toggleMask]="true"
+                    styleClass="w-full mt-2"
+                    inputStyleClass="w-full"
+                    [feedback]="false"
+                ></p-password>
+              </div>
+              <div class="mb-4">
+                <label for="scrapingfishApiKey" class="block text-gray-700">ScrapingFish API Key</label>
+                <p-password
+                    id="scrapingfishApiKey"
+                    formControlName="scrapingfishApiKey" 
+                    [toggleMask]="true"
+                    styleClass="w-full mt-2"
+                    inputStyleClass="w-full"
+                    [feedback]="false"
+                ></p-password>
+              </div>
+              <div class="mb-4">
+                <label for="edenaiApiKey" class="block text-gray-700">EdenAI API Key</label>
+                <p-password
+                    id="edenaiApiKey"
+                    formControlName="edenaiApiKey" 
+                    [toggleMask]="true"
+                    styleClass="w-full mt-2"
+                    inputStyleClass="w-full"
+                    [feedback]="false"
+                ></p-password>
+              </div>
+  
+              <div class="flex pt-4 justify-end">
+  
+                <p-button 
+                  label="Next" 
+                  icon="pi pi-arrow-right" 
+                  iconPos="right" 
+                  (click)="onSubmitStep2(); nextCallback.emit()"
+                  [disabled]="step2Form.invalid"
+                ></p-button>
+              </div>
+            </form>
+          </ng-template>
+        </p-stepperPanel>
+  
+        <p-stepperPanel header="Create blog">
+          <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
+            <form [formGroup]="step3Form" novalidate>
+              <div class="mb-4">
+                <label for="blog_name" class="block text-gray-700">Blog Name</label>
+                <input 
+                  id="blog_name" 
+                  type="text" 
+                  pInputText 
+                  formControlName="name" 
+                  class="w-full mt-2" 
+                />
+              </div>
+              <div class="mb-4">
+                <label for="base_url" class="block text-gray-700">Base URL</label>
+                <input 
+                  id="base_url" 
+                  type="url" 
+                  pInputText 
+                  formControlName="base_url" 
+                  class="w-full mt-2" 
+                />
+              </div>
+              <div class="mb-4">
+                <label for="blog_username" class="block text-gray-700">Blog Username</label>
+                <input 
+                  id="blog_username"
+                  type="text"
+                  pInputText
+                  formControlName="username"
+                  class="w-full mt-2"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="api_key" class="block text-gray-700">Blog API Key</label>
+                <p-password
+                    id="api_key"
+                    formControlName="api_key" 
+                    [toggleMask]="true"
+                    styleClass="w-full mt-2"
+                    inputStyleClass="w-full"
+                    [feedback]="false"
+                ></p-password>
+              </div>
+              <div class="mb-4">
+                <label for="logo_url" class="block text-gray-700">Logo URL</label>
+                <input
+                  id="logo_url"
+                  type="url"
+                  pInputText
+                  formControlName="logo_url"
+                  class="w-full mt-2"
+                />
+              </div>
+  
+              <div class="flex pt-4 justify-end">
+                <p-button 
+                  label="Finish" 
+                  icon="pi pi-check"
+                  (click)="onSubmitStep3()"
+                  [disabled]="step3Form.invalid"
+                ></p-button>
+              </div>
+            </form>
+          </ng-template>
+        </p-stepperPanel>
+  
+      </p-stepper>
+    </div>
+  </div>
+  

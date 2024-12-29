@@ -293,8 +293,11 @@ export class ProductsComponent implements OnInit {
   objectKeys = Object.keys;
 
   searchStores(event: any) {
+    if (!this.blogId) {
+      return;
+    }
     const query = event.query;
-    this.storeService.getStores(0, 10, undefined, undefined, query).subscribe({
+    this.storeService.getStores(this.blogId, 0, 10, undefined, undefined, query).subscribe({
       next: (data) => {
         this.stores = data.stores.map(store => ({
           id: store.id,

@@ -12,7 +12,7 @@
           <p-password
             [(ngModel)]="setting.value"
             [toggleMask]="true"
-            (onInput)="onInputChange(setting, $event)"
+            (onBlur)="onInputChange(setting, $event)"
             styleClass="w-full"
             inputStyleClass="w-full"
             [feedback]="false"
